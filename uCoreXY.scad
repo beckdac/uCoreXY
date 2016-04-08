@@ -25,6 +25,7 @@ yAxisRailSep = 30;
 yAxisRailTightScrewD = 3;
 yAxisRailTightScrewDepth = 12;
 yAxisRailTightCaptiveNutWidth = 5.5; // takend from http://www.fairburyfastener.com/xdims_metric_nuts.htm
+yAxisRailTightCaptiveNutHeight = 2.4; // takend from http://www.fairburyfastener.com/xdims_metric_nuts.htm
 
 /* [Misc] */
 
@@ -103,15 +104,19 @@ module yAxisRailMount() {
 			translate([-yAxisRailMountWidth/2, -yAxisRailSep/2, -cylHeightExt / 2]) cylinder(h=plateThickness + beamHW + cylHeightExt, d=linearRailOD);
 			translate([-yAxisRailMountWidth/2, yAxisRailSep/2, -cylHeightExt / 2]) cylinder(h=plateThickness + beamHW + cylHeightExt, d=linearRailOD);
 			// slots for tightening
-			translate([-yAxisRailMountWidth/2, -yAxisRailSep / 8, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) cube([2, yAxisRailSep, plateThickness + beamHW + cylHeightExt], center = true);
+			translate([-yAxisRailMountWidth/2, -yAxisRailSep / 8, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) cube([1.5, yAxisRailSep, plateThickness + beamHW + cylHeightExt], center = true);
             // separation slot between holes
             translate([-yAxisRailMountWidth * .75, 0, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) cube([10, 2, plateThickness + beamHW + cylHeightExt], center = true);
 			// screw holes for tightenging
 			translate([-yAxisRailMountWidth * .6, yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cylinder(h=yAxisRailTightScrewDepth, d=yAxisRailTightScrewD, center=true);
 			translate([-yAxisRailMountWidth * .6, -yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cylinder(h=yAxisRailTightScrewDepth, d=yAxisRailTightScrewD, center=true);
 			// inset for screw
-			translate([-yAxisRailMountWidth * .6, yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cylinder(h=yAxisRailTightScrewDepth, d=yAxisRailTightScrewD, center=true);
-			#translate([-yAxisRailMountWidth * .8, -yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cylinder(h=5, d=yAxisRailTightScrewD * 2, center=true);
+			translate([-yAxisRailMountWidth * .8, yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cylinder(h=yAxisRailTightScrewDepth, d=yAxisRailTightScrewD * 2, center=true);
+			translate([-yAxisRailMountWidth * .8, -yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cylinder(h=5, d=yAxisRailTightScrewD * 2, center=true);
+			// captive nut
+			translate([-yAxisRailMountWidth * .3, yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cube([plateThickness + beamHW + cylHeightExt, yAxisRailTightCaptiveNutWidth, yAxisRailTightCaptiveNutHeight], center=true);
+			translate([-yAxisRailMountWidth * .3, -yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cube([plateThickness + beamHW + cylHeightExt, yAxisRailTightCaptiveNutWidth, yAxisRailTightCaptiveNutHeight], center=true);
+
 		}
         linear_extrude(height=plateThickness)
             polygon(points=[ [0, -yAxisRailMountHeight / 2], [ 1.5 * yAxisRailMountWidth/2, 0 ], [0, 0 ]], convexity=10);
