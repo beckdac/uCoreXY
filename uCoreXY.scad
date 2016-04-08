@@ -21,6 +21,10 @@ frameSideLength = frameBeamLength + 2 * 0.5 * beamHW; // this accounts for two c
 
 // Y axis linear rail to linear rail separation (center to center, mm)
 yAxisRailSep = 30;
+// Y axis linear rail mount tighenting screw diameter (mm)
+yAxisRailTightScrewD = 3;
+yAxisRailTightScrewDepth = 12;
+yAxisRailTightCaptiveNutWidth = 5.5; // takend from http://www.fairburyfastener.com/xdims_metric_nuts.htm
 
 /* [Misc] */
 
@@ -79,17 +83,38 @@ module yAxisRailMount() {
     yAxisRailMountBuffer = 10;
     yAxisRailMountWidth = linearBearingOD + (linearBearingOD - linearRailOD);
     yAxisRailMountHeight = yAxisRailSep + 
-        (linearBearingOD * 2) + (.5 * linearBearingOD) + // to account for the required spacing of the bearings 
+         (.5 * linearBearingOD) + // to account for the required spacing of the bearings 
         yAxisRailMountBuffer;
     union() {
 		difference() {
-        	linear_extrude(height=plateThickness + beamHW)
-            	polygon(points=[ [0, yAxisRailMountHeight * 1.1], [-yAxisRailMountWidth, yAxisRailMountHeight / 2], [-yAxisRailMountWidth, -yAxisRailMountHeight / 2], [0, -yAxisRailMountHeight / 2] ], convexity = 10);
+		  	union() {
+        		hull() {
+					linear_extrude(height=plateThickness + beamHW)
+            			polygon(points=[ [0, yAxisRailMountHeight * 1.1], [-yAxisRailMountWidth/2, yAxisRailMountHeight / 2], [-yAxisRailMountWidth/2, -yAxisRailMountHeight / 2], [0, -yAxisRailMountHeight / 2] ], convexity = 10);
+					translate([-yAxisRailMountWidth/2, -yAxisRailSep/2, 0]) cylinder(h=plateThickness + beamHW, d=linearRailOD * 2);
+				}
+				hull() {
+					linear_extrude(height=plateThickness + beamHW)
+            		polygon(points=[ [0, yAxisRailMountHeight * 1.1], [-yAxisRailMountWidth/2, yAxisRailMountHeight / 2], [-yAxisRailMountWidth/2, -yAxisRailMountHeight / 2], [0, -yAxisRailMountHeight / 2] ], convexity = 10);
+					translate([-yAxisRailMountWidth/2, yAxisRailSep/2, 0]) cylinder(h=plateThickness + beamHW, d=linearRailOD * 2);
+				}
+			}
+			// rail holes
 			translate([-yAxisRailMountWidth/2, -yAxisRailSep/2, -cylHeightExt / 2]) cylinder(h=plateThickness + beamHW + cylHeightExt, d=linearRailOD);
 			translate([-yAxisRailMountWidth/2, yAxisRailSep/2, -cylHeightExt / 2]) cylinder(h=plateThickness + beamHW + cylHeightExt, d=linearRailOD);
+			// slots for tightening
+			translate([-yAxisRailMountWidth/2, -yAxisRailSep / 8, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) cube([2, yAxisRailSep, plateThickness + beamHW + cylHeightExt], center = true);
+            // separation slot between holes
+            translate([-yAxisRailMountWidth * .75, 0, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) cube([10, 2, plateThickness + beamHW + cylHeightExt], center = true);
+			// screw holes for tightenging
+			translate([-yAxisRailMountWidth * .6, yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cylinder(h=yAxisRailTightScrewDepth, d=yAxisRailTightScrewD, center=true);
+			translate([-yAxisRailMountWidth * .6, -yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cylinder(h=yAxisRailTightScrewDepth, d=yAxisRailTightScrewD, center=true);
+			// inset for screw
+			translate([-yAxisRailMountWidth * .6, yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cylinder(h=yAxisRailTightScrewDepth, d=yAxisRailTightScrewD, center=true);
+			#translate([-yAxisRailMountWidth * .8, -yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cylinder(h=5, d=yAxisRailTightScrewD * 2, center=true);
 		}
         linear_extrude(height=plateThickness)
-            polygon(points=[ [0, -yAxisRailMountHeight / 2], [ 1.5 * yAxisRailMountWidth, 0 ], [0, 0 ]], convexity=10);
+            polygon(points=[ [0, -yAxisRailMountHeight / 2], [ 1.5 * yAxisRailMountWidth/2, 0 ], [0, 0 ]], convexity=10);
     }
 }
 
@@ -107,7 +132,7 @@ module beamBracket90() {
 
 module topNegXNegYCornerBracket() {
      fSLTrnas = frameSideLength / 2 + beamHW / 2; // Translation distant to put brack on the outside of frame
-    color([.9, 0, 0]) {
+    color([.6, .6, 0]) {
     //translate([-fSLTrnas, -fSLTrnas, fSLTrnas]) 
         //translate([0, -plateThickness, 0])
             //rotate([-90, 0, 0]) 
