@@ -59,6 +59,8 @@ module assembly() {
         beamFrame();
         topNegXNegYCornerBracket();
         topPosXNegYCornerBracket();
+        topNegXPosYCornerBracket();
+        topPosXPosYCornerBracket();
     }
 }
 
@@ -138,6 +140,14 @@ module beamBracket90() {
 
 module topPosXNegYCornerBracket() {
     mirror([1,0,0]) topNegXNegYCornerBracket();
+}
+
+module topNegXPosYCornerBracket() {
+    mirror([0,1,0]) topNegXNegYCornerBracket();
+}
+
+module topPosXPosYCornerBracket() {
+    mirror([1,0,0]) topNegXPosYCornerBracket();
 }
 
 module topNegXNegYCornerBracket() {
