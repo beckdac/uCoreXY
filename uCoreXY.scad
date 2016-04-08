@@ -5,18 +5,15 @@ part = "assembly"; // [assembly:all parts assembled, beamFrame:beam frame, topNe
 // height and width of extrusion (mm)
 beamHW = 10;
 // linear rail diameter (mm)
-linearRailD = 8;
-// length of main arm
-armLength = 100;
-// length of forearm
-forearmLength = 75;
-// spacers: print sets or just one (need 6 arm spacers and 4 shoulder spacers)
-print_spacer_sets = 1; //[1:true,0:false]
+linearRailOD = 8;
+// plate thicknesses (mm) where not otherwise specified
+plateThickness = 4;
 
 /* [Frame] */
 
 // frame beam length (mm)
 frameBeamLength = 300;
+frameSideLength = frameBeamLength + 2 * 0.5 * beamHW; // this accounts for two corner cubes (2 at half width)
 
 /* [Misc] */
 
@@ -46,17 +43,17 @@ module render_part() {
 }
 
 module assembly() {
-    beamFrame();
+    union() {
+        beamFrame();
+        topNegXNegYCornerBracket();
+    }
 }
 
 module beamFrame() {
-    frameSideLength = frameBeamLength + 2 * 0.5 * beamHW; // this accounts for two corner cubes (2 at half width)
-    color([.6, .6, .6, .6]) {
+    color([.6, .6, .6, .6]) 
         union() {
-            translate([-frameSideLength / 2, -frameSideLength / 2, 0]) { makerBeam(frameBeamLength); }
-            translate([-frameSideLength / 2, frameSideLength / 2, 0]) { makerBeam(frameBeamLength); }
-            translate([frameSideLength / 2, -frameSideLength / 2, 0]) { makerBeam(frameBeamLength); }
-            translate([frameSideLength / 2, frameSideLength / 2, 0]) { makerBeam(frameBeamLength); }
+            for (i=[-1, 1]) for (j=[-1,1])
+                translate([i * frameSideLength / 2, j * frameSideLength / 2, 0]) makerBeam(frameBeamLength);            
             translate([-frameSideLength / 2, 0, -frameSideLength / 2]) { rotate([90, 0, 0]) { makerBeam(frameBeamLength); } }
             translate([frameSideLength / 2, 0, -frameSideLength / 2]) { rotate([90, 0, 0]) { makerBeam(frameBeamLength); } }
             translate([0, -frameSideLength / 2, -frameSideLength / 2]) { rotate([0, 90, 0]) { makerBeam(frameBeamLength); } }
@@ -66,11 +63,22 @@ module beamFrame() {
             translate([0, -frameSideLength / 2, frameSideLength / 2]) { rotate([0, 90, 0]) { makerBeam(frameBeamLength); } }
             translate([0, frameSideLength / 2, frameSideLength / 2]) { rotate([0, 90, 0]) { makerBeam(frameBeamLength); } }
             for (i=[-1,1]) for (j=[-1,1]) for (k=[-1,1])
-                translate([ i * frameSideLength / 2, j * frameSideLength / 2, k * frameSideLength / 2]) { cube([beamHW, beamHW, beamHW], center=true); }
+                translate([ i * frameSideLength / 2, j * frameSideLength / 2, k * frameSideLength / 2]) cube([beamHW, beamHW, beamHW], center=true);
         }
-    }
+    
 }
 
 module topNegXNegYCornerBracket() {
-
+    cornerLength = 70.7 + 2 * beamHW; // 70.7 is a and b length of c = 10 (inner braces), 2*beam is an estimate of how far out the angle / beam sticks
+    color([.9, 0, 0]) {
+    fSLTrnas = frameSideLength / 2 + beamHW / 2; // Translation distant to put brack on the outside of frame
+    translate([-fSLTrnas, -fSLTrnas, fSLTrnas]) {
+        translate([0, -plateThickness, 0]){
+            rotate([-90, 0, 0]) {
+                union() {
+                    linear_extrude(height=plateThickness) { polygon(points=[ [-plateThickness,-plateThickness], [cornerLength, -plateThickness], [cornerLength, beamHW], [beamHW, cornerLength], [-plateThickness, cornerLength] ], convexity = 10); }
+                }
+            }
+        }
+    } }
 }
