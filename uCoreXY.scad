@@ -1,7 +1,7 @@
 /* [Main] */
 
 // select part
-part = "assembly"; // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegY_cornerBracket:top corner bracket (-x -y)]
+part = "assembly"; // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegY_cornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y)]
 // height and width of extrusion (mm)
 beamHW = 10;
 // linear rail outer diameter (mm)
@@ -58,6 +58,7 @@ module assembly() {
     union() {
         beamFrame();
         topNegXNegYCornerBracket();
+        topPosXNegYCornerBracket();
     }
 }
 
@@ -135,12 +136,16 @@ module beamBracket90() {
                 }
 }
 
+module topPosXNegYCornerBracket() {
+    mirror([1,0,0]) topNegXNegYCornerBracket();
+}
+
 module topNegXNegYCornerBracket() {
      fSLTrnas = frameSideLength / 2 + beamHW / 2; // Translation distant to put brack on the outside of frame
     color([.6, .6, 0]) {
-    //translate([-fSLTrnas, -fSLTrnas, fSLTrnas]) 
-        //translate([0, -plateThickness, 0])
-            //rotate([-90, 0, 0]) 
+    translate([-fSLTrnas, -fSLTrnas, fSLTrnas]) 
+        translate([0, -plateThickness, 0])
+            rotate([-90, 0, 0]) 
                 union() {
                     beamBracket90();
                     yAxisRailMount();
