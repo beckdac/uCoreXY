@@ -70,15 +70,18 @@ module beamFrame() {
 
 module topNegXNegYCornerBracket() {
     cornerLength = 70.7 + 2 * beamHW; // 70.7 is a and b length of c = 10 (inner braces), 2*beam is an estimate of how far out the angle / beam sticks
-    color([.9, 0, 0]) {
     fSLTrnas = frameSideLength / 2 + beamHW / 2; // Translation distant to put brack on the outside of frame
-    translate([-fSLTrnas, -fSLTrnas, fSLTrnas]) {
-        translate([0, -plateThickness, 0]){
-            rotate([-90, 0, 0]) {
+    color([.9, 0, 0]) {
+    //translate([-fSLTrnas, -fSLTrnas, fSLTrnas]) 
+        //translate([0, -plateThickness, 0])
+            //rotate([-90, 0, 0]) 
                 union() {
-                    linear_extrude(height=plateThickness) { polygon(points=[ [-plateThickness,-plateThickness], [cornerLength, -plateThickness], [cornerLength, beamHW], [beamHW, cornerLength], [-plateThickness, cornerLength] ], convexity = 10); }
+                    linear_extrude(height=plateThickness)
+                        polygon(points=[ [0,0], [cornerLength, 0], [cornerLength, beamHW], [beamHW, cornerLength], [0, cornerLength] ], convexity = 10);
+                    linear_extrude(height=plateThickness + beamHW)
+                        polygon(points=[ [-plateThickness, -plateThickness ], [cornerLength, -plateThickness], [cornerLength, 0], [0, 0]], convexity = 10);
+                    linear_extrude(height=plateThickness + beamHW)
+                        polygon(points=[ [-plateThickness, -plateThickness ], [-plateThickness,cornerLength], [0, cornerLength], [0, 0]], convexity = 10);
                 }
-            }
-        }
-    } }
+    }
 }
