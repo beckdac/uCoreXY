@@ -1,7 +1,8 @@
 /* [Main] */
 
 // select part
-part = "assembly"; // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegY_cornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y)]
+//part = "topNegXNegYCornerBracket"; // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y)]
+part = "assembly"; // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y)]
 // height and width of extrusion (mm)
 beamHW = 10;
 // linear rail outer diameter (mm)
@@ -35,7 +36,7 @@ iFitAdjust_d = .25;
 // cylinder subtract height extension
 cylHeightExt = .1;
 // render quality
-$fn = 24; // [24:low quality, 48:development, 64:production]
+$fn = 64; // [24:low quality, 48:development, 64:production]
 
 ////////////////////// End header ////////////////////
 
@@ -47,8 +48,15 @@ module render_part() {
 	if (part == "assembly") {
 		assembly();
 	} else if (part == "breamFrame") {
+		beamFrame();
 	} else if (part == "topNegXNegYCornerBracket") {
-		topNegXNegY_cornerBracket();
+		topNegXNegYCornerBracket();
+	} else if (part == "topPosXNegYCornerBracket") {
+		topPosXNegYCornerBracket();
+	} else if (part == "topNegXPosYCornerBracket") {
+		topNegXPosYCornerBracket();
+	} else if (part == "topPosXPosYCornerBracket") {
+		topPosXPosYCornerBracket();
 	} else {
 		// invalid value
 	}
@@ -92,6 +100,7 @@ module yAxisRailMount() {
     union() {
 		difference() {
 		  	union() {
+                // both hulls set out the rail to brackt mounts
         		hull() {
 					linear_extrude(height=plateThickness + beamHW)
             			polygon(points=[ [0, yAxisRailMountHeight * 1.1], [-yAxisRailMountWidth/2, yAxisRailMountHeight / 2], [-yAxisRailMountWidth/2, -yAxisRailMountHeight / 2], [0, -yAxisRailMountHeight / 2] ], convexity = 10);
@@ -114,27 +123,38 @@ module yAxisRailMount() {
 			translate([-yAxisRailMountWidth * .6, yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cylinder(h=yAxisRailTightScrewDepth, d=yAxisRailTightScrewD, center=true);
 			translate([-yAxisRailMountWidth * .6, -yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cylinder(h=yAxisRailTightScrewDepth, d=yAxisRailTightScrewD, center=true);
 			// inset for screw
-			translate([-yAxisRailMountWidth * .8, yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cylinder(h=yAxisRailTightScrewDepth, d=yAxisRailTightScrewD * 2, center=true);
-			translate([-yAxisRailMountWidth * .8, -yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cylinder(h=5, d=yAxisRailTightScrewD * 2, center=true);
+			translate([-yAxisRailMountWidth * .8, yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cylinder(h=yAxisRailTightScrewDepth / 3, d=yAxisRailTightScrewD * 3, center=true);
+			translate([-yAxisRailMountWidth * .8, -yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cylinder(h=yAxisRailTightScrewDepth / 3, d=yAxisRailTightScrewD * 3, center=true);
 			// captive nut
 			translate([-yAxisRailMountWidth * .3, yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cube([plateThickness + beamHW + cylHeightExt, yAxisRailTightCaptiveNutWidth, yAxisRailTightCaptiveNutHeight], center=true);
 			translate([-yAxisRailMountWidth * .3, -yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cube([plateThickness + beamHW + cylHeightExt, yAxisRailTightCaptiveNutWidth, yAxisRailTightCaptiveNutHeight], center=true);
 
 		}
-        linear_extrude(height=plateThickness)
-            polygon(points=[ [0, -yAxisRailMountHeight / 2], [ 1.5 * yAxisRailMountWidth/2, 0 ], [0, 0 ]], convexity=10);
+        // wing joining mount to brack for additional stability
+        linear_extrude(height=plateThickness + beamHW)
+            polygon(points=[ [0, -yAxisRailMountHeight / 2], [2.5 * yAxisRailMountWidth/2, -yAxisRailMountHeight / 2], [ 4.5 * yAxisRailMountWidth/2, 0 ], [0, 0 ]], convexity=10);
     }
 }
 
 module beamBracket90() {
     cornerLength = 70.7 + 2 * beamHW; // 70.7 is a and b length of c = 10 (inner braces), 2*beam is an estimate of how far out the angle / beam sticks
    union() {
+       // main triangle and beam overlaps
         linear_extrude(height=plateThickness)
             polygon(points=[ [0,0], [cornerLength, 0], [cornerLength, beamHW], [beamHW, cornerLength], [0, cornerLength] ], convexity = 10);
+       // veritcal on one side of 90
         linear_extrude(height=plateThickness + beamHW)
             polygon(points=[ [-plateThickness, -plateThickness ], [cornerLength, -plateThickness], [cornerLength, 0], [0, 0]], convexity = 10);
+       // veritcal on other
         linear_extrude(height=plateThickness + beamHW)           
             polygon(points=[ [-plateThickness, -plateThickness ], [-plateThickness,cornerLength], [0, cornerLength], [0, 0]], convexity = 10);
+  
+    // another main triangle
+    rotate([90, 0, 0]) translate([0, plateThickness, 0]) linear_extrude(height=plateThickness)
+            polygon(points=[ [0,0], [cornerLength, 0], [cornerLength, beamHW], [beamHW, cornerLength], [0, cornerLength] ], convexity = 10);     
+    // another main triangle
+    #translate([0, plateThickness, 0]) rotate([0, -90, 0]) translate([plateThickness, -plateThickness, 0]) linear_extrude(height=plateThickness)
+            polygon(points=[ [0,-plateThickness], [cornerLength, -plateThickness], [cornerLength, beamHW], [beamHW, cornerLength], [0, cornerLength] ], convexity = 10);     
                 }
 }
 
