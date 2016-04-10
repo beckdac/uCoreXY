@@ -1,8 +1,7 @@
 /* [Main] */
 
 // select part
-//part = "topNegXNegYCornerBracket"; // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y)]
-part = "assembly"; // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y)]
+part = "assembly"; // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails]
 // height and width of extrusion (mm)
 beamHW = 10;
 // linear rail outer diameter (mm)
@@ -27,6 +26,15 @@ yAxisRailTightScrewD = 3;
 yAxisRailTightScrewDepth = 12;
 yAxisRailTightCaptiveNutWidth = 5.5; // takend from http://www.fairburyfastener.com/xdims_metric_nuts.htm
 yAxisRailTightCaptiveNutHeight = 2.4; // takend from http://www.fairburyfastener.com/xdims_metric_nuts.htm
+// Y axis linear rail length (mm)
+yAxisLinearRailLength = 330;
+xAxisLinearRailLength = 400;
+// constants computed from the above
+yAxisRailMountBuffer = 10;
+yAxisRailMountWidth = linearBearingOD + (linearBearingOD - linearRailOD);
+yAxisRailMountHeight = yAxisRailSep + 
+     (.5 * linearBearingOD) + // to account for the required spacing of the bearings 
+     yAxisRailMountBuffer;
 
 /* [Misc] */
 
@@ -57,6 +65,10 @@ module render_part() {
 		topNegXPosYCornerBracket();
 	} else if (part == "topPosXPosYCornerBracket") {
 		topPosXPosYCornerBracket();
+    } else if (part == "yAxisLinearRails") {
+        yAxisLinearRails();
+    } else if (part == "xAxisLinearRails") {
+        xAxisLinearRails();
 	} else {
 		// invalid value
 	}
@@ -69,6 +81,8 @@ module assembly() {
         topPosXNegYCornerBracket();
         topNegXPosYCornerBracket();
         topPosXPosYCornerBracket();
+		yAxisLinearRails();
+		xAxisLinearRails();
     }
 }
 
@@ -92,11 +106,6 @@ module beamFrame() {
 }
 
 module yAxisRailMount() {
-    yAxisRailMountBuffer = 10;
-    yAxisRailMountWidth = linearBearingOD + (linearBearingOD - linearRailOD);
-    yAxisRailMountHeight = yAxisRailSep + 
-         (.5 * linearBearingOD) + // to account for the required spacing of the bearings 
-        yAxisRailMountBuffer;
     union() {
 		difference() {
 		  	union() {
@@ -153,7 +162,7 @@ module beamBracket90() {
     rotate([90, 0, 0]) translate([0, plateThickness, 0]) linear_extrude(height=plateThickness)
             polygon(points=[ [0,0], [cornerLength, 0], [cornerLength, beamHW], [beamHW, cornerLength], [0, cornerLength] ], convexity = 10);     
     // another main triangle
-    #translate([0, plateThickness, 0]) rotate([0, -90, 0]) translate([plateThickness, -plateThickness, 0]) linear_extrude(height=plateThickness)
+    translate([0, plateThickness, 0]) rotate([0, -90, 0]) translate([plateThickness, -plateThickness, 0]) linear_extrude(height=plateThickness)
             polygon(points=[ [0,-plateThickness], [cornerLength, -plateThickness], [cornerLength, beamHW], [beamHW, cornerLength], [0, cornerLength] ], convexity = 10);     
                 }
 }
@@ -181,4 +190,19 @@ module topNegXNegYCornerBracket() {
                     yAxisRailMount();
                 }
     }
+}
+
+module yAxisLinearRails() {
+	color([.1,.1,.1])
+	union() {
+		// one side
+		translate([-yAxisRailMountWidth + plateThickness / 4, 0, yAxisRailSep / 2]) translate([-frameSideLength/2 + beamHW / 2, 0, frameSideLength/2 + beamHW / 2]) rotate([90, 0, 0]) cylinder(h=yAxisLinearRailLength, d=linearRailOD, center=true);
+		translate([-yAxisRailMountWidth + plateThickness / 4, 0, -yAxisRailSep / 2]) translate([-frameSideLength/2 + beamHW / 2, 0, frameSideLength/2 + beamHW / 2]) rotate([90, 0, 0]) cylinder(h=yAxisLinearRailLength, d=linearRailOD, center=true);
+		// the other
+		translate([yAxisRailMountWidth / 2 , 0, yAxisRailSep / 2]) translate([frameSideLength/2 + beamHW / 2, 0, frameSideLength/2 + beamHW / 2]) rotate([90, 0, 0]) cylinder(h=yAxisLinearRailLength, d=linearRailOD, center=true);
+		translate([yAxisRailMountWidth / 2, 0, -yAxisRailSep / 2]) translate([frameSideLength/2 + beamHW / 2, 0, frameSideLength/2 + beamHW / 2]) rotate([90, 0, 0]) cylinder(h=yAxisLinearRailLength, d=linearRailOD, center=true);
+	}
+}
+
+module xAxisLinearRails() {
 }
