@@ -1,13 +1,12 @@
 /* [Main] */
 
 // select part
-part = "assembly"; // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails]
+//part = "assembly";
+//part = "yCarriage";
+part = "linearBearingHolder";
+// [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
 beamHW = 10;
-// linear rail outer diameter (mm)
-linearRailOD = 8;
-// linear bearing outer diamter (mm)
-linearBearingOD = 15;
 // plate thicknesses (mm) where not otherwise specified
 plateThickness = 4;
 
@@ -19,6 +18,8 @@ frameSideLength = frameBeamLength + 2 * 0.5 * beamHW; // this accounts for two c
 
 /* [Rails] */
 
+// linear rail outer diameter (mm)
+linearRailOD = 8;
 // Y axis linear rail to linear rail separation (center to center, mm)
 yAxisRailSep = 30;
 // Y axis linear rail mount tighenting screw diameter (mm)
@@ -28,22 +29,32 @@ yAxisRailTightCaptiveNutWidth = 5.5; // takend from http://www.fairburyfastener.
 yAxisRailTightCaptiveNutHeight = 2.4; // takend from http://www.fairburyfastener.com/xdims_metric_nuts.htm
 // clearence between y axis linear bearings and bracket (mm)
 yAxisLinearBearingToBracketClearence = 10;
-
 // Y axis linear rail length (mm)
 yAxisLinearRailLength = 330;
 // X axis linear rail length (mm)
 xAxisLinearRailLength = 400;
 yAxisRailMountBuffer = 10;
-// constants computed from the above
-yAxisRailMountWidth = linearBearingOD + (linearBearingOD - linearRailOD);
-yAxisRailMountHeight = yAxisRailSep + 
-     (.5 * linearBearingOD) + // to account for the required spacing of the bearings 
-     yAxisRailMountBuffer;
-// bracket corner length
-cornerLength = 70.7 + 2 * beamHW; // 70.7 is a and b length of c = 10 (inner braces), 2*beam is an estimate of how far out the angle / beam sticks
 
-/* [Carriage] */
 
+/* [Linear Bearings] */
+
+// linear bearing outer diameter (mm)
+linearBearingOD = 15;
+// linear bearing length (mm)
+linearBearingLength = 24;
+// linear bearing zip tie width (mm)
+linearBearingZipTieWidth = 3;
+// linear bearing zip tie height (mm)
+linearBearingZipTieHeight = 1.5;
+// linear bearing holder shell thickness (mm)
+linearBearingHolderShellThickness = 6;
+
+
+/* [Y Carriages] */
+
+
+
+/* [X Carriages] */
 
 
 
@@ -56,6 +67,25 @@ iFitAdjust_d = .25;
 cylHeightExt = .1; // for overcutting on differences so they render correctly, nothing more
 // render quality
 $fn = 64; // [24:low quality, 48:development, 64:production]
+
+
+/* [Computed Constants] */
+// constants computed from the above
+yAxisRailMountWidth = linearBearingOD + (linearBearingOD - linearRailOD);
+yAxisRailMountHeight = yAxisRailSep + 
+     (.5 * linearBearingOD) + // to account for the required spacing of the bearings 
+     yAxisRailMountBuffer;
+// bracket corner length
+cornerLength = 70.7 + 2 * beamHW; // 70.7 is a and b length of c = 10 (inner braces), 2*beam is an estimate of how far out the angle / beam sticks
+
+// for linear rail bearing mounts
+effectiveLinearRailOD = linearRailOD + iFitAdjust * 10; 
+effectiveLinearBearingOD = linearBearingOD + iFitAdjust;
+effectiveLinearBearingLength = linearBearingLength + iFitAdjust;
+effectiveLinearBearingZipTieWidth = linearBearingZipTieWidth + iFitAdjust;
+effectiveLinearBearingZipTieHeight = linearBearingZipTieHeight + iFitAdjust;
+holderBaseWidth = effectiveLinearBearingOD + 4 * plateThickness;
+holderBaseLength = effectiveLinearBearingLength + 4 * plateThickness;
 
 ////////////////////// End header ////////////////////
 
@@ -80,6 +110,10 @@ module render_part() {
         yAxisLinearRails();
     } else if (part == "xAxisLinearRails") {
         xAxisLinearRails();
+	} else if (part == "linearBearingHolder") {
+		linearBearingHolder();
+	} else if (part == "yCarriage") {
+		yCarriage();
 	} else {
 		// invalid value
 	}
@@ -230,4 +264,79 @@ module yAxisLinearRails() {
 }
 
 module xAxisLinearRails() {
+}
+
+module zipTieSlots() {
+	zipTieRingOD = effectiveLinearBearingOD + plateThickness / 2 + linearBearingZipTieHeight * 2;
+	zipTieRingID = effectiveLinearBearingOD + plateThickness / 2;
+	zipTieRingOffset = effectiveLinearBearingOD / 2;
+	difference() {
+		hull() {
+			cylinder(h = linearBearingZipTieWidth + 2 * iFitAdjust, d = zipTieRingOD);
+			translate([0, zipTieRingOffset, 0])
+				cylinder(h = linearBearingZipTieWidth + 2 * iFitAdjust, d = zipTieRingOD);
+		}
+		hull() {
+			cylinder(h = linearBearingZipTieWidth + 2 * iFitAdjust, d = zipTieRingID);
+			translate([0, zipTieRingOffset, 0])
+				cylinder(h = linearBearingZipTieWidth + 2 * iFitAdjust, d = zipTieRingID);
+		}
+/*
+		difference() {
+			cylinder(h = linearBearingZipTieWidth + 2 * iFitAdjust, d = zipTieRingOD);
+			cylinder(h = linearBearingZipTieWidth + 2 * iFitAdjust, d = zipTieRingID);
+		}
+		translate([0, zipTieRingOffset, 0])
+			difference() {
+				cylinder(h = linearBearingZipTieWidth + 2 * iFitAdjust, d = zipTieRingOD);
+				cylinder(h = linearBearingZipTieWidth + 2 * iFitAdjust, d = zipTieRingID);
+			}
+		#translate([zipTieRingOD / 2 - iFitAdjust * 2, zipTieRingOffset / 2, (linearBearingZipTieWidth + iFitAdjust * 2) / 2])
+			cube([(zipTieRingOD - zipTieRingID) / 2, effectiveLinearBearingOD / 2, linearBearingZipTieWidth + 2 * iFitAdjust], center=true);
+		#translate([-zipTieRingOD / 2 + iFitAdjust * 2, zipTieRingOffset / 2, (linearBearingZipTieWidth + iFitAdjust * 2) / 2])
+			cube([(zipTieRingOD - zipTieRingID) / 2, effectiveLinearBearingOD / 2, linearBearingZipTieWidth + 2 * iFitAdjust], center=true);
+*/
+	}
+}
+
+module linearBearingHolder() {
+	difference() {
+		difference() {
+			hull() {
+				// base
+				cube([holderBaseWidth, holderBaseLength, plateThickness], center=true);
+				// outer shell
+				translate([0, 0, effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
+					rotate([-90, 0, 0])
+						cylinder(h = effectiveLinearBearingLength + linearBearingHolderShellThickness,
+							d = effectiveLinearBearingOD + linearBearingHolderShellThickness, center=true);
+			}
+			// subtract bearing
+			translate([0, 0, effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
+				rotate([-90, 0, 0])
+					cylinder(h = effectiveLinearBearingLength, d = effectiveLinearBearingOD, center=true);
+			// subtract shaft itself
+			translate([0, 0, effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
+				rotate([-90, 0, 0])
+					cylinder(h = holderBaseLength * 2, d = effectiveLinearRailOD, center=true);
+		}
+		// zip tie slots
+		#translate([0, 0, effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
+			rotate([-90, 0, 0])
+				zipTieSlots();
+		// chop top
+		translate([-holderBaseWidth / 2, -holderBaseLength / 2, 
+				effectiveLinearBearingOD / 2 + 
+					linearBearingHolderShellThickness / 2  + plateThickness / 3])
+			cube([effectiveLinearBearingOD + 4 * plateThickness,
+				effectiveLinearBearingLength + 4 * plateThickness, effectiveLinearBearingOD]);
+	}
+}
+
+module yCarriage() {
+	// plate
+	cube([yAxisRailMountHeight, yAxisRailMountHeight, plateThickness], center=false);
+    // four bearing mounts for y axis (2 on each rail)
+    // 90 angle for x axis
+	// holes for mounting xaxis
 }
