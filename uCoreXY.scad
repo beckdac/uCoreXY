@@ -42,7 +42,7 @@ yAxisRailMountHeight = yAxisRailSep +
 iFitAdjust = .4;
 iFitAdjust_d = .25;
 // cylinder subtract height extension
-cylHeightExt = .1;
+cylHeightExt = .1; // for overcutting on differences so they render correctly, nothing more
 // render quality
 $fn = 64; // [24:low quality, 48:development, 64:production]
 
@@ -159,8 +159,13 @@ module beamBracket90() {
             polygon(points=[ [-plateThickness, -plateThickness ], [-plateThickness,cornerLength], [0, cornerLength], [0, 0]], convexity = 10);
   
     // another main triangle
-    rotate([90, 0, 0]) translate([0, plateThickness, 0]) linear_extrude(height=plateThickness)
-            polygon(points=[ [0,0], [cornerLength, 0], [cornerLength, beamHW], [beamHW, cornerLength], [0, cornerLength] ], convexity = 10);     
+    rotate([90, 0, 0]) translate([0, plateThickness, 0]) 
+        difference() {
+            linear_extrude(height=plateThickness)
+                polygon(points=[ [0,0], [cornerLength, 0], [cornerLength, beamHW], [beamHW, cornerLength], [0, cornerLength] ], convexity = 10);     
+			translate([cornerLength, cornerLength, plateThickness / 2])
+				cylinder(h=plateThickness + cylHeightExt, r = cornerLength / 1.2 , center=true);
+		}
     // another main triangle
     translate([0, plateThickness, 0]) rotate([0, -90, 0]) translate([plateThickness, -plateThickness, 0]) linear_extrude(height=plateThickness)
             polygon(points=[ [0,-plateThickness], [cornerLength, -plateThickness], [cornerLength, beamHW], [beamHW, cornerLength], [0, cornerLength] ], convexity = 10);     
