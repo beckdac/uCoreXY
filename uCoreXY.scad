@@ -193,7 +193,7 @@ module topNegXNegYCornerBracket() {
 }
 
 module yAxisLinearRails() {
-	color([.1,.1,.1])
+	color([.75,.75,.75])
 	union() {
 		// one side
 		translate([-yAxisRailMountWidth + plateThickness / 4, 0, yAxisRailSep / 2]) translate([-frameSideLength/2 + beamHW / 2, 0, frameSideLength/2 + beamHW / 2]) rotate([90, 0, 0]) cylinder(h=yAxisLinearRailLength, d=linearRailOD, center=true);
