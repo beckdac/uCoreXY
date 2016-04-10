@@ -26,15 +26,21 @@ yAxisRailTightScrewD = 3;
 yAxisRailTightScrewDepth = 12;
 yAxisRailTightCaptiveNutWidth = 5.5; // takend from http://www.fairburyfastener.com/xdims_metric_nuts.htm
 yAxisRailTightCaptiveNutHeight = 2.4; // takend from http://www.fairburyfastener.com/xdims_metric_nuts.htm
+// clearence between y axis linear bearings and bracket (mm)
+yAxisLinearBearingToBracketClearence = 10;
+
 // Y axis linear rail length (mm)
 yAxisLinearRailLength = 330;
+// X axis linear rail length (mm)
 xAxisLinearRailLength = 400;
-// constants computed from the above
 yAxisRailMountBuffer = 10;
+// constants computed from the above
 yAxisRailMountWidth = linearBearingOD + (linearBearingOD - linearRailOD);
 yAxisRailMountHeight = yAxisRailSep + 
      (.5 * linearBearingOD) + // to account for the required spacing of the bearings 
      yAxisRailMountBuffer;
+// bracket corner length
+cornerLength = 70.7 + 2 * beamHW; // 70.7 is a and b length of c = 10 (inner braces), 2*beam is an estimate of how far out the angle / beam sticks
 
 /* [Misc] */
 
@@ -107,17 +113,17 @@ module beamFrame() {
 
 module yAxisRailMount() {
     union() {
-		difference() {
+		translate([-yAxisLinearBearingToBracketClearence, 0, 0]) difference() {
 		  	union() {
                 // both hulls set out the rail to brackt mounts
         		hull() {
 					linear_extrude(height=plateThickness + beamHW)
-            			polygon(points=[ [0, yAxisRailMountHeight * 1.1], [-yAxisRailMountWidth/2, yAxisRailMountHeight / 2], [-yAxisRailMountWidth/2, -yAxisRailMountHeight / 2], [0, -yAxisRailMountHeight / 2] ], convexity = 10);
+            			polygon(points=[ [0, yAxisRailMountHeight/2], [-yAxisRailMountWidth/2, yAxisRailMountHeight / 2], [-yAxisRailMountWidth/2, -yAxisRailMountHeight / 2], [0, -yAxisRailMountHeight / 2] ], convexity = 10);
 					translate([-yAxisRailMountWidth/2, -yAxisRailSep/2, 0]) cylinder(h=plateThickness + beamHW, d=linearRailOD * 2);
 				}
 				hull() {
 					linear_extrude(height=plateThickness + beamHW)
-            		polygon(points=[ [0, yAxisRailMountHeight * 1.1], [-yAxisRailMountWidth/2, yAxisRailMountHeight / 2], [-yAxisRailMountWidth/2, -yAxisRailMountHeight / 2], [0, -yAxisRailMountHeight / 2] ], convexity = 10);
+        	    		polygon(points=[ [0, yAxisRailMountHeight /2], [-yAxisRailMountWidth/2, yAxisRailMountHeight / 2], [-yAxisRailMountWidth/2, -yAxisRailMountHeight / 2], [0, -yAxisRailMountHeight / 2] ], convexity = 10);
 					translate([-yAxisRailMountWidth/2, yAxisRailSep/2, 0]) cylinder(h=plateThickness + beamHW, d=linearRailOD * 2);
 				}
 			}
@@ -139,14 +145,18 @@ module yAxisRailMount() {
 			translate([-yAxisRailMountWidth * .3, -yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cube([plateThickness + beamHW + cylHeightExt, yAxisRailTightCaptiveNutWidth, yAxisRailTightCaptiveNutHeight], center=true);
 
 		}
+		// now the pieces that join the bracket to the mount
+		// first, the primary connection between the mount and the bracket
+		linear_extrude(height=plateThickness + beamHW)
+			polygon(points=[ [-plateThickness, yAxisRailMountHeight], [-yAxisLinearBearingToBracketClearence, yAxisRailMountHeight / 2], [-yAxisLinearBearingToBracketClearence, -yAxisRailMountHeight / 2], [-plateThickness, - yAxisRailMountHeight / 2 ] ], convexity=10);
         // wing joining mount to brack for additional stability
-        linear_extrude(height=plateThickness + beamHW)
+        translate([-plateThickness, 0, 0])
+		  linear_extrude(height=plateThickness + beamHW)
             polygon(points=[ [0, -yAxisRailMountHeight / 2], [2.5 * yAxisRailMountWidth/2, -yAxisRailMountHeight / 2], [ 4.5 * yAxisRailMountWidth/2, 0 ], [0, 0 ]], convexity=10);
     }
 }
 
 module beamBracket90() {
-    cornerLength = 70.7 + 2 * beamHW; // 70.7 is a and b length of c = 10 (inner braces), 2*beam is an estimate of how far out the angle / beam sticks
    union() {
        // main triangle and beam overlaps
         linear_extrude(height=plateThickness)
@@ -201,11 +211,11 @@ module yAxisLinearRails() {
 	color([.75,.75,.75])
 	union() {
 		// one side
-		translate([-yAxisRailMountWidth + plateThickness / 4, 0, yAxisRailSep / 2]) translate([-frameSideLength/2 + beamHW / 2, 0, frameSideLength/2 + beamHW / 2]) rotate([90, 0, 0]) cylinder(h=yAxisLinearRailLength, d=linearRailOD, center=true);
-		translate([-yAxisRailMountWidth + plateThickness / 4, 0, -yAxisRailSep / 2]) translate([-frameSideLength/2 + beamHW / 2, 0, frameSideLength/2 + beamHW / 2]) rotate([90, 0, 0]) cylinder(h=yAxisLinearRailLength, d=linearRailOD, center=true);
+		translate([-yAxisRailMountWidth + plateThickness / 4 - yAxisLinearBearingToBracketClearence, 0, yAxisRailSep / 2]) translate([-frameSideLength/2 + beamHW / 2, 0, frameSideLength/2 + beamHW / 2]) rotate([90, 0, 0]) cylinder(h=yAxisLinearRailLength, d=linearRailOD, center=true);
+		translate([-yAxisRailMountWidth + plateThickness / 4- yAxisLinearBearingToBracketClearence , 0, -yAxisRailSep / 2]) translate([-frameSideLength/2 + beamHW / 2, 0, frameSideLength/2 + beamHW / 2]) rotate([90, 0, 0]) cylinder(h=yAxisLinearRailLength, d=linearRailOD, center=true);
 		// the other
-		translate([yAxisRailMountWidth / 2 , 0, yAxisRailSep / 2]) translate([frameSideLength/2 + beamHW / 2, 0, frameSideLength/2 + beamHW / 2]) rotate([90, 0, 0]) cylinder(h=yAxisLinearRailLength, d=linearRailOD, center=true);
-		translate([yAxisRailMountWidth / 2, 0, -yAxisRailSep / 2]) translate([frameSideLength/2 + beamHW / 2, 0, frameSideLength/2 + beamHW / 2]) rotate([90, 0, 0]) cylinder(h=yAxisLinearRailLength, d=linearRailOD, center=true);
+		translate([yAxisRailMountWidth / 2 + yAxisLinearBearingToBracketClearence, 0, yAxisRailSep / 2]) translate([frameSideLength/2 + beamHW / 2, 0, frameSideLength/2 + beamHW / 2]) rotate([90, 0, 0]) cylinder(h=yAxisLinearRailLength, d=linearRailOD, center=true);
+		translate([yAxisRailMountWidth / 2 + yAxisLinearBearingToBracketClearence, 0, -yAxisRailSep / 2]) translate([frameSideLength/2 + beamHW / 2, 0, frameSideLength/2 + beamHW / 2]) rotate([90, 0, 0]) cylinder(h=yAxisLinearRailLength, d=linearRailOD, center=true);
 	}
 }
 
