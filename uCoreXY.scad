@@ -42,6 +42,11 @@ yAxisRailMountHeight = yAxisRailSep +
 // bracket corner length
 cornerLength = 70.7 + 2 * beamHW; // 70.7 is a and b length of c = 10 (inner braces), 2*beam is an estimate of how far out the angle / beam sticks
 
+/* [Carriage] */
+
+
+
+
 /* [Misc] */
 
 // interference fit adjustment for 3D printer
@@ -111,9 +116,8 @@ module beamFrame() {
     
 }
 
-module yAxisRailMount() {
-    union() {
-		translate([-yAxisLinearBearingToBracketClearence, 0, 0]) difference() {
+module parallelRailsMount() {
+		difference() {
 		  	union() {
                 // both hulls set out the rail to brackt mounts
         		hull() {
@@ -145,6 +149,12 @@ module yAxisRailMount() {
 			translate([-yAxisRailMountWidth * .3, -yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cube([plateThickness + beamHW + cylHeightExt, yAxisRailTightCaptiveNutWidth, yAxisRailTightCaptiveNutHeight], center=true);
 
 		}
+}
+
+module yAxisRailMount() {
+    union() {
+		translate([-yAxisLinearBearingToBracketClearence, 0, 0]) 
+			parallelRailsMount();
 		// now the pieces that join the bracket to the mount
 		// first, the primary connection between the mount and the bracket
 		linear_extrude(height=plateThickness + beamHW)
