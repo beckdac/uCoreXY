@@ -2,8 +2,7 @@
 
 // select part
 //part = "assembly";
-//part = "yCarriage";
-part = "linearBearingHolder";
+part = "yCarriage";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
 beamHW = 10;
@@ -52,6 +51,8 @@ linearBearingHolderShellThickness = 6;
 
 /* [Y Carriages] */
 
+// y carriage shelf length (mm), where x rails mount
+yCarriageShelfLength = 50;
 
 
 /* [X Carriages] */
@@ -90,6 +91,7 @@ holderBaseLength = effectiveLinearBearingLength + 4 * plateThickness;
 ////////////////////// End header ////////////////////
 
 use <makerBeam.scad>;
+use <linearBearing.scad>;
 
 render_part();
 
@@ -321,9 +323,14 @@ module linearBearingHolder() {
 					cylinder(h = holderBaseLength * 2, d = effectiveLinearRailOD, center=true);
 		}
 		// zip tie slots
-		#translate([0, 0, effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
+		translate([0, effectiveLinearBearingLength / 3, effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
 			rotate([-90, 0, 0])
-				zipTieSlots();
+				translate([0, 0, -(linearBearingZipTieWidth + 2 * iFitAdjust)/2])
+					zipTieSlots();
+		translate([0, -effectiveLinearBearingLength / 3, effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
+			rotate([-90, 0, 0])
+				translate([0, 0, -(linearBearingZipTieWidth + 2 * iFitAdjust)/2])
+					zipTieSlots();
 		// chop top
 		translate([-holderBaseWidth / 2, -holderBaseLength / 2, 
 				effectiveLinearBearingOD / 2 + 
@@ -334,9 +341,35 @@ module linearBearingHolder() {
 }
 
 module yCarriage() {
-	// plate
-	cube([yAxisRailMountHeight, yAxisRailMountHeight, plateThickness], center=false);
-    // four bearing mounts for y axis (2 on each rail)
-    // 90 angle for x axis
-	// holes for mounting xaxis
+	difference() {
+		union() {
+			// plate
+			//cube([yAxisRailMountHeight, yAxisRailMountHeight, plateThickness], center=false);
+    		// four bearing mounts for y axis (2 on each rail)
+			linearBearingHolder();
+			translate([yAxisRailSep, 0, 0])
+				linearBearingHolder();
+			translate([0, holderBaseLength - 2 * plateThickness, 0])
+				linearBearingHolder();
+			translate([yAxisRailSep, holderBaseLength - 2 * plateThickness, 0])
+				linearBearingHolder();
+			// linear bearings
+			translate([0, 0, effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
+				rotate([-90, 0, 0])
+					linear_bearing("LM-8-UU");
+			translate([0, holderBaseLength - 2 * plateThickness, effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
+				rotate([-90, 0, 0])
+					linear_bearing("LM-8-UU");
+			translate([yAxisRailSep, 0, effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
+				rotate([-90, 0, 0])
+					linear_bearing("LM-8-UU");
+			translate([yAxisRailSep, holderBaseLength - 2 * plateThickness, effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
+				rotate([-90, 0, 0])
+					linear_bearing("LM-8-UU");
+    		// 90 angle for x axis
+			translate([-holderBaseWidth / 2, -holderBaseLength / 2, 0])
+			cube([plateThickness * 1.25, holderBaseLength * 2 - 2 * plateThickness, yCarriageShelfLength]);
+		}
+		// holes for mounting xaxis
+	}
 }
