@@ -344,6 +344,11 @@ module yCarriageBrace() {
 					effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
 				rotate([90, 0, 0])
 					cylinder(h=reinforcedPlateThickness, d=linearRailOD * 2);
+			// toe to make the hull go to the foot of the plate 
+			translate([-holderBaseWidth / 2, -holderBaseLength * .5, 0])
+				#cube([(holderBaseWidth * 2 - plateThickness / 2), 
+					reinforcedPlateThickness, 
+					plateThickness / 2]);
 		}
 		// linear rail holes
 		translate([0, -holderBaseLength / 2 + reinforcedPlateThickness + cylHeightExt / 2, 
@@ -358,6 +363,7 @@ module yCarriageBrace() {
 }
 
 module yCarriage() {
+	yCarriageBraceLength = holderBaseLength * 2 - 2 * plateThickness;
 	difference() {
 		union() {
 			// plate
@@ -372,9 +378,13 @@ module yCarriage() {
 				linearBearingHolder();
     		// 90 angle for x axis
 			translate([-holderBaseWidth / 2, -holderBaseLength / 2, 0])
-			cube([reinforcedPlateThickness, holderBaseLength * 2 - 2 * plateThickness, yCarriageShelfLength]);
+			cube([reinforcedPlateThickness, yCarriageBraceLength, yCarriageShelfLength]);
 			// braces for the carriage
 			yCarriageBrace();
+			translate([0, yCarriageBraceLength / 2 - reinforcedPlateThickness / 2, 0])
+				yCarriageBrace();
+			translate([0, yCarriageBraceLength - reinforcedPlateThickness, 0])
+				yCarriageBrace();
 		}
 		// holes for mounting xaxis
 	}
