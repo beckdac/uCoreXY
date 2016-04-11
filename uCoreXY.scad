@@ -132,7 +132,7 @@ module assembly() {
         topPosXPosYCornerBracket();
 		yAxisLinearRails();
 		xAxisLinearRails();
-		renderYCarriage();
+		!renderYCarriage();
     }
 }
 
@@ -328,6 +328,31 @@ module linearBearingHolder() {
 	}
 }
 
+
+
+module yCarriage() {
+	difference() {
+		union() {
+			// plate
+			//cube([yAxisRailMountHeight, yAxisRailMountHeight, plateThickness], center=false);
+    		// four bearing mounts for y axis (2 on each rail)
+			linearBearingHolder();
+			translate([yAxisRailSep, 0, 0])
+				linearBearingHolder();
+			translate([0, holderBaseLength - 2 * plateThickness, 0])
+				linearBearingHolder();
+			translate([yAxisRailSep, holderBaseLength - 2 * plateThickness, 0])
+				linearBearingHolder();
+    		// 90 angle for x axis
+			translate([-holderBaseWidth / 2, -holderBaseLength / 2, 0])
+			cube([plateThickness * 1.25, holderBaseLength * 2 - 2 * plateThickness, yCarriageShelfLength]);
+			// braces for the carriage
+			cube([holderBaseWidth * 2, plateThickness * 1.25, yCarriageShelfLength]);
+		}
+		// holes for mounting xaxis
+	}
+}
+
 module renderYCarriage() {
 	yCarriage();
 	color([.75, .75, .75])
@@ -346,25 +371,4 @@ module renderYCarriage() {
 				rotate([-90, 0, 0])
 					linear_bearing(linearBearingType);
 		}
-}
-
-module yCarriage() {
-	difference() {
-		union() {
-			// plate
-			//cube([yAxisRailMountHeight, yAxisRailMountHeight, plateThickness], center=false);
-    		// four bearing mounts for y axis (2 on each rail)
-			linearBearingHolder();
-			translate([yAxisRailSep, 0, 0])
-				linearBearingHolder();
-			translate([0, holderBaseLength - 2 * plateThickness, 0])
-				linearBearingHolder();
-			translate([yAxisRailSep, holderBaseLength - 2 * plateThickness, 0])
-				linearBearingHolder();
-    		// 90 angle for x axis
-			translate([-holderBaseWidth / 2, -holderBaseLength / 2, 0])
-			cube([plateThickness * 1.25, holderBaseLength * 2 - 2 * plateThickness, yCarriageShelfLength]);
-		}
-		// holes for mounting xaxis
-	}
 }
