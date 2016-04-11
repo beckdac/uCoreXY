@@ -94,6 +94,7 @@ effectiveLinearBearingZipTieWidth = linearBearingZipTieWidth + iFitAdjust;
 effectiveLinearBearingZipTieHeight = linearBearingZipTieHeight + iFitAdjust;
 holderBaseWidth = effectiveLinearBearingOD + 4 * plateThickness;
 holderBaseLength = effectiveLinearBearingLength + 4 * plateThickness;
+yCarriageBraceLength = holderBaseLength * 2 - 2 * plateThickness;
 
 ////////////////////// End header ////////////////////
 
@@ -137,7 +138,8 @@ module assembly() {
         topPosXPosYCornerBracket();
 		yAxisLinearRails();
 		xAxisLinearRails();
-		!renderYCarriage();
+		renderNegYCarriage();
+		renderPosYCarriage();
     }
 }
 
@@ -388,7 +390,6 @@ module yCarriageBrace() {
 }
 
 module yCarriage() {
-	yCarriageBraceLength = holderBaseLength * 2 - 2 * plateThickness;
 	difference() {
 		union() {
 			// plate
@@ -413,6 +414,23 @@ module yCarriage() {
 		}
 		// holes for mounting xaxis
 	}
+}
+
+module renderNegYCarriage() {
+	// move from frame to rails
+	//translate([-yAxisRailMountWidth + plateThickness / 4 - yAxisLinearBearingToBracketClearence, 0, 0])
+	// bring to frame
+	//translate([-frameSideLength / 2, 0, frameSideLength / 2])
+	// these translates center the piece
+	translate([-plateThickness - effectiveLinearBearingOD / 2 - linearBearingHolderShellThickness / 2, 0, 0])
+	translate([0, 0, holderBaseWidth / 2])
+	translate([0, -yCarriageBraceLength / 2, 0])
+		translate([plateThickness / 2, holderBaseLength / 2, 0])
+			rotate([0, 90, 0])
+				renderYCarriage();
+}
+
+module renderPosYCarriage() {
 }
 
 module renderYCarriage() {
