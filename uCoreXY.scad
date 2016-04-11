@@ -8,6 +8,8 @@ part = "assembly";
 beamHW = 10;
 // plate thicknesses (mm) where not otherwise specified
 plateThickness = 4;
+// reinforced plate thickness scale applied to normal plate thickness where more strength required
+reinforcedPlateScale = 1.2;
 
 /* [Frame] */
 
@@ -74,6 +76,7 @@ $fn = 64; // [24:low quality, 48:development, 64:production]
 
 /* [Computed Constants] */
 // constants computed from the above
+reinforcedPlateThickness = plateThickness * reinforcedPlateScale;
 yAxisRailMountWidth = linearBearingOD + (linearBearingOD - linearRailOD);
 yAxisRailMountHeight = yAxisRailSep + 
      (.5 * linearBearingOD) + // to account for the required spacing of the bearings 
@@ -328,7 +331,31 @@ module linearBearingHolder() {
 	}
 }
 
-
+module yCarriageBrace() {
+	// create the brace and remove the holes for the linear rail
+	difference() {
+		// brace
+		hull() {
+			translate([-holderBaseWidth / 2, -holderBaseLength * .5, 0])
+				cube([(holderBaseWidth * 2 - plateThickness / 2) * .5, 
+					reinforcedPlateThickness, 
+					effectiveLinearBearingOD + linearBearingHolderShellThickness / 1.5]);
+			translate([yAxisRailSep, -holderBaseLength / 2 + reinforcedPlateThickness, 
+					effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
+				rotate([90, 0, 0])
+					cylinder(h=reinforcedPlateThickness, d=linearRailOD * 2);
+		}
+		// linear rail holes
+		translate([0, -holderBaseLength / 2 + reinforcedPlateThickness + cylHeightExt / 2, 
+				effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
+			rotate([90, 0, 0])
+				cylinder(h=reinforcedPlateThickness + cylHeightExt, d=effectiveLinearRailOD);
+		translate([yAxisRailSep, -holderBaseLength / 2 + reinforcedPlateThickness + cylHeightExt / 2, 
+				effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
+			rotate([90, 0, 0])
+				cylinder(h=reinforcedPlateThickness + cylHeightExt, d=effectiveLinearRailOD);
+	}
+}
 
 module yCarriage() {
 	difference() {
@@ -345,9 +372,9 @@ module yCarriage() {
 				linearBearingHolder();
     		// 90 angle for x axis
 			translate([-holderBaseWidth / 2, -holderBaseLength / 2, 0])
-			cube([plateThickness * 1.25, holderBaseLength * 2 - 2 * plateThickness, yCarriageShelfLength]);
+			cube([reinforcedPlateThickness, holderBaseLength * 2 - 2 * plateThickness, yCarriageShelfLength]);
 			// braces for the carriage
-			cube([holderBaseWidth * 2, plateThickness * 1.25, yCarriageShelfLength]);
+			yCarriageBrace();
 		}
 		// holes for mounting xaxis
 	}
