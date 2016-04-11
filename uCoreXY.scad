@@ -1,8 +1,8 @@
 /* [Main] */
 
 // select part
-//part = "assembly";
-part = "yCarriage";
+part = "assembly";
+//part = "yCarriage";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
 beamHW = 10;
@@ -33,6 +33,8 @@ yAxisLinearRailLength = 330;
 // X axis linear rail length (mm)
 xAxisLinearRailLength = 400;
 yAxisRailMountBuffer = 10;
+// linear bearing type
+linearBearingType = "LM-8-UU"; // [LM-8-UU:lm8uu]
 
 
 /* [Linear Bearings] */
@@ -130,6 +132,7 @@ module assembly() {
         topPosXPosYCornerBracket();
 		yAxisLinearRails();
 		xAxisLinearRails();
+		renderYCarriage();
     }
 }
 
@@ -283,21 +286,6 @@ module zipTieSlots() {
 			translate([0, zipTieRingOffset, 0])
 				cylinder(h = linearBearingZipTieWidth + 2 * iFitAdjust, d = zipTieRingID);
 		}
-/*
-		difference() {
-			cylinder(h = linearBearingZipTieWidth + 2 * iFitAdjust, d = zipTieRingOD);
-			cylinder(h = linearBearingZipTieWidth + 2 * iFitAdjust, d = zipTieRingID);
-		}
-		translate([0, zipTieRingOffset, 0])
-			difference() {
-				cylinder(h = linearBearingZipTieWidth + 2 * iFitAdjust, d = zipTieRingOD);
-				cylinder(h = linearBearingZipTieWidth + 2 * iFitAdjust, d = zipTieRingID);
-			}
-		#translate([zipTieRingOD / 2 - iFitAdjust * 2, zipTieRingOffset / 2, (linearBearingZipTieWidth + iFitAdjust * 2) / 2])
-			cube([(zipTieRingOD - zipTieRingID) / 2, effectiveLinearBearingOD / 2, linearBearingZipTieWidth + 2 * iFitAdjust], center=true);
-		#translate([-zipTieRingOD / 2 + iFitAdjust * 2, zipTieRingOffset / 2, (linearBearingZipTieWidth + iFitAdjust * 2) / 2])
-			cube([(zipTieRingOD - zipTieRingID) / 2, effectiveLinearBearingOD / 2, linearBearingZipTieWidth + 2 * iFitAdjust], center=true);
-*/
 	}
 }
 
@@ -340,6 +328,26 @@ module linearBearingHolder() {
 	}
 }
 
+module renderYCarriage() {
+	yCarriage();
+	color([.75, .75, .75])
+		union() {
+			// linear bearings
+			translate([0, 0, effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
+				rotate([-90, 0, 0])
+					linear_bearing(linearBearingType);
+			translate([0, holderBaseLength - 2 * plateThickness, effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
+				rotate([-90, 0, 0])
+					linear_bearing(linearBearingType);
+			translate([yAxisRailSep, 0, effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
+				rotate([-90, 0, 0])
+					linear_bearing(linearBearingType);
+			translate([yAxisRailSep, holderBaseLength - 2 * plateThickness, effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
+				rotate([-90, 0, 0])
+					linear_bearing(linearBearingType);
+		}
+}
+
 module yCarriage() {
 	difference() {
 		union() {
@@ -353,19 +361,6 @@ module yCarriage() {
 				linearBearingHolder();
 			translate([yAxisRailSep, holderBaseLength - 2 * plateThickness, 0])
 				linearBearingHolder();
-			// linear bearings
-			translate([0, 0, effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
-				rotate([-90, 0, 0])
-					linear_bearing("LM-8-UU");
-			translate([0, holderBaseLength - 2 * plateThickness, effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
-				rotate([-90, 0, 0])
-					linear_bearing("LM-8-UU");
-			translate([yAxisRailSep, 0, effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
-				rotate([-90, 0, 0])
-					linear_bearing("LM-8-UU");
-			translate([yAxisRailSep, holderBaseLength - 2 * plateThickness, effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
-				rotate([-90, 0, 0])
-					linear_bearing("LM-8-UU");
     		// 90 angle for x axis
 			translate([-holderBaseWidth / 2, -holderBaseLength / 2, 0])
 			cube([plateThickness * 1.25, holderBaseLength * 2 - 2 * plateThickness, yCarriageShelfLength]);
