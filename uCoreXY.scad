@@ -1,3 +1,5 @@
+// Requires OpenSCAD 2016.3+
+
 /* [Main] */
 
 // select part
@@ -335,7 +337,8 @@ module yCarriageBrace() {
 	// create the brace and remove the holes for the linear rail
 	difference() {
 		// brace
-		hull() {
+		union() {
+		  hull() {
 			translate([-holderBaseWidth / 2, -holderBaseLength * .5, 0])
 				cube([(holderBaseWidth * 2 - plateThickness / 2) * .5, 
 					reinforcedPlateThickness, 
@@ -346,9 +349,31 @@ module yCarriageBrace() {
 					cylinder(h=reinforcedPlateThickness, d=linearRailOD * 2);
 			// toe to make the hull go to the foot of the plate 
 			translate([-holderBaseWidth / 2, -holderBaseLength * .5, 0])
-				#cube([(holderBaseWidth * 2 - plateThickness / 2), 
+				cube([(holderBaseWidth * 2 - plateThickness / 2), 
 					reinforcedPlateThickness, 
 					plateThickness / 2]);
+		   }
+			// shell for brace arc
+			difference() {
+				translate([-holderBaseWidth * .2,
+						-holderBaseLength / 2 + reinforcedPlateThickness, 
+						effectiveLinearBearingOD + linearBearingHolderShellThickness + plateThickness])
+					rotate([90, 0, 0])
+						rotate_extrude(angle=-180, convexity = 10)
+							polygon(points=[ [linearRailOD, 0], 
+								[linearRailOD - 2, 0], 
+								[linearRailOD - 2, reinforcedPlateThickness], 
+								[linearRailOD, reinforcedPlateThickness]]);
+				translate([-holderBaseWidth * .2,
+						-holderBaseLength / 2 + reinforcedPlateThickness, 
+						effectiveLinearBearingOD + linearBearingHolderShellThickness + plateThickness])
+					rotate([90, 0, 0])
+						rotate_extrude(angle=-90, convexity = 10)
+							polygon(points=[ [linearRailOD, 0], 
+								[linearRailOD - 2, 0], 
+								[linearRailOD - 2, reinforcedPlateThickness], 
+								[linearRailOD, reinforcedPlateThickness]]);
+			}
 		}
 		// linear rail holes
 		translate([0, -holderBaseLength / 2 + reinforcedPlateThickness + cylHeightExt / 2, 
