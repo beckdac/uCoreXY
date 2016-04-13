@@ -422,15 +422,22 @@ module renderNegYCarriage() {
 	// bring to frame
 	//translate([-frameSideLength / 2, 0, frameSideLength / 2])
 	// these translates center the piece
+
+/*
 	translate([-plateThickness - effectiveLinearBearingOD / 2 - linearBearingHolderShellThickness / 2, 0, 0])
 	translate([0, 0, holderBaseWidth / 2])
 	translate([0, -yCarriageBraceLength / 2, 0])
 		translate([plateThickness / 2, holderBaseLength / 2, 0])
+*/
+	
+	translate([-yAxisRailMountWidth + plateThickness / 4 - yAxisLinearBearingToBracketClearence, 0, yAxisRailSep / 2]) translate([-frameSideLength/2 + beamHW / 2, 0, frameSideLength/2 + beamHW / 2])
+		translate([-(effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5), -holderBaseLength / 2 + plateThickness, 0])
 			rotate([0, 90, 0])
 				renderYCarriage();
 }
 
 module renderPosYCarriage() {
+	mirror([-1, 0, 0]) renderNegYCarriage();
 }
 
 module renderYCarriage() {
