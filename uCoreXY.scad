@@ -4,7 +4,7 @@
 
 // select part
 part = "assembly";
-//part = "beltPulley";
+part = "negXStepperMount";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
 beamHW = 10;
@@ -119,6 +119,8 @@ yCarriageBraceLength = holderBaseLength * 2 - 2 * plateThickness;
 
 use <makerBeam.scad>;
 use <linearBearing.scad>;
+include <MCAD/stepper.scad>
+
 
 render_part();
 
@@ -151,6 +153,8 @@ module render_part() {
 		beltPulley();
 	} else if (part == "beltIdlerPulley") {
 		beltIdlerPulley();
+	} else if (part == "negXStepperMount") {
+		negXStepperMount();
 	} else {
 		// invalid value
 	}
@@ -554,4 +558,8 @@ module beltIdlerPulley() {
 			cylinder(h=beltIdlerPulleyH * 2, d=beltIdlerPulleyBearingID, center=true);
 		}
 	}
+}
+
+module negXStepperMount() {
+	motor(Nema17, orientation=[0, -180, 0]);
 }
