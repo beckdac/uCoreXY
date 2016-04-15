@@ -4,7 +4,7 @@
 
 // select part
 part = "assembly";
-part = "beltIdlerPulley";
+part = "beltPulley";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
 beamHW = 10;
@@ -46,6 +46,13 @@ beltIdlerPulleyD = 6.3;
 beltIdlerPulleyLidD = 12.6;
 beltIdlerPulleyBearingID = 3;
 beltH = 6;
+// belt pulley
+beltLength = 18;
+beltInnerLength = 7.5;
+beltInnerD = 6.5;
+beltOuterD = 9.2;
+beltMaxShaftLen = 14;
+beltMinShaftLen = 9.2;
 
 
 /* [Linear Bearings] */
@@ -142,6 +149,8 @@ module render_part() {
 		laserHeatsink();
 	} else if (part == "xCarriage") {
 		xCarriage();
+	} else if (part == "beltPulley") {
+		beltPulley();
 	} else if (part == "beltIdlerPulley") {
 		beltIdlerPulley();
 	} else {
@@ -519,6 +528,17 @@ laserHeatsinkWireslotOffset = 8;
 					cube([laserHeatsinkWireslotX, laserHeatsinkWireslotY, 
 						laserHeatsinkZ + cylHeightExt], center = true);
 			}
+		}
+}
+
+module beltPulley() {
+	color([0.7, 0.7, 0.7]) 
+		union() {
+			cylinder(r=beltInnerD / 2, h=beltLength, center=true);
+			translate([0, 0, beltLength / 2]) 
+				cylinder(d=beltOuterD, h=1, center=true);
+			translate([0, 0, beltLength / 2-beltInnerLength]) 
+				cylinder(d=beltOuterD, h=1, center=true);
 		}
 }
 
