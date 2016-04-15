@@ -47,12 +47,9 @@ beltIdlerPulleyLidD = 12.6;
 beltIdlerPulleyBearingID = 3;
 beltH = 6;
 // belt pulley
-beltLength = 18;
-beltInnerLength = 7.5;
-beltInnerD = 6.5;
-beltOuterD = 9.2;
-beltMaxShaftLen = 14;
-beltMinShaftLen = 9.2;
+beltPulleyLidD = 16;
+beltPulleyH = 16;
+beltPulleyGearedD = 12.2;
 
 
 /* [Linear Bearings] */
@@ -531,26 +528,40 @@ laserHeatsinkWireslotOffset = 8;
 		}
 }
 
+/* [Belt] */
+beltIdlerPulleyH = 8.4;
+beltIdlerPulleyD = 6.3;
+beltIdlerPulleyLidD = 12.6;
+beltIdlerPulleyBearingID = 3;
+beltH = 6;
+// belt pulley
+beltPulleyLidD = 16;
+beltPulleyH = 16;
+beltPulleyGearedD = 12.2;
+beltPulleyShaftD = 5;
+beltPulleyLidH = 1;
+
 module beltPulley() {
 	color([0.7, 0.7, 0.7]) 
+	difference() {
+		translate([0, 0, beltPulleyH / 2]) // now center
+		translate([0, 0, -beltH / 2])	// place pulley to at origin
 		union() {
-			cylinder(r=beltInnerD / 2, h=beltLength, center=true);
-			translate([0, 0, beltLength / 2]) 
-				cylinder(d=beltOuterD, h=1, center=true);
-			translate([0, 0, beltLength / 2-beltInnerLength]) 
-				cylinder(d=beltOuterD, h=1, center=true);
+			cylinder(d=beltPulleyGearedD, h=beltH, center=true);
+			translate([0, 0, beltH / 2 - beltPulleyLidH / 2]) 
+				cylinder(d=beltPulleyLidD, h=beltPulleyLidH, center=true);
+			translate([0, 0, -beltH / 2 - (beltPulleyH - beltH) / 2]) 
+				cylinder(d=beltPulleyLidD, h=beltPulleyH - beltH, center=true);
 		}
+		cylinder(d=beltPulleyShaftD, h = beltPulleyH + cylHeightExt, center = true);
+	}
 }
 
 module beltIdlerPulley() {
 	color([0.7, 0.7, 0.7]) {
 		difference() {
 			union() {
-				translate([0, 0, beltIdlerPulleyH / 2])
-					cylinder(h=(beltIdlerPulleyH - beltH) / 2, d=beltIdlerPulleyLidD, center=true);
-				cylinder(h=beltIdlerPulleyH, d=beltIdlerPulleyD, center=true);
-				translate([0, 0, -beltIdlerPulleyH / 2])
-					cylinder(h=(beltIdlerPulleyH - beltH) / 2, d=beltIdlerPulleyLidD, center=true);
+				cylinder(h=beltPulleyH, d=beltPulleyD, center=true);
 			}
 			cylinder(h=beltIdlerPulleyH * 2, d=beltIdlerPulleyBearingID, center=true);
 		}
