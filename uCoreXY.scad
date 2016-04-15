@@ -4,7 +4,7 @@
 
 // select part
 part = "assembly";
-part = "beltPulley";
+//part = "beltPulley";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
 beamHW = 10;
@@ -50,7 +50,8 @@ beltH = 6;
 beltPulleyLidD = 16;
 beltPulleyH = 16;
 beltPulleyGearedD = 12.2;
-
+beltPulleyShaftD = 5;
+beltPulleyLidH = 1;
 
 /* [Linear Bearings] */
 
@@ -527,19 +528,6 @@ laserHeatsinkWireslotOffset = 8;
 			}
 		}
 }
-
-/* [Belt] */
-beltIdlerPulleyH = 8.4;
-beltIdlerPulleyD = 6.3;
-beltIdlerPulleyLidD = 12.6;
-beltIdlerPulleyBearingID = 3;
-beltH = 6;
-// belt pulley
-beltPulleyLidD = 16;
-beltPulleyH = 16;
-beltPulleyGearedD = 12.2;
-beltPulleyShaftD = 5;
-beltPulleyLidH = 1;
 
 module beltPulley() {
 	color([0.7, 0.7, 0.7]) 
