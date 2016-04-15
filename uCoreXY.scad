@@ -478,6 +478,10 @@ laserHeatsinkMountScrewZ = 10;
 laserHeatsinkMountScrewLength = 8;
 laserDiodeD = 12;
 laserHeatsinkDiodeCenterOffset = laserHeatsinkY / 5;
+laserHeatsinkWireholeD = 5;
+laserHeatsinkWireslotX = 10;
+laserHeatsinkWireslotY = 5;
+laserHeatsinkWireslotOffset = 8;
 	color([0.72, 0.72, 0.72])
 		union() {
 			difference() {
@@ -491,6 +495,13 @@ laserHeatsinkDiodeCenterOffset = laserHeatsinkY / 5;
 								d=laserHeatsinkMountScrewD, center=true);
 				translate([0, -laserHeatsinkDiodeCenterOffset / 2, 0])
 					cylinder(h = laserHeatsinkZ + cylHeightExt, d = laserDiodeD, center=true);
+				translate([0, laserHeatsinkY / 2, 0], center=true)
+					rotate([-90, 0, 0])
+						cylinder(h = laserHeatsinkMountScrewLength, 
+							d = laserHeatsinkWireholeD, center=true);
+				translate([0, laserHeatsinkWireslotOffset, 0])
+					cube([laserHeatsinkWireslotX, laserHeatsinkWireslotY, 
+						laserHeatsinkZ + cylHeightExt], center = true);
 			}
 		}
 }
