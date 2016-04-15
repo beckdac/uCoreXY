@@ -3,8 +3,8 @@
 /* [Main] */
 
 // select part
-//part = "assembly";
-part = "laserHeatsink";
+part = "assembly";
+part = "beltIdlerPulley";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
 beamHW = 10;
@@ -35,10 +35,17 @@ yAxisLinearBearingToBracketClearence = 10;
 // Y axis linear rail length (mm)
 yAxisLinearRailLength = 330;
 // X axis linear rail length (mm)
-xAxisLinearRailLength = 400;
+xAxisLinearRailLength = 330;
 yAxisRailMountBuffer = 10;
 // linear bearing type
 linearBearingType = "LM-8-UU"; // [LM-8-UU:lm8uu]
+
+/* [Belt] */
+beltIdlerPulleyH = 8.4;
+beltIdlerPulleyD = 6.3;
+beltIdlerPulleyLidD = 12.6;
+beltIdlerPulleyBearingID = 3;
+beltH = 6;
 
 
 /* [Linear Bearings] */
@@ -135,6 +142,8 @@ module render_part() {
 		laserHeatsink();
 	} else if (part == "xCarriage") {
 		xCarriage();
+	} else if (part == "beltIdlerPulley") {
+		beltIdlerPulley();
 	} else {
 		// invalid value
 	}
@@ -287,6 +296,13 @@ module yAxisLinearRails() {
 }
 
 module xAxisLinearRails() {
+	color([.75,.75,.75])
+	union() {
+        for (i=[-1, 1])
+			translate([0, i * ((laserHeatsinkY / 2) + reinforcedPlateThickness * 2), frameSideLength / 2])
+				rotate([0, 90, 0])
+					cylinder(h=xAxisLinearRailLength, d=linearRailOD, center=true);
+	}
 }
 
 module zipTieSlots() {
@@ -504,4 +520,19 @@ laserHeatsinkWireslotOffset = 8;
 						laserHeatsinkZ + cylHeightExt], center = true);
 			}
 		}
+}
+
+module beltIdlerPulley() {
+	color([0.7, 0.7, 0.7]) {
+		difference() {
+			union() {
+				translate([0, 0, beltIdlerPulleyH / 2])
+					cylinder(h=(beltIdlerPulleyH - beltH) / 2, d=beltIdlerPulleyLidD, center=true);
+				cylinder(h=beltIdlerPulleyH, d=beltIdlerPulleyD, center=true);
+				translate([0, 0, -beltIdlerPulleyH / 2])
+					cylinder(h=(beltIdlerPulleyH - beltH) / 2, d=beltIdlerPulleyLidD, center=true);
+			}
+			cylinder(h=beltIdlerPulleyH * 2, d=beltIdlerPulleyBearingID, center=true);
+		}
+	}
 }
