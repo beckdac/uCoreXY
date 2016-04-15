@@ -3,8 +3,8 @@
 /* [Main] */
 
 // select part
-part = "assembly";
-//part = "yCarriage";
+//part = "assembly";
+part = "laserHeatsink";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
 beamHW = 10;
@@ -62,7 +62,14 @@ yCarriageShelfLength = 50;
 
 
 /* [X Carriages] */
-
+// laser heatsink x (mm)
+laserHeatsinkX = 22;
+// laser heatsink y (mm)
+laserHeatsinkY = 27;
+// laser heatsink x (mm)
+laserHeatsinkZ = 58;
+// laser diameter (mm)
+laserDiameter = 12;
 
 
 /* [Misc] */
@@ -124,6 +131,10 @@ module render_part() {
 		linearBearingHolder();
 	} else if (part == "yCarriage") {
 		yCarriage();
+	} else if (part == "laserHeatsink") {
+		laserHeatsink();
+	} else if (part == "xCarriage") {
+		xCarriage();
 	} else {
 		// invalid value
 	}
@@ -457,5 +468,29 @@ module renderYCarriage() {
 			translate([yAxisRailSep, holderBaseLength - 2 * plateThickness, effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
 				rotate([-90, 0, 0])
 					linear_bearing(linearBearingType);
+		}
+}
+
+module laserHeatsink() {
+laserHeatsinkMountScrewD = 3;
+laserHeatsinkMountScrewX = 3.5;
+laserHeatsinkMountScrewZ = 10;
+laserHeatsinkMountScrewLength = 8;
+laserDiodeD = 12;
+laserHeatsinkDiodeCenterOffset = laserHeatsinkY / 5;
+	color([0.72, 0.72, 0.72])
+		union() {
+			difference() {
+				cube([laserHeatsinkX, laserHeatsinkY, laserHeatsinkZ], center=true);
+            	for (i=[-1, 1])  for (j=[-1, 1])
+					translate([i * (laserHeatsinkX / 2) + (-i * laserHeatsinkMountScrewX),
+						laserHeatsinkY / 2,
+						j * (laserHeatsinkZ / 2) + (-j * laserHeatsinkMountScrewZ)])
+						rotate([-90, 0, 0])
+							cylinder(h=laserHeatsinkMountScrewLength, 
+								d=laserHeatsinkMountScrewD, center=true);
+				translate([0, -laserHeatsinkDiodeCenterOffset / 2, 0])
+					cylinder(h = laserHeatsinkZ + cylHeightExt, d = laserDiodeD, center=true);
+			}
 		}
 }
