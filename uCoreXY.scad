@@ -477,8 +477,6 @@ module yCarriageBrace() {
 module yCarriage() {
 	difference() {
 		union() {
-			// plate
-			//cube([yAxisRailMountHeight, yAxisRailMountHeight, plateThickness], center=false);
     		// four bearing mounts for y axis (2 on each rail)
             for (i=[0, yAxisRailSep])
 				for (j=[0, holderBaseLength - 2 * plateThickness])
@@ -511,9 +509,11 @@ module yCarriage() {
 module xCarriage() {
 	difference() {
 		union() {
-            	for (i=[-1, 1])
-				  for (j=[-1, 1])
-			linearBearingHolder();
+            for (i=[0, xAxisRailSep])
+				for (j=[0, holderBaseLength - 2 * plateThickness])
+					translate([i, j, 0])
+						linearBearingHolder();
+			laserHeatsink();
 		}
 		// holes for mounting
 	}
