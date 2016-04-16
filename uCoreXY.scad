@@ -219,10 +219,14 @@ module parallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRailSep, 
 						- cylHeightExt / 2])
 					cylinder(h=plateThickness + beamHW + cylHeightExt, d=linearRailOD);
 			if (includeSupportCones) {
+				depth = plateThickness + beamHW + supportConeLength / 2 + cylHeightExt;
         		for (i=[-1, 1])
-					translate([- axisRailMountWidth / 2, i * axisRailSep / 2, 
-							supportConeLength / 8 - cylHeightExt / 2])
-						#cylinder(h=plateThickness + beamHW + supportConeLength / 2 + cylHeightExt, d=linearRailOD);
+					translate([- axisRailMountWidth / 2,
+							i * axisRailSep / 2, 
+							supportConeLength / 8 - cylHeightExt / 2
+								- depth])
+						// # this is an interesting piece... not ready to give up the #
+						#cylinder(h=depth, d=linearRailOD);
 			}
 			// slots for tightening
 			translate([-axisRailMountWidth/2, 0, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4])
