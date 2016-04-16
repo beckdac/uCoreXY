@@ -5,6 +5,7 @@
 // select part
 part = "assembly";
 //part = "yCarriage";
+part = "xCarriage";
 //part = "topNegXNegYCornerBracket";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
@@ -479,13 +480,10 @@ module yCarriage() {
 			// plate
 			//cube([yAxisRailMountHeight, yAxisRailMountHeight, plateThickness], center=false);
     		// four bearing mounts for y axis (2 on each rail)
-			linearBearingHolder();
-			translate([yAxisRailSep, 0, 0])
-				linearBearingHolder();
-			translate([0, holderBaseLength - 2 * plateThickness, 0])
-				linearBearingHolder();
-			translate([yAxisRailSep, holderBaseLength - 2 * plateThickness, 0])
-				linearBearingHolder();
+            for (i=[0, yAxisRailSep])
+				for (j=[0, holderBaseLength - 2 * plateThickness])
+					translate([i, j, 0])
+						linearBearingHolder();
     		// 90 angle for x axis
 			translate([-holderBaseWidth / 2, -holderBaseLength / 2, 0])
 				cube([reinforcedPlateThickness, yCarriageBraceLength, yCarriageShelfLength]);
@@ -507,6 +505,17 @@ module yCarriage() {
 					parallelRailsMount(xAxisRailMountHeight, xAxisRailMountWidth, xAxisRailSep, xAxisRailTightScrewDepth, xAxisRailTightScrewD, xAxisRailTightCaptiveNutWidth, xAxisRailTightCaptiveNutHeight, true, xAxisSupportConeLength);
 		}
 		// holes for mounting xaxis
+	}
+}
+
+module xCarriage() {
+	difference() {
+		union() {
+            	for (i=[-1, 1])
+				  for (j=[-1, 1])
+			linearBearingHolder();
+		}
+		// holes for mounting
 	}
 }
 
@@ -559,7 +568,8 @@ laserHeatsinkWireslotOffset = 8;
 		union() {
 			difference() {
 				cube([laserHeatsinkX, laserHeatsinkY, laserHeatsinkZ], center=true);
-            	for (i=[-1, 1])  for (j=[-1, 1])
+            	for (i=[-1, 1])
+				  for (j=[-1, 1])
 					translate([i * (laserHeatsinkX / 2) + (-i * laserHeatsinkMountScrewX),
 						laserHeatsinkY / 2,
 						j * (laserHeatsinkZ / 2) + (-j * laserHeatsinkMountScrewZ)])
