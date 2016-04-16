@@ -199,6 +199,7 @@ module assembly() {
 		xAxisLinearRails();
 		renderNegYCarriage();
 		renderPosYCarriage();
+		renderXCarriange();
     }
 }
 
@@ -516,9 +517,16 @@ module yCarriage() {
 	}
 }
 
-module xCarriage() {
-union(){
+module renderXCarriange() {
+	rotate([0, 180, 90])
+		union(){
+			xCarriage();
+			translate([0, 0, -laserHeatsinkMountScrewZ])
+				laserHeatsink();
+		}
+}
 
+module xCarriage() {
 	difference() {
 		union() {
 			translate([-xAxisRailSep / 2, 
@@ -550,11 +558,16 @@ union(){
 			laserHeatsinkY + iFitAdjust, 
 			laserHeatsinkZ + iFitAdjust], center=true);
 		// holes for mounting
+		for (i=[-1, 1])
+			for (j=[-1, 1])
+				translate([i * holderBaseLength / 6, j * holderBaseWidth / 1.5])
+					cylinder(h=plateThickness, d=laserHeatsinkMountScrewD, center=true);
+		rotate([0, 0, 90])
+			for (i=[-1, 1])
+				for (j=[-1, 1])
+					translate([i * holderBaseLength / 3, j * holderBaseWidth * .75])
+						cylinder(h=plateThickness, d=laserHeatsinkMountScrewD, center=true);
 	}
-
-			translate([0, 0, -laserHeatsinkMountScrewZ])
-				laserHeatsink();
-}
 }
 
 module renderNegYCarriage() {
