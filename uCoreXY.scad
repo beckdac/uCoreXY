@@ -354,7 +354,9 @@ module xAxisLinearRails() {
 	color([.75,.75,.75])
 	union() {
         for (i=[-1, 1])
-			translate([0, i * ((laserHeatsinkY / 2) + reinforcedPlateThickness * 2), frameSideLength / 2])
+			translate([0, i * xAxisRailSep / 2, 
+					frameSideLength / 2 + beamHW / 2 + yAxisRailSep / 2 + holderBaseWidth / 2
+					-(xAxisRailMountWidth / 2)])
 				rotate([0, 90, 0])
 					cylinder(h=xAxisLinearRailLength, d=linearRailOD, center=true);
 	}
@@ -500,7 +502,7 @@ module yCarriage() {
 			translate([0, yCarriageBraceLength / 2 - plateThickness / 1.5, 0])
 			translate([-holderBaseWidth / 2, -holderBaseLength * .5, 0])
 				// align y to 0
-				translate([0, xAxisRailMountHeight / 2 + plateThickness + linearRailOD -linearBearingLength / 2, yCarriageShelfLength * .3])
+				translate([0, xAxisRailMountHeight / 2 + plateThickness + linearRailOD -linearBearingLength / 2, yCarriageShelfLength / 3])
 				rotate([0, 0, 180])
 					parallelRailsMount(xAxisRailMountHeight, xAxisRailMountWidth, xAxisRailSep, xAxisRailTightScrewDepth, xAxisRailTightScrewD, xAxisRailTightCaptiveNutWidth, xAxisRailTightCaptiveNutHeight, true, xAxisSupportConeLength);
 		}
@@ -509,23 +511,13 @@ module yCarriage() {
 }
 
 module renderNegYCarriage() {
-	// move from frame to rails
-	//translate([-yAxisRailMountWidth + plateThickness / 4 - yAxisLinearBearingToBracketClearence, 0, 0])
-	// bring to frame
-	//translate([-frameSideLength / 2, 0, frameSideLength / 2])
-	// these translates center the piece
-
-/*
-	translate([-plateThickness - effectiveLinearBearingOD / 2 - linearBearingHolderShellThickness / 2, 0, 0])
-	translate([0, 0, holderBaseWidth / 2])
-	translate([0, -yCarriageBraceLength / 2, 0])
-		translate([plateThickness / 2, holderBaseLength / 2, 0])
-*/
-	
-	translate([-yAxisRailMountWidth + plateThickness / 4 - yAxisLinearBearingToBracketClearence, 0, yAxisRailSep / 2]) translate([-frameSideLength/2 + beamHW / 2, 0, frameSideLength/2 + beamHW / 2])
-		translate([-(effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5), -holderBaseLength / 2 + plateThickness, 0])
-			rotate([0, 90, 0])
-				renderYCarriage();
+	translate([-yAxisRailMountWidth + plateThickness / 4 - yAxisLinearBearingToBracketClearence,
+			0, yAxisRailSep / 2])
+		translate([-frameSideLength / 2 + beamHW / 2, 0, frameSideLength / 2 + beamHW / 2])
+			translate([-(effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5),
+					-holderBaseLength / 2 + plateThickness, 0])
+				rotate([0, 90, 0])
+					renderYCarriage();
 }
 
 module renderPosYCarriage() {
