@@ -84,6 +84,16 @@ laserHeatsinkY = 27;
 laserHeatsinkZ = 58;
 // laser diameter (mm)
 laserDiameter = 12;
+laserHeatsinkMountScrewD = 3;
+laserHeatsinkMountScrewX = 3.5;
+laserHeatsinkMountScrewZ = 10;
+laserHeatsinkMountScrewLength = 8;
+laserDiodeD = 12;
+laserHeatsinkDiodeCenterOffset = laserHeatsinkY / 5;
+laserHeatsinkWireholeD = 5;
+laserHeatsinkWireslotX = 10;
+laserHeatsinkWireslotY = 5;
+laserHeatsinkWireslotOffset = 8;
 
 
 /* [Misc] */
@@ -507,16 +517,32 @@ module yCarriage() {
 }
 
 module xCarriage() {
+union(){
+
 	difference() {
 		union() {
-            for (i=[0, xAxisRailSep])
-				for (j=[0, holderBaseLength - 2 * plateThickness])
-					translate([i, j, 0])
-						linearBearingHolder();
-			laserHeatsink();
+			translate([-xAxisRailSep / 2, 
+					-holderBaseLength / 2 + plateThickness, plateThickness / 2])
+            	for (i=[0, xAxisRailSep])
+					for (j=[0, holderBaseLength - 2 * plateThickness])
+						translate([i, j, 0])
+							linearBearingHolder();
+			translate([0, 0, reinforcedPlateThickness / 2])
+				cube([xAxisRailSep - holderBaseWidth + plateThickness,
+					holderBaseLength * 2 - 2 * plateThickness,
+					reinforcedPlateThickness], center=true);
 		}
+		// slot for heatsink
+		cube([laserHeatsinkX + iFitAdjust, 
+			laserHeatsinkY + iFitAdjust, 
+			laserHeatsinkZ + iFitAdjust], center=true);
 		// holes for mounting
 	}
+
+
+			translate([0, 0, -laserHeatsinkMountScrewZ])
+				laserHeatsink();
+}
 }
 
 module renderNegYCarriage() {
