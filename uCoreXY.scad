@@ -5,6 +5,7 @@
 // select part
 part = "assembly";
 part = "yCarriage";
+//part = "topNegXNegYCornerBracket";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
 beamHW = 10;
@@ -194,10 +195,12 @@ module beamFrame() {
     
 }
 
-module parallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRailSep, axisRailTightScrewDepth, axisRailTightScrewD, axisRailTightCaptiveNutWidth, axisRailTightCaptiveNutHeight, includeSupportCones) {
+// if includeSupportCones is false, supportConeLength must be 0 
+// is there an assert in openscad?
+module parallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRailSep, axisRailTightScrewDepth, axisRailTightScrewD, axisRailTightCaptiveNutWidth, axisRailTightCaptiveNutHeight, includeSupportCones, supportConeLength) {
 		difference() {
 		  	union() {
-                // both hulls set out the rail to brackt mounts
+                // both hulls set out the rail to bracket mounts
         		for (i=[-1, 1])
         			hull() {
 						linear_extrude(height=plateThickness + beamHW)
@@ -205,15 +208,24 @@ module parallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRailSep, 
 						translate([-axisRailMountWidth/2, i * axisRailSep/2, 0])
 							cylinder(h=plateThickness + beamHW, d=linearRailOD * 2);
 						if (includeSupportCones) {
+							translate([-cylHeightExt, i * axisRailSep/2, -supportConeLength])
+								cylinder(h=cylHeightExt / 2, d=cylHeightExt / 2);
 						}
 					}
 			}
 			// rail holes
         	for (i=[-1, 1])
-				translate([-axisRailMountWidth/2, i * axisRailSep/2, -cylHeightExt / 2])
+				translate([- axisRailMountWidth / 2, i * axisRailSep / 2, 
+						- cylHeightExt / 2])
 					cylinder(h=plateThickness + beamHW + cylHeightExt, d=linearRailOD);
+			if (includeSupportCones) {
+        		for (i=[-1, 1])
+					translate([- axisRailMountWidth / 2, i * axisRailSep / 2, 
+							supportConeLength / 8 - cylHeightExt / 2])
+						#cylinder(h=plateThickness + beamHW + supportConeLength / 2 + cylHeightExt, d=linearRailOD);
+			}
 			// slots for tightening
-			translate([-axisRailMountWidth/2, -axisRailSep / 8, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4])
+			translate([-axisRailMountWidth/2, 0, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4])
 				cube([1.5, axisRailSep, plateThickness + beamHW + cylHeightExt], center = true);
             // separation slot between holes
             translate([-axisRailMountWidth * .75, 0, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4])
@@ -240,10 +252,10 @@ module parallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRailSep, 
 module yAxisRailMount() {
     union() {
 		translate([-yAxisLinearBearingToBracketClearence, 0, 0]) 
-			parallelRailsMount(yAxisRailMountHeight, yAxisRailMountWidth, yAxisRailSep, yAxisRailTightScrewDepth, yAxisRailTightScrewD, yAxisRailTightCaptiveNutWidth, yAxisRailTightCaptiveNutHeight)
+			parallelRailsMount(yAxisRailMountHeight, yAxisRailMountWidth, yAxisRailSep, yAxisRailTightScrewDepth, yAxisRailTightScrewD, yAxisRailTightCaptiveNutWidth, yAxisRailTightCaptiveNutHeight, false, 0)
 		// now the pieces that join the bracket to the mount
 		// first, the primary connection between the mount and the bracket
-		linear_extrude(height=plateThickness + beamHW)
+		#linear_extrude(height=plateThickness + beamHW)
 			polygon(points=[ [-plateThickness, yAxisRailMountHeight], [-yAxisLinearBearingToBracketClearence, yAxisRailMountHeight / 2], [-yAxisLinearBearingToBracketClearence, -yAxisRailMountHeight / 2], [-plateThickness, - yAxisRailMountHeight / 2 ] ], convexity=10);
         // wing joining mount to brack for additional stability
         translate([-plateThickness, 0, 0])
@@ -451,7 +463,7 @@ module yCarriage() {
 				linearBearingHolder();
     		// 90 angle for x axis
 			translate([-holderBaseWidth / 2, -holderBaseLength / 2, 0])
-			cube([reinforcedPlateThickness, yCarriageBraceLength, yCarriageShelfLength]);
+				cube([reinforcedPlateThickness, yCarriageBraceLength, yCarriageShelfLength]);
 			// braces for the carriage
 			yCarriageBrace();
 			translate([0, yCarriageBraceLength / 2 - reinforcedPlateThickness / 2, 0])
@@ -459,18 +471,25 @@ module yCarriage() {
 			translate([0, yCarriageBraceLength - reinforcedPlateThickness, 0])
 				yCarriageBrace();
 			// xAxis rails
-xAxisRailSep = laserHeatsinkY + yAxisRailMountBuffer;
-xAxisRailMountWidth = linearBearingOD + (linearBearingOD - linearRailOD);
-xAxisRailMountHeight = xAxisRailSep + 
-     (.5 * linearBearingOD) + // to account for the required spacing of the bearings 
-     yAxisRailMountBuffer;
+xAxisRailSep = laserHeatsinkY * 1.5 + yAxisRailMountBuffer;
 xAxisRailTightScrewDepth = yAxisRailTightScrewDepth;
 xAxisRailTightScrewD = yAxisRailTightScrewD;
 xAxisRailTightCaptiveNutWidth = yAxisRailTightCaptiveNutWidth;
 xAxisRailTightCaptiveNutHeight = yAxisRailTightCaptiveNutHeight;
-			translate([0, 0, yCarriageShelfLength])
+xAxisSupportConeLength = 20;
+xAxisRailMountWidth = linearBearingOD + (linearBearingOD - linearRailOD);
+xAxisRailMountHeight = xAxisRailSep + 
+     (.5 * linearBearingOD) + // to account for the required spacing of the bearings 
+     yAxisRailMountBuffer;
+			// bring y to axis sep / 2
+			translate([0, -holderBaseWidth, yCarriageShelfLength / 3])
+			// bring y to center of carriage (0)
+			translate([0, yCarriageBraceLength / 2 - reinforcedPlateThickness / 2, 0])
+			translate([-holderBaseWidth / 2, -holderBaseLength * .5, 0])
+				// align y to 0
+				translate([0, xAxisRailMountHeight / 2 + plateThickness + linearRailOD -linearBearingLength / 2, yCarriageShelfLength * .3])
 				rotate([0, 0, 180])
-					parallelRailsMount(xAxisRailMountHeight, xAxisRailMountWidth, xAxisRailSep, xAxisRailTightScrewDepth, xAxisRailTightScrewD, xAxisRailTightCaptiveNutWidth, xAxisRailTightCaptiveNutHeight, true);
+					parallelRailsMount(xAxisRailMountHeight, xAxisRailMountWidth, xAxisRailSep, xAxisRailTightScrewDepth, xAxisRailTightScrewD, xAxisRailTightCaptiveNutWidth, xAxisRailTightCaptiveNutHeight, true, xAxisSupportConeLength);
 		}
 		// holes for mounting xaxis
 	}
