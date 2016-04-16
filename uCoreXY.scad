@@ -4,7 +4,7 @@
 
 // select part
 part = "assembly";
-part = "negXStepperMount";
+part = "yCarriage";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
 beamHW = 10;
@@ -561,5 +561,7 @@ module beltIdlerPulley() {
 }
 
 module negXStepperMount() {
-	motor(Nema17, orientation=[0, -180, 0]);
+	union () {
+		//motor(Nema17, orientation=[0, -180, 0]);
+	}
 }
