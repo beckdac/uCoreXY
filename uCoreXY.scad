@@ -188,42 +188,51 @@ module beamFrame() {
             translate([0, -frameSideLength / 2, frameSideLength / 2]) { rotate([0, 90, 0]) { makerBeam(frameBeamLength); } }
             translate([0, frameSideLength / 2, frameSideLength / 2]) { rotate([0, 90, 0]) { makerBeam(frameBeamLength); } }
             for (i=[-1,1]) for (j=[-1,1]) for (k=[-1,1])
-                translate([ i * frameSideLength / 2, j * frameSideLength / 2, k * frameSideLength / 2]) cube([beamHW, beamHW, beamHW], center=true);
+                translate([ i * frameSideLength / 2, j * frameSideLength / 2, k * frameSideLength / 2])
+					cube([beamHW, beamHW, beamHW], center=true);
         }
     
 }
 
-module parallelRailsMount() {
+module parallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRailSep, axisRailTightScrewDepth, axisRailTightScrewD, axisRailTightCaptiveNutWidth, axisRailTightCaptiveNutHeight, includeSupportCones) {
 		difference() {
 		  	union() {
                 // both hulls set out the rail to brackt mounts
-        		hull() {
-					linear_extrude(height=plateThickness + beamHW)
-            			polygon(points=[ [0, yAxisRailMountHeight/2], [-yAxisRailMountWidth/2, yAxisRailMountHeight / 2], [-yAxisRailMountWidth/2, -yAxisRailMountHeight / 2], [0, -yAxisRailMountHeight / 2] ], convexity = 10);
-					translate([-yAxisRailMountWidth/2, -yAxisRailSep/2, 0]) cylinder(h=plateThickness + beamHW, d=linearRailOD * 2);
-				}
-				hull() {
-					linear_extrude(height=plateThickness + beamHW)
-        	    		polygon(points=[ [0, yAxisRailMountHeight /2], [-yAxisRailMountWidth/2, yAxisRailMountHeight / 2], [-yAxisRailMountWidth/2, -yAxisRailMountHeight / 2], [0, -yAxisRailMountHeight / 2] ], convexity = 10);
-					translate([-yAxisRailMountWidth/2, yAxisRailSep/2, 0]) cylinder(h=plateThickness + beamHW, d=linearRailOD * 2);
-				}
+        		for (i=[-1, 1])
+        			hull() {
+						linear_extrude(height=plateThickness + beamHW)
+            				polygon(points=[ [0, axisRailMountHeight/2], [-axisRailMountWidth/2, axisRailMountHeight / 2], [-axisRailMountWidth/2, -axisRailMountHeight / 2], [0, -axisRailMountHeight / 2] ], convexity = 10);
+						translate([-axisRailMountWidth/2, i * axisRailSep/2, 0])
+							cylinder(h=plateThickness + beamHW, d=linearRailOD * 2);
+						if (includeSupportCones) {
+						}
+					}
 			}
 			// rail holes
-			translate([-yAxisRailMountWidth/2, -yAxisRailSep/2, -cylHeightExt / 2]) cylinder(h=plateThickness + beamHW + cylHeightExt, d=linearRailOD);
-			translate([-yAxisRailMountWidth/2, yAxisRailSep/2, -cylHeightExt / 2]) cylinder(h=plateThickness + beamHW + cylHeightExt, d=linearRailOD);
+        	for (i=[-1, 1])
+				translate([-axisRailMountWidth/2, i * axisRailSep/2, -cylHeightExt / 2])
+					cylinder(h=plateThickness + beamHW + cylHeightExt, d=linearRailOD);
 			// slots for tightening
-			translate([-yAxisRailMountWidth/2, -yAxisRailSep / 8, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) cube([1.5, yAxisRailSep, plateThickness + beamHW + cylHeightExt], center = true);
+			translate([-axisRailMountWidth/2, -axisRailSep / 8, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4])
+				cube([1.5, axisRailSep, plateThickness + beamHW + cylHeightExt], center = true);
             // separation slot between holes
-            translate([-yAxisRailMountWidth * .75, 0, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) cube([10, 2, plateThickness + beamHW + cylHeightExt], center = true);
+            translate([-axisRailMountWidth * .75, 0, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4])
+				cube([10, 2, plateThickness + beamHW + cylHeightExt], center = true);
 			// screw holes for tightenging
-			translate([-yAxisRailMountWidth * .6, yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cylinder(h=yAxisRailTightScrewDepth, d=yAxisRailTightScrewD, center=true);
-			translate([-yAxisRailMountWidth * .6, -yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cylinder(h=yAxisRailTightScrewDepth, d=yAxisRailTightScrewD, center=true);
+        	for (i=[-1, 1])
+				translate([-axisRailMountWidth * .6, i * axisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4])
+					rotate([0, 90, 0])
+						cylinder(h=axisRailTightScrewDepth, d=axisRailTightScrewD, center=true);
 			// inset for screw
-			translate([-yAxisRailMountWidth * .8, yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cylinder(h=yAxisRailTightScrewDepth / 3, d=yAxisRailTightScrewD * 3, center=true);
-			translate([-yAxisRailMountWidth * .8, -yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cylinder(h=yAxisRailTightScrewDepth / 3, d=yAxisRailTightScrewD * 3, center=true);
+        	for (i=[-1, 1])
+				translate([-axisRailMountWidth * .8, i * axisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4])
+					rotate([0, 90, 0])
+						cylinder(h=axisRailTightScrewDepth / 3, d=axisRailTightScrewD * 3, center=true);
 			// captive nut
-			translate([-yAxisRailMountWidth * .3, yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cube([plateThickness + beamHW + cylHeightExt, yAxisRailTightCaptiveNutWidth, yAxisRailTightCaptiveNutHeight], center=true);
-			translate([-yAxisRailMountWidth * .3, -yAxisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4]) rotate([0, 90, 0]) cube([plateThickness + beamHW + cylHeightExt, yAxisRailTightCaptiveNutWidth, yAxisRailTightCaptiveNutHeight], center=true);
+        	for (i=[-1, 1])
+				translate([-axisRailMountWidth * .3, i * axisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4])
+					rotate([0, 90, 0])
+						cube([plateThickness + beamHW + cylHeightExt, axisRailTightCaptiveNutWidth, axisRailTightCaptiveNutHeight], center=true);
 
 		}
 }
@@ -231,7 +240,7 @@ module parallelRailsMount() {
 module yAxisRailMount() {
     union() {
 		translate([-yAxisLinearBearingToBracketClearence, 0, 0]) 
-			parallelRailsMount();
+			parallelRailsMount(yAxisRailMountHeight, yAxisRailMountWidth, yAxisRailSep, yAxisRailTightScrewDepth, yAxisRailTightScrewD, yAxisRailTightCaptiveNutWidth, yAxisRailTightCaptiveNutHeight)
 		// now the pieces that join the bracket to the mount
 		// first, the primary connection between the mount and the bracket
 		linear_extrude(height=plateThickness + beamHW)
@@ -449,6 +458,19 @@ module yCarriage() {
 				yCarriageBrace();
 			translate([0, yCarriageBraceLength - reinforcedPlateThickness, 0])
 				yCarriageBrace();
+			// xAxis rails
+xAxisRailSep = laserHeatsinkY + yAxisRailMountBuffer;
+xAxisRailMountWidth = linearBearingOD + (linearBearingOD - linearRailOD);
+xAxisRailMountHeight = xAxisRailSep + 
+     (.5 * linearBearingOD) + // to account for the required spacing of the bearings 
+     yAxisRailMountBuffer;
+xAxisRailTightScrewDepth = yAxisRailTightScrewDepth;
+xAxisRailTightScrewD = yAxisRailTightScrewD;
+xAxisRailTightCaptiveNutWidth = yAxisRailTightCaptiveNutWidth;
+xAxisRailTightCaptiveNutHeight = yAxisRailTightCaptiveNutHeight;
+			translate([0, 0, yCarriageShelfLength])
+				rotate([0, 0, 180])
+					parallelRailsMount(xAxisRailMountHeight, xAxisRailMountWidth, xAxisRailSep, xAxisRailTightScrewDepth, xAxisRailTightScrewD, xAxisRailTightCaptiveNutWidth, xAxisRailTightCaptiveNutHeight, true);
 		}
 		// holes for mounting xaxis
 	}
