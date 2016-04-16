@@ -531,6 +531,19 @@ union(){
 				cube([xAxisRailSep - holderBaseWidth + plateThickness,
 					holderBaseLength * 2 - 2 * plateThickness,
 					reinforcedPlateThickness], center=true);
+           	for (i=[-1, 1])
+				translate([0,
+						i * (laserHeatsinkY / 2 + iFitAdjust / 2 + plateThickness / 4),
+						laserHeatsinkMountScrewZ * .75])
+					difference() {
+						cube([laserHeatsinkX * 1.5, plateThickness / 2, laserHeatsinkMountScrewZ * 1.25], center=true);
+						for (i=[-1, 1])
+							translate([i * (laserHeatsinkX - laserHeatsinkMountScrewX * 2) / 2, 
+									0, plateThickness / 2])
+								rotate([90, 0, 0])
+									cylinder(h=plateThickness / 2 + cylHeightExt,
+										d=laserHeatsinkMountScrewD, center=true);
+					}
 		}
 		// slot for heatsink
 		cube([laserHeatsinkX + iFitAdjust, 
@@ -538,7 +551,6 @@ union(){
 			laserHeatsinkZ + iFitAdjust], center=true);
 		// holes for mounting
 	}
-
 
 			translate([0, 0, -laserHeatsinkMountScrewZ])
 				laserHeatsink();
