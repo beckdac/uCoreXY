@@ -4,7 +4,7 @@
 
 // select part
 part = "assembly";
-part = "yCarriage";
+//part = "yCarriage";
 //part = "topNegXNegYCornerBracket";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
@@ -115,6 +115,22 @@ effectiveLinearBearingZipTieHeight = linearBearingZipTieHeight + iFitAdjust;
 holderBaseWidth = effectiveLinearBearingOD + 4 * plateThickness;
 holderBaseLength = effectiveLinearBearingLength + 4 * plateThickness;
 yCarriageBraceLength = holderBaseLength * 2 - 2 * plateThickness;
+
+
+
+/* [X Axis Rails] */ // this needs to be properly integrated into the above
+xAxisRailSep = laserHeatsinkY * 1.5 + yAxisRailMountBuffer;
+xAxisRailTightScrewDepth = yAxisRailTightScrewDepth;
+xAxisRailTightScrewD = yAxisRailTightScrewD;
+xAxisRailTightCaptiveNutWidth = yAxisRailTightCaptiveNutWidth;
+xAxisRailTightCaptiveNutHeight = yAxisRailTightCaptiveNutHeight;
+xAxisSupportConeLength = 20;
+xAxisRailMountWidth = linearBearingOD + (linearBearingOD - linearRailOD);
+xAxisRailMountHeight = xAxisRailSep + 
+     (.5 * linearBearingOD) + // to account for the required spacing of the bearings 
+     yAxisRailMountBuffer;
+
+
 
 ////////////////////// End header ////////////////////
 
@@ -475,16 +491,6 @@ module yCarriage() {
 			translate([0, yCarriageBraceLength - reinforcedPlateThickness, 0])
 				yCarriageBrace();
 			// xAxis rails
-xAxisRailSep = laserHeatsinkY * 1.5 + yAxisRailMountBuffer;
-xAxisRailTightScrewDepth = yAxisRailTightScrewDepth;
-xAxisRailTightScrewD = yAxisRailTightScrewD;
-xAxisRailTightCaptiveNutWidth = yAxisRailTightCaptiveNutWidth;
-xAxisRailTightCaptiveNutHeight = yAxisRailTightCaptiveNutHeight;
-xAxisSupportConeLength = 20;
-xAxisRailMountWidth = linearBearingOD + (linearBearingOD - linearRailOD);
-xAxisRailMountHeight = xAxisRailSep + 
-     (.5 * linearBearingOD) + // to account for the required spacing of the bearings 
-     yAxisRailMountBuffer;
 			// bring y to axis sep / 2
 			translate([0, -holderBaseWidth, yCarriageShelfLength / 3])
 			// bring y to center of carriage (0)
