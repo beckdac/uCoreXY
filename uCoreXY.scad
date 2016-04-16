@@ -242,7 +242,7 @@ module parallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRailSep, 
 							supportConeLength / 8 - cylHeightExt / 2
 								- depth])
 						// # this is an interesting piece... not ready to give up the #
-						#cylinder(h=depth, d=linearRailOD);
+						cylinder(h=depth, d=linearRailOD);
 			}
 			// slots for tightening
 			translate([-axisRailMountWidth/2, 0, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4])
@@ -272,11 +272,14 @@ module parallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRailSep, 
 module yAxisRailMount() {
     union() {
 		translate([-yAxisLinearBearingToBracketClearence, 0, 0]) 
-			parallelRailsMount(yAxisRailMountHeight, yAxisRailMountWidth, yAxisRailSep, yAxisRailTightScrewDepth, yAxisRailTightScrewD, yAxisRailTightCaptiveNutWidth, yAxisRailTightCaptiveNutHeight, false, 0)
+			parallelRailsMount(yAxisRailMountHeight, yAxisRailMountWidth, yAxisRailSep, yAxisRailTightScrewDepth, yAxisRailTightScrewD, yAxisRailTightCaptiveNutWidth, yAxisRailTightCaptiveNutHeight, false, 0);
 		// now the pieces that join the bracket to the mount
 		// first, the primary connection between the mount and the bracket
-		#linear_extrude(height=plateThickness + beamHW)
+		linear_extrude(height=plateThickness + beamHW)
 			polygon(points=[ [-plateThickness, yAxisRailMountHeight], [-yAxisLinearBearingToBracketClearence, yAxisRailMountHeight / 2], [-yAxisLinearBearingToBracketClearence, -yAxisRailMountHeight / 2], [-plateThickness, - yAxisRailMountHeight / 2 ] ], convexity=10);
+
+
+
         // wing joining mount to brack for additional stability
         translate([-plateThickness, 0, 0])
 		  linear_extrude(height=plateThickness + beamHW)
