@@ -488,7 +488,7 @@ xAxisRailMountHeight = xAxisRailSep +
 			// bring y to axis sep / 2
 			translate([0, -holderBaseWidth, yCarriageShelfLength / 3])
 			// bring y to center of carriage (0)
-			translate([0, yCarriageBraceLength / 2 - reinforcedPlateThickness / 2, 0])
+			translate([0, yCarriageBraceLength / 2 - plateThickness / 1.5, 0])
 			translate([-holderBaseWidth / 2, -holderBaseLength * .5, 0])
 				// align y to 0
 				translate([0, xAxisRailMountHeight / 2 + plateThickness + linearRailOD -linearBearingLength / 2, yCarriageShelfLength * .3])
