@@ -12,7 +12,7 @@ part = "assembly";
 //part = "xStepperMount";
 //part = "negXStepperMount";
 part = "negXPulleyMount";
-part = "beltIdlerPulley";
+//part = "beltIdlerPulley";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
 beamHW = 10;
@@ -20,6 +20,16 @@ beamHW = 10;
 plateThickness = 4;
 // reinforced plate thickness scale applied to normal plate thickness where more strength required
 reinforcedPlateScale = 1.2;
+
+/* [Misc] */
+
+// interference fit adjustment for 3D printer
+iFitAdjust = .4;
+// cylinder subtract height extension
+cylHeightExt = .1; // for overcutting on differences so they render correctly, nothing more
+// render quality
+$fn = 64; // [24:low quality, 48:development, 64:production]
+
 
 /* [Frame] */
 
@@ -57,7 +67,7 @@ beltIdlerPulleyD = 6.3;
 beltIdlerPulleyLidD = 12.6;
 beltIdlerPulleyLidH = 1;
 beltIdlerPulleyBearingID = 3;
-beltIdlerPulleyBearingScrewD = beltIdlerPulleyBearingID;
+beltIdlerPulleyBearingScrewD = beltIdlerPulleyBearingID + iFitAdjust;
 beltIdlerPulleyHousingScrewD = beltIdlerPulleyBearingScrewD;
 beltIdlerPulleyHousingPulleySpacerHeight = 2;
 beltIdlerPulleyHousingPulleySpacerD = 2;
@@ -108,16 +118,6 @@ laserHeatsinkWireholeD = 5;
 laserHeatsinkWireslotX = 10;
 laserHeatsinkWireslotY = 5;
 laserHeatsinkWireslotOffset = 8;
-
-
-/* [Misc] */
-
-// interference fit adjustment for 3D printer
-iFitAdjust = .4;
-// cylinder subtract height extension
-cylHeightExt = .1; // for overcutting on differences so they render correctly, nothing more
-// render quality
-$fn = 64; // [24:low quality, 48:development, 64:production]
 
 
 /* [Computed Constants] */
@@ -801,33 +801,80 @@ module negXStepperMount() {
 	}
 }
 
+
 //beltIdlerPulleyHousingPulleySpacerHeight = 2;
 //beltIdlerPulleyHousingPulleySpacerD = 2;
-module xPulleyMount() {
-	union() {
-
-
-beltIdlerPulley();
-
+module xPulleyHousing() {
+	xPulleyMountPlateHeight = 
+			beltIdlerPulleyH / 2 + reinforcedPlateThickness / 2 + beltIdlerPulleyLidH / 2
+			+ 2 * (beltIdlerPulleyH + beltIdlerPulleyLidH)
+			+ 2 * beltIdlerPulleyHousingPulleySpacerHeight;
+	translate([0, 0, xPulleyMountPlateHeight])
 		difference() {
-			rotate([180, 0, 0])
-				xMount();
-			// bearing screw
-			cylinder(h=reinforcedPlateThickness + cylHeightExt, 
-				d=beltIdlerPulleyBearingScrewD * 1.1, center=true);
-			for (i = [-1,1])
-				for (j = [-1,1])
-					translate([i * stepperMountHoleSpacing / 2,
-							j * stepperMountHoleSpacing / 2,
-							beltIdlerPulleyHousingPulleySpacerHeight])
-						cylinder(h=reinforcedPlateThickness + cylHeightExt,
-							d=beltIdlerPulleyHousingScrewD, center=true);
+			union() {
+				cube([xMountWidth, xMountWidth, reinforcedPlateThickness], center=true);
+				translate([0, stepperMountHoleSpacing / 2, -xPulleyMountPlateHeight / 2])
+					cube([stepperMountHoleSpacing - beltIdlerPulleyHousingScrewD,
+						reinforcedPlateThickness,
+						xPulleyMountPlateHeight - reinforcedPlateThickness], center=true);
+				translate([-stepperMountHoleSpacing / 2, 0, -xPulleyMountPlateHeight / 2])
+					cube([reinforcedPlateThickness,
+						stepperMountHoleSpacing - beltIdlerPulleyHousingScrewD,
+						xPulleyMountPlateHeight - reinforcedPlateThickness], center=true);
+				for (i = [-1,1])
+					for (j = [-1,1])
+						translate([i * stepperMountHoleSpacing / 2, 
+							j * stepperMountHoleSpacing / 2, -xPulleyMountPlateHeight / 2])
+						difference() {
+							cylinder(h=xPulleyMountPlateHeight - reinforcedPlateThickness,
+								d=beltIdlerPulleyHousingScrewD + plateThickness, center=true);
+							cylinder(h=xPulleyMountPlateHeight - reinforcedPlateThickness + cylHeightExt,
+								d=beltIdlerPulleyHousingScrewD, center=true);
+						}
+			}
+		// bearing screw
+		cylinder(h=reinforcedPlateThickness + cylHeightExt, 
+			d=beltIdlerPulleyBearingScrewD * 1.1, center=true);
+		// housing screws
+		for (i = [-1,1])
+			for (j = [-1,1])
+				translate([i * stepperMountHoleSpacing / 2,
+						j * stepperMountHoleSpacing / 2, 0])
+					cylinder(h=reinforcedPlateThickness + cylHeightExt,
+						d=beltIdlerPulleyHousingScrewD, center=true);
 		}
+}
+
+module xPulleyMount() {
+	difference() {
+		rotate([180, 0, 0])
+			xMount();
+		// bearing screw
+		cylinder(h=reinforcedPlateThickness + cylHeightExt, 
+			d=beltIdlerPulleyBearingScrewD * 1.1, center=true);
+		// housing screws
+		for (i = [-1,1])
+			for (j = [-1,1])
+				translate([i * stepperMountHoleSpacing / 2,
+						j * stepperMountHoleSpacing / 2, 0])
+					cylinder(h=reinforcedPlateThickness + cylHeightExt,
+						d=beltIdlerPulleyHousingScrewD, center=true);
 	}
 }
 
 module negXPulleyMount() {
 	union() {
 		xPulleyMount();
+		xPulleyHousing();
+		// pulleys
+		translate([0, 0,
+				beltIdlerPulleyH / 2 + reinforcedPlateThickness / 2 + beltIdlerPulleyLidH / 2
+				+ beltIdlerPulleyHousingPulleySpacerHeight ])
+			beltIdlerPulley();
+		translate([0, 0,
+				beltIdlerPulleyH / 2 + reinforcedPlateThickness / 2 + beltIdlerPulleyLidH / 2
+				+ beltIdlerPulleyH + beltIdlerPulleyLidH
+				+ 2 * beltIdlerPulleyHousingPulleySpacerHeight ])
+			beltIdlerPulley();
 	}
 }
