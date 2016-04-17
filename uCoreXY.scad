@@ -14,6 +14,7 @@ part = "assembly";
 //part = "negXPulleyMount";
 //part = "posXPulleyMount";
 //part = "beltIdlerPulley";
+part = "carriageIdlerPulleyHousing";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
 beamHW = 10;
@@ -156,6 +157,12 @@ xAxisRailMountHeight = xAxisRailSep +
      yAxisRailMountBuffer;
 
 
+// pulley housings
+xPulleyMountPlateHeight = 
+	beltIdlerPulleyH / 2 + reinforcedPlateThickness / 2 + beltIdlerPulleyLidH / 2
+	+ 2 * (beltIdlerPulleyH + beltIdlerPulleyLidH)
+	+ 2 * beltIdlerPulleyHousingPulleySpacerHeight;
+
 
 ////////////////////// End header ////////////////////
 
@@ -211,6 +218,8 @@ module render_part() {
 		renderNegYCarriage();
 	} else if (part == "renderXCarriage") {
 		renderXCarriage();
+	} else if (part == "carriageIdlerPulleyHousing") {
+		carriageIdlerPulleyHousing();
 	} else {
 		// invalid value
 	}
@@ -794,10 +803,16 @@ module xStepperMount() {
 }
 
 module negXStepperMount() {
+
+	translate([0, 0, 
+		yAxisRailSep / 2 - reinforcedPlateThickness / 2 +
+		frameSideHeight / 2 + beamHW / 2 +
+		holderBaseWidth / 2
+		])
 	translate([frameSideLength / 2 +
 				effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5,
 			-frameSideLength / 2 - xMountWidth / 2 - beamHW / 2 - plateThickness,
-			frameSideHeight / 2])
+			0])
 		rotate([180, 0, 180])
 			union() {
 				xStepperMount();
@@ -813,17 +828,19 @@ module posXStepperMount() {
 }
 
 
-//beltIdlerPulleyHousingPulleySpacerHeight = 2;
-//beltIdlerPulleyHousingPulleySpacerD = 2;
 module xPulleyHousing() {
-	xPulleyMountPlateHeight = 
-			beltIdlerPulleyH / 2 + reinforcedPlateThickness / 2 + beltIdlerPulleyLidH / 2
-			+ 2 * (beltIdlerPulleyH + beltIdlerPulleyLidH)
-			+ 2 * beltIdlerPulleyHousingPulleySpacerHeight;
 	translate([0, 0, xPulleyMountPlateHeight])
 		difference() {
 			union() {
-				cube([xMountWidth, xMountWidth, reinforcedPlateThickness], center=true);
+				cube([stepperMountHoleSpacing + reinforcedPlateThickness,
+					stepperMountHoleSpacing + reinforcedPlateThickness,
+					reinforcedPlateThickness], center=true);
+				for (i = [-1,1])
+					for (j = [-1,1])
+						translate([i * stepperMountHoleSpacing / 2, 
+							j * stepperMountHoleSpacing / 2, 0])
+							cylinder(h=reinforcedPlateThickness,
+								d=beltIdlerPulleyHousingScrewD + plateThickness, center=true);
 				translate([0, stepperMountHoleSpacing / 2, -xPulleyMountPlateHeight / 2])
 					cube([stepperMountHoleSpacing - beltIdlerPulleyHousingScrewD,
 						reinforcedPlateThickness,
@@ -874,10 +891,15 @@ module xPulleyMount() {
 }
 
 module negXPulleyMount() {
+	translate([0, 0, 
+		yAxisRailSep / 2 - reinforcedPlateThickness / 2 +
+		frameSideHeight / 2 + beamHW / 2 +
+		holderBaseWidth / 2
+		])
 	translate([frameSideLength / 2 +
 			effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5,
 		frameSideLength / 2 + xMountWidth / 2 + beamHW / 2 + plateThickness,
-		frameSideHeight / 2])
+		0])
 	union() {
 		xPulleyMount();
 		xPulleyHousing();
@@ -897,4 +919,39 @@ module negXPulleyMount() {
 module posXPulleyMount() {
 	mirror([-1, 0, 0])
 		negXPulleyMount();
+}
+
+carriageIdlerPulleyHousingWidth = beltIdlerPulleyD * 2 + 2.5;
+carriageIdlerPulleyHousingLength = carriageIdlerPulleyHousingWidth;
+module carriageIdlerPulleyHousing() {
+	translate([0, 0, xPulleyMountPlateHeight])
+		difference() {
+			union() {
+				cube([carriageIdlerPulleyHousingWidth,
+					carriageIdlerPulleyHousingLength,
+					reinforcedPlateThickness], center=true);
+				for (i = [-1,1])
+					for (j = [-1,1])
+						translate([i * carriageIdlerPulleyHousingWidth / 2,
+							j * carriageIdlerPulleyHousingLength / 2, 0])
+							cylinder(h=reinforcedPlateThickness,
+								d=beltIdlerPulleyHousingScrewD + plateThickness, center=true);
+				for (i = [-1,1])
+						translate([i * carriageIdlerPulleyHousingWidth / 2,
+							i * carriageIdlerPulleyHousingLength / 2, -xPulleyMountPlateHeight / 2])
+						difference() {
+							cylinder(h=xPulleyMountPlateHeight - reinforcedPlateThickness,
+								d=beltIdlerPulleyHousingScrewD + plateThickness, center=true);
+							cylinder(h=xPulleyMountPlateHeight - reinforcedPlateThickness + cylHeightExt,
+								d=beltIdlerPulleyHousingScrewD, center=true);
+						}
+			}
+		// housing screws
+		for (i = [-1,1])
+			for (j = [-1,1])
+				translate([i * carriageIdlerPulleyHousingWidth / 2,
+						j * carriageIdlerPulleyHousingLength / 2, 0])
+					cylinder(h=reinforcedPlateThickness + cylHeightExt,
+						d=beltIdlerPulleyHousingScrewD, center=true);
+		}
 }
