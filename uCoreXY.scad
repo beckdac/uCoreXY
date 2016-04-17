@@ -794,16 +794,17 @@ module xStepperMount() {
 }
 
 module negXStepperMount() {
-	translate([frameSideLength / 2 + xMountWidth / 2,  
-		-frameSideLength / 2 - xMountWidth / 2 - beamHW / 2 - plateThickness,
-		frameSideHeight / 2])
-	rotate([180, 0, 180])
-	union() {
-		xStepperMount();
-		translate([0, 0, reinforcedPlateThickness / 2 - stepperCollarHeight])
-			rotate([180, 0, 0])
-				motor(Nema17, orientation=[0, -180, 0]);
-	}
+	translate([frameSideLength / 2 +
+				effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5,
+			-frameSideLength / 2 - xMountWidth / 2 - beamHW / 2 - plateThickness,
+			frameSideHeight / 2])
+		rotate([180, 0, 180])
+			union() {
+				xStepperMount();
+				translate([0, 0, reinforcedPlateThickness / 2 - stepperCollarHeight])
+					rotate([180, 0, 0])
+						motor(Nema17, orientation=[0, -180, 0]);
+			}
 }
 
 module posXStepperMount() {
@@ -873,7 +874,8 @@ module xPulleyMount() {
 }
 
 module negXPulleyMount() {
-	translate([frameSideLength / 2 + xMountWidth / 2,  
+	translate([frameSideLength / 2 +
+			effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5,
 		frameSideLength / 2 + xMountWidth / 2 + beamHW / 2 + plateThickness,
 		frameSideHeight / 2])
 	union() {
