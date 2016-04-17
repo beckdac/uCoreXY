@@ -6,6 +6,8 @@
 part = "assembly";
 //part = "yCarriage";
 //part = "xCarriage";
+//part = "renderXCarriage";
+//part = "renderPosYCarriage";
 //part = "topNegXNegYCornerBracket";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
@@ -185,6 +187,12 @@ module render_part() {
 		beltIdlerPulley();
 	} else if (part == "negXStepperMount") {
 		negXStepperMount();
+	} else if (part == "renderPosYCarriage") {
+		renderPosYCarriage();
+	} else if (part == "renderNegYCarriage") {
+		renderNegYCarriage();
+	} else if (part == "renderXCarriage") {
+		renderXCarriage();
 	} else {
 		// invalid value
 	}
@@ -201,7 +209,7 @@ module assembly() {
 		xAxisLinearRails();
 		renderNegYCarriage();
 		renderPosYCarriage();
-		renderXCarriange();
+		renderXCarriage();
     }
 }
 
@@ -526,12 +534,34 @@ module yCarriage() {
 	}
 }
 
-module renderXCarriange() {
+module renderXCarriage() {
+	translate([0, 0,
+		effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5 +
+		plateThickness / 2 +
+		frameSideHeight / 2 + beamHW / 2 + yAxisRailSep / 2 + holderBaseWidth / 2
+		-(xAxisRailMountWidth / 2)])
 	rotate([0, 180, 90])
 		union(){
 			xCarriage();
 			translate([0, 0, -laserHeatsinkMountScrewZ])
 				laserHeatsink();
+			color([.75, .75, .75])
+			translate([-xAxisRailSep / 2, - ( holderBaseLength - 2 * plateThickness ) / 2, 0])
+			union() {
+				// linear bearings
+				translate([0, 0, plateThickness / 2 + effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
+					rotate([-90, 0, 0])
+						linear_bearing(linearBearingType);
+				translate([0, holderBaseLength - 2 * plateThickness, plateThickness / 2 + effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
+					rotate([-90, 0, 0])
+						linear_bearing(linearBearingType);
+				translate([xAxisRailSep, 0, plateThickness / 2 + effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
+					rotate([-90, 0, 0])
+						linear_bearing(linearBearingType);
+				translate([xAxisRailSep, holderBaseLength - 2 * plateThickness, plateThickness / 2 + effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5])
+					rotate([-90, 0, 0])
+					linear_bearing(linearBearingType);
+			}
 		}
 }
 
