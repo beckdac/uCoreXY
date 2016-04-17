@@ -11,7 +11,8 @@ part = "assembly";
 //part = "topNegXNegYCornerBracket";
 //part = "xStepperMount";
 //part = "negXStepperMount";
-part = "negXPulleyMount";
+//part = "negXPulleyMount";
+//part = "posXPulleyMount";
 //part = "beltIdlerPulley";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
@@ -793,12 +794,21 @@ module xStepperMount() {
 }
 
 module negXStepperMount() {
+	translate([frameSideLength / 2 + xMountWidth / 2,  
+		-frameSideLength / 2 - xMountWidth / 2 - beamHW / 2 - plateThickness,
+		frameSideHeight / 2])
+	rotate([180, 0, 180])
 	union() {
 		xStepperMount();
 		translate([0, 0, reinforcedPlateThickness / 2 - stepperCollarHeight])
 			rotate([180, 0, 0])
 				motor(Nema17, orientation=[0, -180, 0]);
 	}
+}
+
+module posXStepperMount() {
+	mirror([-1, 0, 0])
+		negXStepperMount();
 }
 
 
@@ -817,7 +827,7 @@ module xPulleyHousing() {
 					cube([stepperMountHoleSpacing - beltIdlerPulleyHousingScrewD,
 						reinforcedPlateThickness,
 						xPulleyMountPlateHeight - reinforcedPlateThickness], center=true);
-				translate([-stepperMountHoleSpacing / 2, 0, -xPulleyMountPlateHeight / 2])
+				translate([stepperMountHoleSpacing / 2, 0, -xPulleyMountPlateHeight / 2])
 					cube([reinforcedPlateThickness,
 						stepperMountHoleSpacing - beltIdlerPulleyHousingScrewD,
 						xPulleyMountPlateHeight - reinforcedPlateThickness], center=true);
@@ -863,6 +873,9 @@ module xPulleyMount() {
 }
 
 module negXPulleyMount() {
+	translate([frameSideLength / 2 + xMountWidth / 2,  
+		frameSideLength / 2 + xMountWidth / 2 + beamHW / 2 + plateThickness,
+		frameSideHeight / 2])
 	union() {
 		xPulleyMount();
 		xPulleyHousing();
@@ -877,4 +890,9 @@ module negXPulleyMount() {
 				+ 2 * beltIdlerPulleyHousingPulleySpacerHeight ])
 			beltIdlerPulley();
 	}
+}
+
+module posXPulleyMount() {
+	mirror([-1, 0, 0])
+		negXPulleyMount();
 }
