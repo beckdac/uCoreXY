@@ -20,6 +20,9 @@ reinforcedPlateScale = 1.2;
 // frame beam length (mm)
 frameBeamLength = 300;
 frameSideLength = frameBeamLength + 2 * 0.5 * beamHW; // this accounts for two corner cubes (2 at half width)
+// frame beam height (mm)
+frameBeamHeight = 100;
+frameSideHeight = frameBeamHeight + 2 * 0.5 * beamHW; // this accounts for two corner cubes (2 at half width)
 
 /* [Rails] */
 
@@ -205,18 +208,22 @@ module assembly() {
 module beamFrame() {
     color([.6, .6, .6, .6]) 
         union() {
-            for (i=[-1, 1]) for (j=[-1,1])
-                translate([i * frameSideLength / 2, j * frameSideLength / 2, 0]) makerBeam(frameBeamLength);            
-            translate([-frameSideLength / 2, 0, -frameSideLength / 2]) { rotate([90, 0, 0]) { makerBeam(frameBeamLength); } }
-            translate([frameSideLength / 2, 0, -frameSideLength / 2]) { rotate([90, 0, 0]) { makerBeam(frameBeamLength); } }
-            translate([0, -frameSideLength / 2, -frameSideLength / 2]) { rotate([0, 90, 0]) { makerBeam(frameBeamLength); } }
-            translate([0, frameSideLength / 2, -frameSideLength / 2]) { rotate([0, 90, 0]) { makerBeam(frameBeamLength); } }
-            translate([-frameSideLength / 2, 0, frameSideLength / 2]) { rotate([90, 0, 0]) { makerBeam(frameBeamLength); } }
-            translate([frameSideLength / 2, 0, frameSideLength / 2]) { rotate([90, 0, 0]) { makerBeam(frameBeamLength); } }
-            translate([0, -frameSideLength / 2, frameSideLength / 2]) { rotate([0, 90, 0]) { makerBeam(frameBeamLength); } }
-            translate([0, frameSideLength / 2, frameSideLength / 2]) { rotate([0, 90, 0]) { makerBeam(frameBeamLength); } }
+            for (i=[-1, 1])
+				for (j=[-1,1])
+                	translate([i * frameSideLength / 2, j * frameSideLength / 2, 0])
+						makerBeam(frameBeamHeight);            
+            for (i=[-1, 1])
+				for (j=[-1,1])
+            		translate([i * frameSideLength / 2, 0, j * frameSideHeight / 2])
+						rotate([90, 0, 0])
+							makerBeam(frameBeamLength);
+            for (i=[-1, 1])
+				for (j=[-1,1])
+            		translate([0, i * frameSideLength / 2, j * frameSideHeight / 2])
+						rotate([0, 90, 0])
+							makerBeam(frameBeamLength);
             for (i=[-1,1]) for (j=[-1,1]) for (k=[-1,1])
-                translate([ i * frameSideLength / 2, j * frameSideLength / 2, k * frameSideLength / 2])
+                translate([ i * frameSideLength / 2, j * frameSideLength / 2, k * frameSideHeight / 2])
 					cube([beamHW, beamHW, beamHW], center=true);
         }
     
@@ -337,9 +344,10 @@ module topPosXPosYCornerBracket() {
 }
 
 module topNegXNegYCornerBracket() {
-     fSLTrnas = frameSideLength / 2 + beamHW / 2; // Translation distant to put brack on the outside of frame
+    fSLTrnas = frameSideLength / 2 + beamHW / 2; // Translation distant to put brack on the outside of frame
+    fSHTrnas = frameSideHeight / 2 + beamHW / 2; // Translation distant to put brack on the outside of frame
     color([.6, .6, 0]) {
-    translate([-fSLTrnas, -fSLTrnas, fSLTrnas]) 
+    translate([-fSLTrnas, -fSLTrnas, fSHTrnas]) 
         translate([0, -plateThickness, 0])
             rotate([-90, 0, 0]) 
                 union() {
@@ -355,7 +363,9 @@ module yAxisLinearRails() {
         for (i=[-1, 1]) for (j=[-1, 1])
 		translate([i * (yAxisRailMountWidth/2 + yAxisLinearBearingToBracketClearence), 0, j * yAxisRailSep / 2])
 			// move out from center and up to top
-			translate([i * frameSideLength/2 + i * beamHW / 2, 0, frameSideLength/2 + beamHW / 2])
+			translate([i * frameSideLength / 2 + i * beamHW / 2,
+					0,
+					frameSideHeight / 2 + beamHW / 2])
 				rotate([90, 0, 0])
 					cylinder(h=yAxisLinearRailLength, d=linearRailOD, center=true);
 	}
@@ -366,7 +376,7 @@ module xAxisLinearRails() {
 	union() {
         for (i=[-1, 1])
 			translate([0, i * xAxisRailSep / 2, 
-					frameSideLength / 2 + beamHW / 2 + yAxisRailSep / 2 + holderBaseWidth / 2
+					frameSideHeight / 2 + beamHW / 2 + yAxisRailSep / 2 + holderBaseWidth / 2
 					-(xAxisRailMountWidth / 2)])
 				rotate([0, 90, 0])
 					cylinder(h=xAxisLinearRailLength, d=linearRailOD, center=true);
@@ -572,7 +582,7 @@ module xCarriage() {
 module renderNegYCarriage() {
 	translate([-yAxisRailMountWidth + plateThickness / 4 - yAxisLinearBearingToBracketClearence,
 			0, yAxisRailSep / 2])
-		translate([-frameSideLength / 2 + beamHW / 2, 0, frameSideLength / 2 + beamHW / 2])
+		translate([-frameSideLength / 2 + beamHW / 2, 0, frameSideHeight / 2 + beamHW / 2])
 			translate([-(effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5),
 					-holderBaseLength / 2 + plateThickness, 0])
 				rotate([0, 90, 0])
