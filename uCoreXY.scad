@@ -5,7 +5,7 @@
 // select part
 part = "assembly";
 //part = "yCarriage";
-part = "xCarriage";
+//part = "xCarriage";
 //part = "topNegXNegYCornerBracket";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
@@ -100,7 +100,6 @@ laserHeatsinkWireslotOffset = 8;
 
 // interference fit adjustment for 3D printer
 iFitAdjust = .4;
-iFitAdjust_d = .25;
 // cylinder subtract height extension
 cylHeightExt = .1; // for overcutting on differences so they render correctly, nothing more
 // render quality
@@ -119,8 +118,8 @@ cornerLength = 70.7 + 2 * beamHW; // 70.7 is a and b length of c = 10 (inner bra
 
 // for linear rail bearing mounts
 effectiveLinearRailOD = linearRailOD + iFitAdjust * 10; 
-effectiveLinearBearingOD = linearBearingOD + iFitAdjust;
-effectiveLinearBearingLength = linearBearingLength + iFitAdjust;
+effectiveLinearBearingOD = linearBearingOD + iFitAdjust * 2;
+effectiveLinearBearingLength = linearBearingLength + iFitAdjust * 2;
 effectiveLinearBearingZipTieWidth = linearBearingZipTieWidth + iFitAdjust;
 effectiveLinearBearingZipTieHeight = linearBearingZipTieHeight + iFitAdjust;
 holderBaseWidth = effectiveLinearBearingOD + 4 * plateThickness;
