@@ -724,7 +724,8 @@ stepperShaftLength = 24;
 stepperCollarHeight = 2;
 stepperCollarWidth = 22;
 
-xMountWidth = stepperWidth + reinforcedPlateThickness * 2;
+xMountStepperBuffer = 2;
+xMountWidth = stepperWidth + xMountStepperBuffer + reinforcedPlateThickness * 2;
 
 // this is a generic mount that is based off the nema17 dimensions
 // it will also hold the pulley mounts
@@ -768,7 +769,7 @@ module xStepperMount() {
 module negXStepperMount() {
 	union() {
 		xStepperMount();
-		translate([0, 0, reinforcedPlateThickness])
+		translate([0, 0, reinforcedPlateThickness / 2 - stepperCollarHeight])
 			rotate([180, 0, 0])
 				motor(Nema17, orientation=[0, -180, 0]);
 	}
