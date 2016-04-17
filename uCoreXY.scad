@@ -3,14 +3,16 @@
 /* [Main] */
 
 // select part
-//part = "assembly";
+part = "assembly";
 //part = "yCarriage";
 //part = "xCarriage";
 //part = "renderXCarriage";
 //part = "renderPosYCarriage";
 //part = "topNegXNegYCornerBracket";
 //part = "xStepperMount";
-part = "negXStepperMount";
+//part = "negXStepperMount";
+part = "negXPulleyMount";
+part = "beltIdlerPulley";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
 beamHW = 10;
@@ -53,7 +55,12 @@ linearBearingType = "LM-8-UU"; // [LM-8-UU:lm8uu]
 beltIdlerPulleyH = 8.4;
 beltIdlerPulleyD = 6.3;
 beltIdlerPulleyLidD = 12.6;
+beltIdlerPulleyLidH = 1;
 beltIdlerPulleyBearingID = 3;
+beltIdlerPulleyBearingScrewD = beltIdlerPulleyBearingID;
+beltIdlerPulleyHousingScrewD = beltIdlerPulleyBearingScrewD;
+beltIdlerPulleyHousingPulleySpacerHeight = 2;
+beltIdlerPulleyHousingPulleySpacerD = 2;
 beltH = 6;
 // belt pulley
 beltPulleyLidD = 16;
@@ -193,6 +200,10 @@ module render_part() {
 		negXStepperMount();
 	} else if (part == "posXStepperMount") {
 		posXStepperMount();
+	} else if (part == "negXPulleyMount") {
+		negXPulleyMount();
+	} else if (part == "posXPulleyMount") {
+		posXPulleyMount();
 	} else if (part == "renderPosYCarriage") {
 		renderPosYCarriage();
 	} else if (part == "renderNegYCarriage") {
@@ -217,6 +228,9 @@ module assembly() {
 		renderPosYCarriage();
 		renderXCarriage();
 		negXStepperMount();
+		posXStepperMount();
+		negXPulleyMount();
+		posXPulleyMount();
     }
 }
 
@@ -604,6 +618,7 @@ module xCarriage() {
 			laserHeatsinkY + iFitAdjust, 
 			laserHeatsinkZ + iFitAdjust], center=true);
 		// holes for mounting
+/*
 		for (i=[-1, 1])
 			for (j=[-1, 1])
 				translate([i * holderBaseLength / 6, j * holderBaseWidth / 1.5])
@@ -613,6 +628,7 @@ module xCarriage() {
 				for (j=[-1, 1])
 					translate([i * holderBaseLength / 3, j * holderBaseWidth * .75])
 						cylinder(h=plateThickness, d=laserHeatsinkMountScrewD, center=true);
+*/
 	}
 }
 
@@ -702,11 +718,21 @@ module beltPulley() {
 	}
 }
 
+/*
+beltIdlerPulleyH = 8.4;
+beltIdlerPulleyD = 6.3;
+beltIdlerPulleyLidD = 12.6;
+beltIdlerPulleyLidH = 1;
+beltIdlerPulleyBearingID = 3;
+*/
 module beltIdlerPulley() {
 	color([0.7, 0.7, 0.7]) {
 		difference() {
 			union() {
-				cylinder(h=beltPulleyH, d=beltPulleyD, center=true);
+				cylinder(h=beltIdlerPulleyH, d=beltIdlerPulleyD, center=true);
+				for (i = [-1,1])
+					translate([0, 0, i * beltIdlerPulleyH / 2])
+						cylinder(h=beltIdlerPulleyLidH, d=beltIdlerPulleyLidD, center=true);
 			}
 			cylinder(h=beltIdlerPulleyH * 2, d=beltIdlerPulleyBearingID, center=true);
 		}
@@ -772,5 +798,36 @@ module negXStepperMount() {
 		translate([0, 0, reinforcedPlateThickness / 2 - stepperCollarHeight])
 			rotate([180, 0, 0])
 				motor(Nema17, orientation=[0, -180, 0]);
+	}
+}
+
+//beltIdlerPulleyHousingPulleySpacerHeight = 2;
+//beltIdlerPulleyHousingPulleySpacerD = 2;
+module xPulleyMount() {
+	union() {
+
+
+beltIdlerPulley();
+
+		difference() {
+			rotate([180, 0, 0])
+				xMount();
+			// bearing screw
+			cylinder(h=reinforcedPlateThickness + cylHeightExt, 
+				d=beltIdlerPulleyBearingScrewD * 1.1, center=true);
+			for (i = [-1,1])
+				for (j = [-1,1])
+					translate([i * stepperMountHoleSpacing / 2,
+							j * stepperMountHoleSpacing / 2,
+							beltIdlerPulleyHousingPulleySpacerHeight])
+						cylinder(h=reinforcedPlateThickness + cylHeightExt,
+							d=beltIdlerPulleyHousingScrewD, center=true);
+		}
+	}
+}
+
+module negXPulleyMount() {
+	union() {
+		xPulleyMount();
 	}
 }
