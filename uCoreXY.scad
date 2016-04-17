@@ -3,12 +3,13 @@
 /* [Main] */
 
 // select part
-part = "assembly";
+//part = "assembly";
 //part = "yCarriage";
 //part = "xCarriage";
 //part = "renderXCarriage";
 //part = "renderPosYCarriage";
 //part = "topNegXNegYCornerBracket";
+part = "xStepperMount";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
 beamHW = 10;
@@ -185,8 +186,12 @@ module render_part() {
 		beltPulley();
 	} else if (part == "beltIdlerPulley") {
 		beltIdlerPulley();
+	} else if (part == "xStepperMount") {
+		xStepperMount();
 	} else if (part == "negXStepperMount") {
 		negXStepperMount();
+	} else if (part == "posXStepperMount") {
+		posXStepperMount();
 	} else if (part == "renderPosYCarriage") {
 		renderPosYCarriage();
 	} else if (part == "renderNegYCarriage") {
@@ -210,6 +215,7 @@ module assembly() {
 		renderNegYCarriage();
 		renderPosYCarriage();
 		renderXCarriage();
+		negXStepperMount();
     }
 }
 
@@ -706,8 +712,62 @@ module beltIdlerPulley() {
 	}
 }
 
-module negXStepperMount() {
+// Nema17 data
+stepperWidth = 42.3;
+stepperHeight = 34;
+stepperMountHoleSpacing = 31;
+stepperMountScrewD = 3 + iFitAdjust;
+stepperMountScrewDepth = 4.5;
+stepperShaftD = 5;
+stepperShaftLength = 24;
+stepperCollarHeight = 2;
+stepperCollarWidth = 22;
+
+xMountWidth = stepperWidth + reinforcedPlateThickness * 2;
+
+// this is a generic mount that is based off the nema17 dimensions
+// it will also hold the pulley mounts
+module xMount() {
 	union () {
-		//motor(Nema17, orientation=[0, -180, 0]);
+		// face plate
+		cube([xMountWidth, xMountWidth, reinforcedPlateThickness], center=true);
+		// corner plate backing
+		translate([0, xMountWidth / 2 - reinforcedPlateThickness / 2, stepperHeight * 1.25 / 2])
+			cube([xMountWidth, reinforcedPlateThickness, stepperHeight * 1.25], center=true);
+		// side supports
+		for (i = [-1,1])
+			translate()
+				hull() {
+					translate([i * xMountWidth / 2 - i * reinforcedPlateThickness / 2, 
+							xMountWidth / 2 - reinforcedPlateThickness / 2, 
+							stepperHeight * 1.25 / 2])
+						cube([reinforcedPlateThickness, reinforcedPlateThickness,
+							stepperHeight * 1.25], center=true);
+					translate([i * xMountWidth / 2 - i * reinforcedPlateThickness / 2, 
+							-xMountWidth / 2 + reinforcedPlateThickness / 2, 
+							0])
+						cube([reinforcedPlateThickness, reinforcedPlateThickness,
+							reinforcedPlateThickness], center=true);
+				}
+	}
+}
+
+module xStepperMount() {
+	difference() {
+		xMount();
+		cylinder(h=reinforcedPlateThickness + cylHeightExt, d=stepperCollarWidth * 1.1, center=true);
+		for (i = [-1,1])
+			for (j = [-1,1])
+				translate([i * stepperMountHoleSpacing / 2, j * stepperMountHoleSpacing / 2, 0])
+					cylinder(h=reinforcedPlateThickness + cylHeightExt,
+						d=stepperMountScrewD, center=true);
+	}
+}
+
+module negXStepperMount() {
+	union() {
+		xStepperMount();
+		rotate([180, 0, 0])
+			motor(Nema17, orientation=[0, -180, 0]);
 	}
 }
