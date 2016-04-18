@@ -18,6 +18,7 @@ part = "assembly";
 //part = "renderYCarriageIdlerPulleyHousing";
 //part = "xPulleyHousing";
 //part = "negXPulleyMount";
+part = "xCarriageBeltMount";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
 beamHW = 10;
@@ -246,6 +247,8 @@ module render_part() {
 		renderYCarriageIdlerPulleyHousing();
 	} else if (part == "xPulleyHousing") {
 		xPulleyHousing();
+	} else if (part == "xCarriageBeltMount") {
+		xCarriageBeltMount();
 	} else {
 		// invalid value
 	}
@@ -622,6 +625,27 @@ module renderXCarriage() {
 		}
 }
 
+module beltMount() {
+	
+}
+
+module xCarriageBeltMount() {
+	union() {
+		// pulleys
+		translate([0,
+				-carriageIdlerPulleyHousingLength / 2,
+				beltIdlerPulleyH / 2 + reinforcedPlateThickness / 2
+				+ beltIdlerPulleyHousingPulleySpacerHeight])
+			beltIdlerPulley();
+		translate([0,
+				carriageIdlerPulleyHousingLength / 2,
+				beltIdlerPulleyH / 2 + reinforcedPlateThickness / 2
+				+ beltIdlerPulleyH
+				+ 2 * beltIdlerPulleyHousingPulleySpacerHeight ])
+			beltIdlerPulley();
+	}
+}
+
 module xCarriage() {
 	difference() {
 		union() {
@@ -795,7 +819,12 @@ stepperCollarWidth = 22;
 
 xMountStepperBuffer = 2;
 xMountWidth = stepperWidth + xMountStepperBuffer + reinforcedPlateThickness * 2;
+/*
+// original slot len was 6
 stepperMountHoleTensionSlotLen = 6;
+*/
+// instead, going with 0 and putting tensioner on ends
+stepperMountHoleTensionSlotLen = 0;
 
 // this is a generic mount that is based off the nema17 dimensions
 // it will also hold the pulley mounts
