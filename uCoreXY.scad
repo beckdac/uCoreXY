@@ -795,6 +795,7 @@ stepperCollarWidth = 22;
 
 xMountStepperBuffer = 2;
 xMountWidth = stepperWidth + xMountStepperBuffer + reinforcedPlateThickness * 2;
+stepperMountHoleTensionSlotLen = 6;
 
 // this is a generic mount that is based off the nema17 dimensions
 // it will also hold the pulley mounts
@@ -830,8 +831,14 @@ module xStepperMount() {
 		for (i = [-1,1])
 			for (j = [-1,1])
 				translate([i * stepperMountHoleSpacing / 2, j * stepperMountHoleSpacing / 2, 0])
-					cylinder(h=reinforcedPlateThickness + cylHeightExt,
-						d=stepperMountScrewD, center=true);
+					hull() {
+						translate([0, stepperMountHoleTensionSlotLen * .25, 0])
+							cylinder(h=reinforcedPlateThickness + cylHeightExt,
+								d=stepperMountScrewD, center=true);
+						translate([0, -stepperMountHoleTensionSlotLen * .75, 0])
+							cylinder(h=reinforcedPlateThickness + cylHeightExt,
+								d=stepperMountScrewD, center=true);
+					}
 	}
 }
 
@@ -1075,6 +1082,8 @@ module carriageIdlerPulleyHousing() {
 									d2=beltIdlerPulleyHousingScrewD + plateThickness, center=true);
 							}
 							cylinder(h=xPulleyMountPlateHeight - reinforcedPlateThickness + cylHeightExt,
+								d=beltIdlerPulleyHousingScrewD, center=true);
+							#cylinder(h=xPulleyMountPlateHeight - reinforcedPlateThickness + cylHeightExt,
 								d=beltIdlerPulleyHousingScrewD, center=true);
 						}
 			}
