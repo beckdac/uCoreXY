@@ -655,31 +655,34 @@ module negXCarriageBeltMount() {
 	xCarraigeBeltMount();
 }
 
-module beltMountClip() {
+module beltMountClip(growUp) {
 	union () {
 		difference() {
 			union() {
 				// bulk
 				cube([beltMountClipX, beltMountClipY,
 					beltMountClipZ], center=true);
+				thisHeight = xPulleyMountPlateHeight - reinforcedPlateThickness - beltMountClipZ;
+				if (growUp) {
+/*
+					#translate([0,
+							0,
+							beltMountClipZ / 2 + thisHeight / 2])
+						cube([beltMountClipX,
+							beltMountClipY,
+							thisHeight
+							], center = true);
+*/
+				} else {
+					translate([0,
+							0,
+							-beltMountClipZ / 2 - thisHeight / 2])
+						cube([beltMountClipX,
+							beltMountClipY,
+							thisHeight
+							], center = true);
+				}
 			}
-
-			// slot
-			translate([-beltMountClipTensionSheetThickness * 2 / 2, beltMountClipY / 4,
-					beltMountClipZ / 2 - beltMountClipZ / 2])
-				cube([beltMountClipX - beltMountClipTensionSheetThickness * 2 + cylHeightExt,
-					beltMountClipY / 2 - beltMountClipTensionSheetThickness * 2,
-					beltMountClipZ - beltMountClipTensionSheetThickness * 2], center = true);
-			// tension screw
-			translate([0, beltMountClipY / 4, 0])
-				rotate([0, 90, 0])
-					cylinder(h=beltMountClipX + cylHeightExt,
-						d=beltMountClipTensionScrewD, center=true);
-			// tension screw recess
-			translate([beltMountClipX / 2, beltMountClipY / 4, 0])
-				rotate([0, 90, 0])
-					cylinder(h=plateThickness / 2,
-						d=beltMountClipTensionScrewD * 2, center=true);
 			// belt fastener
 			// incoming belt cutout
 			translate([beltMountClipX / 8,
@@ -747,93 +750,13 @@ module beltMountClip() {
 	}
 }
 
-module beltMount(growUp) {
-	difference() {
-		union() {
-			// bulk
-			translate([-beltMountClipX - beltMountClipX, 
-					0,
-					beltMountClipZ / 2 - beltMountClipZ / 2])
-				cube([beltMountClipX,
-					beltMountClipY,
-					beltMountClipZ], center = true);
-			// male for tensioner
-			translate([-beltMountClipX-beltMountClipTensionSheetThickness * 2 / 2, 
-					beltMountClipY / 4,
-					beltMountClipZ / 2 - beltMountClipZ / 2])
-				cube([beltMountClipX - beltMountClipTensionSheetThickness * 2 + cylHeightExt,
-					beltMountClipY / 2 - beltMountClipTensionSheetThickness * 2 - iFitAdjust,
-					beltMountClipZ - beltMountClipTensionSheetThickness * 2 - iFitAdjust], center = true);
-			thisHeight = xPulleyMountPlateHeight - reinforcedPlateThickness - beltMountClipZ;
-			if (growUp) {
-				translate([-beltMountClipX * 1.5, 
-						0,
-						beltMountClipZ / 2 + thisHeight / 2])
-					cube([beltMountClipX * 2,
-						beltMountClipY,
-						thisHeight
-						], center = true);
-			} else {
-				translate([-beltMountClipX * 1.5, 
-						0,
-						-beltMountClipZ / 2 - thisHeight / 2])
-					cube([beltMountClipX * 2,
-						beltMountClipY,
-						thisHeight
-						], center = true);
-			}
-		}
-		// tensioner screw
-		// this piece through the male
-		translate([-beltMountClipX - cylHeightExt / 2, 
-				beltMountClipY / 4, 0])
-			rotate([0, 90, 0])
-				cylinder(h=beltMountClipX + cylHeightExt,
-					d=beltMountClipTensionScrewD, center=true);
-		// and through the bulk
-		translate([-beltMountClipX * 2 - cylHeightExt / 2, 
-				beltMountClipY / 4, 0])
-			rotate([0, 90, 0])
-				cylinder(h=beltMountClipX + cylHeightExt,
-					d=beltMountClipTensionScrewD, center=true);
-		// and beyond another bit
-		translate([-beltMountClipX * 2 - cylHeightExt / 2,
-				beltMountClipY / 4, 0])
-			rotate([0, 90, 0])
-				cylinder(h=beltMountClipX + cylHeightExt,
-					d=beltMountClipTensionScrewD, center=true);
-		// tensioner captive nut
-		translate([-beltMountClipX * 1.75, 
-				beltMountClipY / 4, 0])
-			cube([beltMountCaptiveNutHeight,
-				beltMountCaptiveNutWidth,
-				beltMountClipZ + cylHeightExt], center=true);
-		// mounting screws to carriage
-		screwHeight = beltMountClipZ * 2 + cylHeightExt;
-		if (growUp) {
-			translate([-beltMountClipX * 2,
-					-beltMountClipY / 8,
-					screwHeight / 4])
-				cylinder(h=screwHeight,
-					d=beltMountScrewD, center=true);
-		} else {
-			translate([-beltMountClipX * 2,
-					-beltMountClipY / 8,
-					-screwHeight / 4])
-				cylinder(h=screwHeight,
-					d=beltMountScrewD, center=true);
-		}
-	}
-}
-
 module xCarriageBeltMount() {
 	translate([0, 0,
             yAxisRailSep / 2 - reinforcedPlateThickness / 2 +
                 frameSideHeight / 2 + beamHW / 2 +
                 holderBaseWidth / 2
             ])
-	translate([beltMountClipX * 2,
-		0,
+	translate([laserHeatsinkY, 0
 		-reinforcedPlateThickness / 2])
 	difference() {
 	union() {
@@ -845,8 +768,7 @@ module xCarriageBeltMount() {
 				+ beltIdlerPulleyHousingPulleySpacerHeight])
 			mirror([0, -1, 0])
 				union() {
-					beltMount(true);
-					beltMountClip();
+					beltMountClip(true);
 				}
 		translate([0, 
 				+beltThickness / 2 
@@ -856,22 +778,22 @@ module xCarriageBeltMount() {
 				+ beltIdlerPulleyH
 				+ 2 * beltIdlerPulleyHousingPulleySpacerHeight ])
 				union() {
-					beltMount(false);
-					beltMountClip();
+					beltMountClip(false);
 				}
 		// join the two beltMounts
 		joinerWidth = 2 * ((-beltThickness / 2
 					+carriageIdlerPulleyHousingLength / 2
 					+beltIdlerPulleyD / 2) - beltMountClipY / 2);
-		translate([-beltMountClipX - beltMountClipX / 2, 
+		translate([0,
 				0,
 				(xPulleyMountPlateHeight - reinforcedPlateThickness) / 2 +
 					reinforcedPlateThickness / 2
 				])
-			cube([beltMountClipX * 2,
+			cube([beltMountClipX,
 				joinerWidth,
 				xPulleyMountPlateHeight - reinforcedPlateThickness], center=true);
 	}
+/*
 		// mounting screws to carriage
 		screwHeight = beltMountClipZ * 2 + cylHeightExt;
 		translate([-beltMountClipX,
@@ -881,6 +803,7 @@ module xCarriageBeltMount() {
 				])
 			cylinder(h=screwHeight,
 				d=beltMountScrewD, center=true);
+*/
 	}
 }
 
@@ -1057,12 +980,7 @@ stepperCollarWidth = 22;
 
 xMountStepperBuffer = 2;
 xMountWidth = stepperWidth + xMountStepperBuffer + reinforcedPlateThickness * 2;
-/*
-// original slot len was 6
 stepperMountHoleTensionSlotLen = 6;
-*/
-// instead, going with 0 and putting tensioner on ends
-stepperMountHoleTensionSlotLen = 0;
 
 // this is a generic mount that is based off the nema17 dimensions
 // it will also hold the pulley mounts
