@@ -694,6 +694,23 @@ module beltMountClip() {
 					cube([beltMountClipX / 4, beltMountClipY / 4, 
 						beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt], center=true);
 			}
+			// semi circle enlarged cutout for cleanliness
+			translate([-beltMountClipX / 4,
+					-beltMountClipY / 4,
+					(beltH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltH / 2
+					])
+			intersection() {
+				difference() {
+					cylinder(h=beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt,
+						d=beltMountClipY, center=true);
+					cylinder(h=beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt,
+						d=beltMountClipY / 2 - 2 * beltThickness, center=true);
+				}
+				translate([+beltMountClipX / 8 - beltMountClipX / 4,
+						beltMountClipY / 8 - beltMountClipY / 4, 0])
+					cube([beltMountClipX / 4 + cylHeightExt, beltMountClipY / 4 + cylHeightExt, 
+						beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt], center=true);
+			}
 			//intersecting diagonal to clamp belt
 			translate([0, 0, 
 					(beltH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltH / 2
@@ -736,8 +753,14 @@ module beltMount() {
 			rotate([0, 90, 0])
 				cylinder(h=beltMountClipX + cylHeightExt,
 					d=beltMountClipTensionScrewD, center=true);
+		// and beyond another bit
+		#translate([-beltMountClipX * 2 - cylHeightExt / 2,
+				beltMountClipY / 4, 0])
+			rotate([0, 90, 0])
+				cylinder(h=beltMountClipX + cylHeightExt,
+					d=beltMountClipTensionScrewD, center=true);
 		// tensioner captive nut
-		#translate([-beltMountClipX * 2 - cylHeightExt / 2, 
+		#translate([-beltMountClipX * 1.75, 
 				beltMountClipY / 4, 0])
 			cube([beltMountCaptiveNutHeight,
 				beltMountCaptiveNutWidth,
