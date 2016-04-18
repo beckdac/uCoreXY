@@ -653,14 +653,11 @@ module beltMountClip() {
 				rotate([0, 90, 0])
 					cylinder(h=beltMountClipX + cylHeightExt,
 						d=beltMountClipTensionScrewD, center=true);
-/*
-// disabled this as it was just for aesthetics
 			// tension screw recess
 			translate([beltMountClipX / 2, -beltMountClipY / 4, 0])
 				rotate([0, 90, 0])
-					cylinder(h=plateThickness / 4,
-						d=beltMountClipTensionScrewD * 1.5, center=true);
-*/
+					cylinder(h=plateThickness / 2,
+						d=beltMountClipTensionScrewD * 2, center=true);
 			// belt fastener
 			// incoming belt cutout
 			translate([beltMountClipX / 8,
@@ -698,11 +695,11 @@ module beltMountClip() {
 					(beltH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltH / 2
 					- (beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt) / 2
 				])
-			#linear_extrude(height=beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt)
-				polygon(points=[[0, beltMountClipY / 4 + beltThickness],
+			linear_extrude(height=beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt)
+				polygon(points=[[-iFitAdjust, beltMountClipY / 4 + beltThickness + iFitAdjust],
 							[beltMountClipX / 4, 2 * beltThickness],
 							[beltMountClipX / 4, 0],
-							[-beltThickness, beltMountClipY / 4 + beltThickness]
+							[-beltThickness * 1.25 - iFitAdjust, beltMountClipY / 4 + beltThickness + iFitAdjust]
 							]);
 		}
 	}
