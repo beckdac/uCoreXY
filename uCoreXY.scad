@@ -18,7 +18,7 @@ part = "assembly";
 //part = "renderYCarriageIdlerPulleyHousing";
 //part = "xPulleyHousing";
 //part = "negXPulleyMount";
-part = "xCarriageBeltMount";
+//part = "xCarriageBeltMount";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
 beamHW = 10;
@@ -143,6 +143,19 @@ laserHeatsinkWireslotX = 10;
 laserHeatsinkWireslotY = 5;
 laserHeatsinkWireslotOffset = 8;
 
+// belt clip on X Carriage
+beltMountClipX = 20;
+beltMountClipY = 20;
+//beltMountClipZ = beltH + beltIdlerPulleyHousingPulleySpacerHeight * 2;
+// for testing
+beltMountClipZ = beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight * 2;
+beltMountClipTensionSheetThickness = plateThickness / 2;
+beltMountClipTensionScrewD = 3;
+beltMountClipTensionScrewNutWidth = 3;
+beltMountCaptiveNutWidth = yAxisRailTightCaptiveNutWidth;
+beltMountCaptiveNutHeight = yAxisRailTightCaptiveNutHeight;
+beltMountScrewD = 3;
+
 
 /* [Computed Constants] */
 // constants computed from the above
@@ -250,6 +263,10 @@ module render_part() {
 		xPulleyHousing();
 	} else if (part == "xCarriageBeltMount") {
 		xCarriageBeltMount();
+	} else if (part == "negXCarriageBeltMount") {
+		negXCarriageBeltMount();
+	} else if (part == "posXCarriageBeltMount") {
+		posXCarriageBeltMount();
 	} else {
 		// invalid value
 	}
@@ -446,7 +463,7 @@ module xAxisLinearRails() {
         for (i=[-1, 1])
 			translate([0, i * xAxisRailSep / 2, 
 					frameSideHeight / 2 + beamHW / 2 + yAxisRailSep / 2 + holderBaseWidth / 2
-					-(xAxisRailMountWidth / 2)])
+					-(xAxisRailMountWidth / 2) - reinforcedPlateThickness])
 				rotate([0, 90, 0])
 					cylinder(h=xAxisLinearRailLength, d=linearRailOD, center=true);
 	}
@@ -582,7 +599,10 @@ module yCarriage() {
 				yCarriageBrace();
 			// xAxis rails
 			// bring y to axis sep / 2
-			translate([0, -holderBaseWidth, yCarriageShelfLength / 3])
+			translate([reinforcedPlateThickness, 
+				-holderBaseWidth,
+				yCarriageShelfLength / 3
+				])
 			// bring y to center of carriage (0)
 			translate([0, yCarriageBraceLength / 2 - plateThickness / 1.5, 0])
 			translate([-holderBaseWidth / 2, -holderBaseLength * .5, 0])
@@ -596,11 +616,14 @@ module yCarriage() {
 }
 
 module renderXCarriage() {
+  union() {
 	translate([0, 0,
 		effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5 +
 		plateThickness / 2 +
 		frameSideHeight / 2 + beamHW / 2 + yAxisRailSep / 2 + holderBaseWidth / 2
-		-(xAxisRailMountWidth / 2)])
+		-(xAxisRailMountWidth / 2)
+		-reinforcedPlateThickness
+		])
 	rotate([0, 180, 90])
 		union(){
 			xCarriage();
@@ -624,19 +647,13 @@ module renderXCarriage() {
 					linear_bearing(linearBearingType);
 			}
 		}
+	xCarriageBeltMount();
+  }
 }
 
-beltMountClipX = 20;
-beltMountClipY = 20;
-//beltMountClipZ = beltH + beltIdlerPulleyHousingPulleySpacerHeight * 2;
-// for testing
-beltMountClipZ = beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight * 2;
-beltMountClipTensionSheetThickness = plateThickness / 2;
-beltMountClipTensionScrewD = 3;
-beltMountClipTensionScrewNutWidth = 3;
-beltMountCaptiveNutWidth = yAxisRailTightCaptiveNutWidth;
-beltMountCaptiveNutHeight = yAxisRailTightCaptiveNutHeight;
-beltMountScrewD = 3;
+module negXCarriageBeltMount() {
+	xCarraigeBeltMount();
+}
 
 module beltMountClip() {
 	union () {
@@ -810,6 +827,14 @@ module beltMount(growUp) {
 }
 
 module xCarriageBeltMount() {
+	translate([0, 0,
+            yAxisRailSep / 2 - reinforcedPlateThickness / 2 +
+                frameSideHeight / 2 + beamHW / 2 +
+                holderBaseWidth / 2
+            ])
+	translate([beltMountClipX * 2,
+		0,
+		-reinforcedPlateThickness / 2])
 	difference() {
 	union() {
 		translate([0, 
