@@ -67,11 +67,24 @@ yAxisRailMountBuffer = 10;
 linearBearingType = "LM-8-UU"; // [LM-8-UU:lm8uu]
 
 /* [Belt] */
+/* old for 16 tooth
 beltIdlerPulleyLidH = 1;
 //beltIdlerPulleyH = 8.4;
 beltIdlerPulleyH = 8.4 - beltIdlerPulleyLidH * 2;
 beltIdlerPulleyD = 6.3;
 beltIdlerPulleyLidD = 12.6;
+beltIdlerPulleyBearingID = 3;
+beltIdlerPulleyBearingScrewD = beltIdlerPulleyBearingID + iFitAdjust;
+beltIdlerPulleyHousingScrewD = beltIdlerPulleyBearingScrewD;
+beltIdlerPulleyHousingPulleySpacerHeight = 2;
+beltIdlerPulleyHousingPulleySpacerD = 4.4;
+*/
+/* for 20 tooth compatible dimensions */
+beltIdlerPulleyLidH = 1;
+//beltIdlerPulleyH = 8.4;
+beltIdlerPulleyH = 9 - beltIdlerPulleyLidH * 2;
+beltIdlerPulleyD = 12.2;
+beltIdlerPulleyLidD = 18;
 beltIdlerPulleyBearingID = 3;
 beltIdlerPulleyBearingScrewD = beltIdlerPulleyBearingID + iFitAdjust;
 beltIdlerPulleyHousingScrewD = beltIdlerPulleyBearingScrewD;
@@ -104,7 +117,7 @@ linearBearingHolderShellThickness = 6;
 // y carriage shelf length (mm), where x rails mount
 yCarriageShelfLength = 50;
 // y carriage idler housing
-carriageIdlerPulleyHousingWidth = beltIdlerPulleyD * 2 + 2.5;
+carriageIdlerPulleyHousingWidth = beltIdlerPulleyD + 2.5;
 carriageIdlerPulleyHousingLength = carriageIdlerPulleyHousingWidth;
 carriageIdlerPulleyHousingCylD = beltIdlerPulleyHousingScrewD + plateThickness / 2;
 
@@ -224,7 +237,7 @@ module render_part() {
 	} else if (part == "renderPosYCarriage") {
 		renderPosYCarriage();
 	} else if (part == "renderNegYCarriage") {
-		renderNegYCarriage();
+		renderNegYCarriage(0);
 	} else if (part == "renderXCarriage") {
 		renderXCarriage();
 	} else if (part == "carriageIdlerPulleyHousing") {
@@ -247,7 +260,7 @@ module assembly() {
         topPosXPosYCornerBracket();
 		yAxisLinearRails();
 		xAxisLinearRails();
-		renderNegYCarriage();
+		renderNegYCarriage(0);
 		renderPosYCarriage();
 		renderXCarriage();
 		negXStepperMount();
@@ -655,7 +668,8 @@ module xCarriage() {
 	}
 }
 
-module renderNegYCarriage() {
+module renderNegYCarriage(rotateHousingZAxisAngle) {
+  union() {
 	translate([-yAxisRailMountWidth + plateThickness / 4 - yAxisLinearBearingToBracketClearence,
 			0, yAxisRailSep / 2])
 		translate([-frameSideLength / 2 + beamHW / 2, 0, frameSideHeight / 2 + beamHW / 2])
@@ -663,10 +677,23 @@ module renderNegYCarriage() {
 					-holderBaseLength / 2 + plateThickness, 0])
 				rotate([0, 90, 0])
 					renderYCarriage();
+	translate([0, 0, 
+			yAxisRailSep / 2 - reinforcedPlateThickness / 2 +
+				frameSideHeight / 2 + beamHW / 2 +
+				holderBaseWidth / 2
+			])
+		translate([frameSideLength / 2 +
+					effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5
+					-carriageIdlerPulleyHousingWidth / 2,
+				0, 0])
+			//rotate([0, 0, rotateHousingZAxisAngle])
+				renderYCarriageIdlerPulleyHousing();
+		echo(rotateHousingZAxisAngle);
+  }
 }
 
 module renderPosYCarriage() {
-	mirror([-1, 0, 0]) renderNegYCarriage();
+	mirror([-1, 0, 0]) renderNegYCarriage(0);
 }
 
 module renderYCarriage() {
@@ -945,7 +972,7 @@ module posXPulleyMount() {
 module pulleyHousingSpacer() {
 	difference() {
 		cylinder(h=beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight, 
-			d=beltIdlerPulleyHousingScrewD + plateThickness, center=true);
+			d=carriageIdlerPulleyHousingCylD, center=true);
 		cylinder(h=beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt, 
 			d=beltIdlerPulleyHousingScrewD, center=true);
 	}
