@@ -645,25 +645,25 @@ module beltMountClip() {
 			}
 
 			// slot
-			translate([-beltMountClipTensionSheetThickness * 2 / 2, -beltMountClipY / 4,
+			translate([-beltMountClipTensionSheetThickness * 2 / 2, beltMountClipY / 4,
 					beltMountClipZ / 2 - beltMountClipZ / 2])
 				cube([beltMountClipX - beltMountClipTensionSheetThickness * 2 + cylHeightExt,
 					beltMountClipY / 2 - beltMountClipTensionSheetThickness * 2,
 					beltMountClipZ - beltMountClipTensionSheetThickness * 2], center = true);
 			// tension screw
-			translate([0, -beltMountClipY / 4, 0])
+			translate([0, beltMountClipY / 4, 0])
 				rotate([0, 90, 0])
 					cylinder(h=beltMountClipX + cylHeightExt,
 						d=beltMountClipTensionScrewD, center=true);
 			// tension screw recess
-			translate([beltMountClipX / 2, -beltMountClipY / 4, 0])
+			translate([beltMountClipX / 2, beltMountClipY / 4, 0])
 				rotate([0, 90, 0])
 					cylinder(h=plateThickness / 2,
 						d=beltMountClipTensionScrewD * 2, center=true);
 			// belt fastener
 			// incoming belt cutout
 			translate([beltMountClipX / 8,
-						beltThickness / 2,
+						-beltThickness / 2,
 						(beltH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltH / 2
 						])
 				cube([beltMountClipX * .75,
@@ -671,14 +671,15 @@ module beltMountClip() {
 					beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt], center=true);
 			// outgoing belt cutout
 			translate([beltMountClipX / 2 - beltMountClipX * .25 / 2,
-						beltThickness * 1.5,
+						-beltThickness * 1.5,
 						(beltH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltH / 2
 						])
 				cube([beltMountClipX * .25,
 					beltThickness,
 					beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt], center=true);
 			// semi circle
-			translate([-beltMountClipX / 4, beltMountClipY / 4,
+			translate([-beltMountClipX / 4,
+					-beltMountClipY / 4,
 					(beltH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltH / 2
 					])
 			difference() {
@@ -688,7 +689,8 @@ module beltMountClip() {
 					cylinder(h=beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt,
 						d=beltMountClipY / 2 - 2 * beltThickness, center=true);
 				}
-				translate([+beltMountClipX / 8, - beltMountClipY / 8 + beltThickness, 0])
+				translate([+beltMountClipX / 8,
+						beltMountClipY / 8 - beltThickness, 0])
 					cube([beltMountClipX / 4, beltMountClipY / 4, 
 						beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt], center=true);
 			}
@@ -698,10 +700,11 @@ module beltMountClip() {
 					- (beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt) / 2
 				])
 			linear_extrude(height=beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt)
-				polygon(points=[[-iFitAdjust, beltMountClipY / 4 + beltThickness + iFitAdjust],
-							[beltMountClipX / 4, 2 * beltThickness],
+				polygon(points=[[-iFitAdjust, -beltMountClipY / 4 - beltThickness - iFitAdjust],
+							[beltMountClipX / 4, -2 * beltThickness],
 							[beltMountClipX / 4, 0],
-							[-beltThickness * 1.25 - iFitAdjust, beltMountClipY / 4 + beltThickness + iFitAdjust]
+							[-beltThickness * 1.25 - iFitAdjust, 	
+								-beltMountClipY / 4 - beltThickness - iFitAdjust]
 							]);
 		}
 	}
@@ -712,7 +715,8 @@ module beltMount() {
 		union() {
 			// bulk
 			// male for tensioner
-			translate([-beltMountClipX-beltMountClipTensionSheetThickness * 2 / 2, -beltMountClipY / 4,
+			translate([-beltMountClipX-beltMountClipTensionSheetThickness * 2 / 2, 
+					beltMountClipY / 4,
 					beltMountClipZ / 2 - beltMountClipZ / 2])
 				cube([beltMountClipX - beltMountClipTensionSheetThickness * 2 + cylHeightExt,
 					beltMountClipY / 2 - beltMountClipTensionSheetThickness * 2 - iFitAdjust,
@@ -721,17 +725,20 @@ module beltMount() {
 		}
 		// tensioner screw
 		// this piece through the male
-		translate([-beltMountClipX - cylHeightExt / 2, -beltMountClipY / 4, 0])
+		translate([-beltMountClipX - cylHeightExt / 2, 
+				beltMountClipY / 4, 0])
 			rotate([0, 90, 0])
 				cylinder(h=beltMountClipX + cylHeightExt,
 					d=beltMountClipTensionScrewD, center=true);
 		// and through the bulk
-		translate([-beltMountClipX * 2 - cylHeightExt / 2, -beltMountClipY / 4, 0])
+		translate([-beltMountClipX * 2 - cylHeightExt / 2, 
+				beltMountClipY / 4, 0])
 			rotate([0, 90, 0])
 				cylinder(h=beltMountClipX + cylHeightExt,
 					d=beltMountClipTensionScrewD, center=true);
 		// tensioner captive nut
-		#translate([-beltMountClipX * 2 - cylHeightExt / 2, -beltMountClipY / 4, 0])
+		#translate([-beltMountClipX * 2 - cylHeightExt / 2, 
+				beltMountClipY / 4, 0])
 			cube([beltMountCaptiveNutHeight,
 				beltMountCaptiveNutWidth,
 				beltMountClipZ], center=true);
