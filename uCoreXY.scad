@@ -628,7 +628,9 @@ module renderXCarriage() {
 
 beltMountClipX = 20;
 beltMountClipY = 20;
-beltMountClipZ = beltH + beltIdlerPulleyHousingPulleySpacerHeight * 2;
+//beltMountClipZ = beltH + beltIdlerPulleyHousingPulleySpacerHeight * 2;
+// for testing
+beltMountClipZ = beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight * 2;
 beltMountClipTensionSheetThickness = plateThickness / 2;
 beltMountClipTensionScrewD = 3;
 beltMountClipTensionScrewNutWidth = 3;
@@ -664,59 +666,59 @@ module beltMountClip() {
 			// incoming belt cutout
 			translate([beltMountClipX / 8,
 						-beltThickness / 2,
-						(beltH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltH / 2
+						(beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltIdlerPulleyH / 2
 						])
 				cube([beltMountClipX * .75,
 					beltThickness,
-					beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt], center=true);
+					beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt], center=true);
 			// outgoing belt cutout
 			translate([beltMountClipX / 2 - beltMountClipX * .25 / 2,
 						-beltThickness * 1.5,
-						(beltH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltH / 2
+						(beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltIdlerPulleyH / 2
 						])
 				cube([beltMountClipX * .25,
 					beltThickness,
-					beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt], center=true);
+					beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt], center=true);
 			// semi circle
 			translate([-beltMountClipX / 4,
 					-beltMountClipY / 4,
-					(beltH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltH / 2
+					(beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltIdlerPulleyH / 2
 					])
 			difference() {
 				difference() {
-					cylinder(h=beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt,
+					cylinder(h=beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt,
 						d=beltMountClipY / 2, center=true);
-					cylinder(h=beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt,
+					cylinder(h=beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt,
 						d=beltMountClipY / 2 - 2 * beltThickness, center=true);
 				}
 				translate([+beltMountClipX / 8,
 						beltMountClipY / 8 - beltThickness, 0])
 					cube([beltMountClipX / 4, beltMountClipY / 4, 
-						beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt], center=true);
+						beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt], center=true);
 			}
 			// semi circle enlarged cutout for cleanliness
 			translate([-beltMountClipX / 4,
 					-beltMountClipY / 4,
-					(beltH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltH / 2
+					(beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltIdlerPulleyH / 2
 					])
 			intersection() {
 				difference() {
-					cylinder(h=beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt,
+					cylinder(h=beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt,
 						d=beltMountClipY, center=true);
-					cylinder(h=beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt,
+					cylinder(h=beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt,
 						d=beltMountClipY / 2 - 2 * beltThickness, center=true);
 				}
 				translate([+beltMountClipX / 8 - beltMountClipX / 4,
 						beltMountClipY / 8 - beltMountClipY / 4, 0])
 					cube([beltMountClipX / 4 + cylHeightExt, beltMountClipY / 4 + cylHeightExt, 
-						beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt], center=true);
+						beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt], center=true);
 			}
 			//intersecting diagonal to clamp belt
 			translate([0, 0, 
-					(beltH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltH / 2
-					- (beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt) / 2
+					(beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltIdlerPulleyH / 2
+					- (beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt) / 2
 				])
-			linear_extrude(height=beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt)
+			linear_extrude(height=beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt)
 				polygon(points=[[-iFitAdjust, -beltMountClipY / 4 - beltThickness - iFitAdjust],
 							[beltMountClipX / 4, -2 * beltThickness],
 							[beltMountClipX / 4, 0],
@@ -727,10 +729,16 @@ module beltMountClip() {
 	}
 }
 
-module beltMount() {
+module beltMount(growUp) {
 	difference() {
 		union() {
 			// bulk
+			translate([-beltMountClipX - beltMountClipX, 
+					0,
+					beltMountClipZ / 2 - beltMountClipZ / 2])
+				cube([beltMountClipX,
+					beltMountClipY,
+					beltMountClipZ], center = true);
 			// male for tensioner
 			translate([-beltMountClipX-beltMountClipTensionSheetThickness * 2 / 2, 
 					beltMountClipY / 4,
@@ -738,7 +746,24 @@ module beltMount() {
 				cube([beltMountClipX - beltMountClipTensionSheetThickness * 2 + cylHeightExt,
 					beltMountClipY / 2 - beltMountClipTensionSheetThickness * 2 - iFitAdjust,
 					beltMountClipZ - beltMountClipTensionSheetThickness * 2 - iFitAdjust], center = true);
-			
+			thisHeight = xPulleyMountPlateHeight - reinforcedPlateThickness - beltMountClipZ;
+			if (growUp) {
+				translate([-beltMountClipX * 1.5, 
+						0,
+						beltMountClipZ / 2 + thisHeight / 2])
+					cube([beltMountClipX * 2,
+						beltMountClipY,
+						thisHeight
+						], center = true);
+			} else {
+				translate([-beltMountClipX * 1.5, 
+						0,
+						-beltMountClipZ / 2 - thisHeight / 2])
+					cube([beltMountClipX * 2,
+						beltMountClipY,
+						thisHeight
+						], center = true);
+			}
 		}
 		// tensioner screw
 		// this piece through the male
@@ -754,24 +779,57 @@ module beltMount() {
 				cylinder(h=beltMountClipX + cylHeightExt,
 					d=beltMountClipTensionScrewD, center=true);
 		// and beyond another bit
-		#translate([-beltMountClipX * 2 - cylHeightExt / 2,
+		translate([-beltMountClipX * 2 - cylHeightExt / 2,
 				beltMountClipY / 4, 0])
 			rotate([0, 90, 0])
 				cylinder(h=beltMountClipX + cylHeightExt,
 					d=beltMountClipTensionScrewD, center=true);
 		// tensioner captive nut
-		#translate([-beltMountClipX * 1.75, 
+		translate([-beltMountClipX * 1.75, 
 				beltMountClipY / 4, 0])
 			cube([beltMountCaptiveNutHeight,
 				beltMountCaptiveNutWidth,
-				beltMountClipZ], center=true);
+				beltMountClipZ + cylHeightExt], center=true);
 		// mounting screws to carriage
 	}
 }
 
 module xCarriageBeltMount() {
-	beltMount();
-	beltMountClip();
+	union() {
+		translate([0, 
+				-beltThickness / 2
+					+carriageIdlerPulleyHousingLength / 2
+					+beltIdlerPulleyD / 2,
+				beltIdlerPulleyH / 2 + reinforcedPlateThickness / 2
+				+ beltIdlerPulleyHousingPulleySpacerHeight])
+			mirror([0, -1, 0])
+				union() {
+					beltMount(true);
+					beltMountClip();
+				}
+		translate([0, 
+				+beltThickness / 2 
+					- carriageIdlerPulleyHousingLength / 2
+					- beltIdlerPulleyD / 2,
+				beltIdlerPulleyH / 2 + reinforcedPlateThickness / 2
+				+ beltIdlerPulleyH
+				+ 2 * beltIdlerPulleyHousingPulleySpacerHeight ])
+				union() {
+					beltMount(false);
+					beltMountClip();
+				}
+		joinerWidth = 2 * ((-beltThickness / 2
+					+carriageIdlerPulleyHousingLength / 2
+					+beltIdlerPulleyD / 2) - beltMountClipY / 2);
+		translate([-beltMountClipX - beltMountClipX / 2, 
+				0,
+				(xPulleyMountPlateHeight - reinforcedPlateThickness) / 2 +
+					reinforcedPlateThickness / 2
+				])
+			cube([beltMountClipX * 2,
+				joinerWidth,
+				xPulleyMountPlateHeight - reinforcedPlateThickness], center=true);
+	}
 /*
 	union() {
 		// pulleys
