@@ -328,7 +328,7 @@ module parallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRailSep, 
 							i * axisRailSep / 2, 
 							supportConeLength / 8 - cylHeightExt / 2
 								- depth])
-						// # this is an interesting piece... not ready to give up the #
+						// this is an interesting piece... not ready to give up the number 
 						cylinder(h=depth, d=linearRailOD);
 			}
 			// slots for tightening
@@ -797,19 +797,20 @@ module beltMount(growUp) {
 			translate([-beltMountClipX * 2,
 					-beltMountClipY / 8,
 					screwHeight / 4])
-				#cylinder(h=screwHeight,
+				cylinder(h=screwHeight,
 					d=beltMountScrewD, center=true);
 		} else {
 			translate([-beltMountClipX * 2,
 					-beltMountClipY / 8,
 					-screwHeight / 4])
-				#cylinder(h=screwHeight,
+				cylinder(h=screwHeight,
 					d=beltMountScrewD, center=true);
 		}
 	}
 }
 
 module xCarriageBeltMount() {
+	difference() {
 	union() {
 		translate([0, 
 				-beltThickness / 2
@@ -845,6 +846,7 @@ module xCarriageBeltMount() {
 			cube([beltMountClipX * 2,
 				joinerWidth,
 				xPulleyMountPlateHeight - reinforcedPlateThickness], center=true);
+	}
 		// mounting screws to carriage
 		screwHeight = beltMountClipZ * 2 + cylHeightExt;
 		translate([-beltMountClipX,
@@ -852,25 +854,9 @@ module xCarriageBeltMount() {
 				(xPulleyMountPlateHeight - reinforcedPlateThickness) / 2 +
 					reinforcedPlateThickness / 2
 				])
-			#cylinder(h=screwHeight,
+			cylinder(h=screwHeight,
 				d=beltMountScrewD, center=true);
 	}
-/*
-	union() {
-		// pulleys
-		translate([0,
-				-carriageIdlerPulleyHousingLength / 2,
-				beltIdlerPulleyH / 2 + reinforcedPlateThickness / 2
-				+ beltIdlerPulleyHousingPulleySpacerHeight])
-			beltIdlerPulley();
-		translate([0,
-				carriageIdlerPulleyHousingLength / 2,
-				beltIdlerPulleyH / 2 + reinforcedPlateThickness / 2
-				+ beltIdlerPulleyH
-				+ 2 * beltIdlerPulleyHousingPulleySpacerHeight ])
-			beltIdlerPulley();
-	}
-*/
 }
 
 module xCarriage() {
