@@ -92,6 +92,7 @@ beltIdlerPulleyHousingScrewD = beltIdlerPulleyBearingScrewD;
 beltIdlerPulleyHousingPulleySpacerHeight = 2;
 beltIdlerPulleyHousingPulleySpacerD = 4.4;
 beltH = 6;
+beltThickness = 1.5;
 // belt pulley
 beltPulleyLidD = 16;
 beltPulleyH = 16;
@@ -625,11 +626,104 @@ module renderXCarriage() {
 		}
 }
 
+beltMountClipX = 20;
+beltMountClipY = 20;
+beltMountClipZ = beltH + beltIdlerPulleyHousingPulleySpacerHeight * 2;
+beltMountClipTensionSheetThickness = plateThickness / 2;
+beltMountClipTensionScrewD = 3;
+beltMountClipTensionScrewNutWidth = 3;
+
+module beltMountClip() {
+	union () {
+		difference() {
+			union() {
+				// bulk
+				cube([beltMountClipX, beltMountClipY,
+					beltMountClipZ], center=true);
+			}
+
+			// slot
+			translate([-beltMountClipTensionSheetThickness * 2 / 2, -beltMountClipY / 4,
+					beltMountClipZ / 2 - beltMountClipZ / 2])
+				cube([beltMountClipX - beltMountClipTensionSheetThickness * 2 + cylHeightExt,
+					beltMountClipY / 2 - beltMountClipTensionSheetThickness * 2,
+					beltMountClipZ - beltMountClipTensionSheetThickness * 2], center = true);
+			// tension screw
+			translate([0, -beltMountClipY / 4, 0])
+				rotate([0, 90, 0])
+					cylinder(h=beltMountClipX + cylHeightExt,
+						d=beltMountClipTensionScrewD, center=true);
+/*
+// disabled this as it was just for aesthetics
+			// tension screw recess
+			translate([beltMountClipX / 2, -beltMountClipY / 4, 0])
+				rotate([0, 90, 0])
+					cylinder(h=plateThickness / 4,
+						d=beltMountClipTensionScrewD * 1.5, center=true);
+*/
+			// belt fastener
+			// incoming belt cutout
+			translate([beltMountClipX / 8,
+						beltThickness / 2,
+						(beltH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltH / 2
+						])
+				cube([beltMountClipX * .75,
+					beltThickness,
+					beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt], center=true);
+			// outgoing belt cutout
+			translate([beltMountClipX / 2 - beltMountClipX * .25 / 2,
+						beltThickness * 1.5,
+						(beltH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltH / 2
+						])
+				cube([beltMountClipX * .25,
+					beltThickness,
+					beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt], center=true);
+			// semi circle
+			translate([-beltMountClipX / 4, beltMountClipY / 4,
+					(beltH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltH / 2
+					])
+			difference() {
+				difference() {
+					cylinder(h=beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt,
+						d=beltMountClipY / 2, center=true);
+					cylinder(h=beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt,
+						d=beltMountClipY / 2 - 2 * beltThickness, center=true);
+				}
+				translate([+beltMountClipX / 8, - beltMountClipY / 8 + beltThickness, 0])
+					cube([beltMountClipX / 4, beltMountClipY / 4, 
+						beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt], center=true);
+			}
+			//intersecting diagonal to clamp belt
+			translate([0, 0, 
+					(beltH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltH / 2
+					- (beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt) / 2
+				])
+			#linear_extrude(height=beltH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt)
+				polygon(points=[[0, beltMountClipY / 4 + beltThickness],
+							[beltMountClipX / 4, 2 * beltThickness],
+							[beltMountClipX / 4, 0],
+							[-beltThickness, beltMountClipY / 4 + beltThickness]
+							]);
+		}
+	}
+}
+
 module beltMount() {
-	
+	difference() {
+		union() {
+			// bulk
+			// male for tensioner
+		}
+		// tensioner screw
+		// tensioner captive nut
+		// mounting screws to carriage
+	}
 }
 
 module xCarriageBeltMount() {
+	beltMount();
+	beltMountClip();
+/*
 	union() {
 		// pulleys
 		translate([0,
@@ -644,6 +738,7 @@ module xCarriageBeltMount() {
 				+ 2 * beltIdlerPulleyHousingPulleySpacerHeight ])
 			beltIdlerPulley();
 	}
+*/
 }
 
 module xCarriage() {
@@ -1112,7 +1207,7 @@ module carriageIdlerPulleyHousing() {
 							}
 							cylinder(h=xPulleyMountPlateHeight - reinforcedPlateThickness + cylHeightExt,
 								d=beltIdlerPulleyHousingScrewD, center=true);
-							#cylinder(h=xPulleyMountPlateHeight - reinforcedPlateThickness + cylHeightExt,
+							cylinder(h=xPulleyMountPlateHeight - reinforcedPlateThickness + cylHeightExt,
 								d=beltIdlerPulleyHousingScrewD, center=true);
 						}
 			}
