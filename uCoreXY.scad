@@ -237,7 +237,7 @@ module render_part() {
 	} else if (part == "renderPosYCarriage") {
 		renderPosYCarriage();
 	} else if (part == "renderNegYCarriage") {
-		renderNegYCarriage(180);
+		renderNegYCarriage(0);
 	} else if (part == "renderXCarriage") {
 		renderXCarriage();
 	} else if (part == "carriageIdlerPulleyHousing") {
@@ -260,7 +260,7 @@ module assembly() {
         topPosXPosYCornerBracket();
 		yAxisLinearRails();
 		xAxisLinearRails();
-		renderNegYCarriage(180);
+		renderNegYCarriage(-90);
 		renderPosYCarriage();
 		renderXCarriage();
 		negXStepperMount();
@@ -693,7 +693,7 @@ module renderNegYCarriage(rotateHousingZAxisAngle) {
 }
 
 module renderPosYCarriage() {
-	mirror([-1, 0, 0]) renderNegYCarriage(0);
+	mirror([-1, 0, 0]) renderNegYCarriage(90);
 }
 
 module renderYCarriage() {
