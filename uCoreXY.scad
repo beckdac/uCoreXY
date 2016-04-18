@@ -636,6 +636,7 @@ beltMountClipTensionScrewD = 3;
 beltMountClipTensionScrewNutWidth = 3;
 beltMountCaptiveNutWidth = yAxisRailTightCaptiveNutWidth;
 beltMountCaptiveNutHeight = yAxisRailTightCaptiveNutHeight;
+beltMountScrewD = 3;
 
 module beltMountClip() {
 	union () {
@@ -791,6 +792,20 @@ module beltMount(growUp) {
 				beltMountCaptiveNutWidth,
 				beltMountClipZ + cylHeightExt], center=true);
 		// mounting screws to carriage
+		screwHeight = beltMountClipZ * 2 + cylHeightExt;
+		if (growUp) {
+			translate([-beltMountClipX * 2,
+					-beltMountClipY / 8,
+					screwHeight / 4])
+				#cylinder(h=screwHeight,
+					d=beltMountScrewD, center=true);
+		} else {
+			translate([-beltMountClipX * 2,
+					-beltMountClipY / 8,
+					-screwHeight / 4])
+				#cylinder(h=screwHeight,
+					d=beltMountScrewD, center=true);
+		}
 	}
 }
 
@@ -818,6 +833,7 @@ module xCarriageBeltMount() {
 					beltMount(false);
 					beltMountClip();
 				}
+		// join the two beltMounts
 		joinerWidth = 2 * ((-beltThickness / 2
 					+carriageIdlerPulleyHousingLength / 2
 					+beltIdlerPulleyD / 2) - beltMountClipY / 2);
@@ -829,6 +845,15 @@ module xCarriageBeltMount() {
 			cube([beltMountClipX * 2,
 				joinerWidth,
 				xPulleyMountPlateHeight - reinforcedPlateThickness], center=true);
+		// mounting screws to carriage
+		screwHeight = beltMountClipZ * 2 + cylHeightExt;
+		translate([-beltMountClipX,
+				0,
+				(xPulleyMountPlateHeight - reinforcedPlateThickness) / 2 +
+					reinforcedPlateThickness / 2
+				])
+			#cylinder(h=screwHeight,
+				d=beltMountScrewD, center=true);
 	}
 /*
 	union() {
