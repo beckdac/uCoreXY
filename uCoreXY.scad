@@ -55,8 +55,8 @@ yAxisRailSep = 30;
 // Y axis linear rail mount tighenting screw diameter (mm)
 yAxisRailTightScrewD = 3;
 yAxisRailTightScrewDepth = 12;
-yAxisRailTightCaptiveNutWidth = 5.5; // takend from http://www.fairburyfastener.com/xdims_metric_nuts.htm
-yAxisRailTightCaptiveNutHeight = 2.4; // takend from http://www.fairburyfastener.com/xdims_metric_nuts.htm
+yAxisRailTightCaptiveNutWidth = 6.7;
+yAxisRailTightCaptiveNutHeight = 4;
 // clearence between y axis linear bearings and bracket (mm)
 yAxisLinearBearingToBracketClearence = 10;
 // Y axis linear rail length (mm)
@@ -632,6 +632,8 @@ beltMountClipZ = beltH + beltIdlerPulleyHousingPulleySpacerHeight * 2;
 beltMountClipTensionSheetThickness = plateThickness / 2;
 beltMountClipTensionScrewD = 3;
 beltMountClipTensionScrewNutWidth = 3;
+beltMountCaptiveNutWidth = yAxisRailTightCaptiveNutWidth;
+beltMountCaptiveNutHeight = yAxisRailTightCaptiveNutHeight;
 
 module beltMountClip() {
 	union () {
@@ -710,9 +712,29 @@ module beltMount() {
 		union() {
 			// bulk
 			// male for tensioner
+			translate([-beltMountClipX-beltMountClipTensionSheetThickness * 2 / 2, -beltMountClipY / 4,
+					beltMountClipZ / 2 - beltMountClipZ / 2])
+				cube([beltMountClipX - beltMountClipTensionSheetThickness * 2 + cylHeightExt,
+					beltMountClipY / 2 - beltMountClipTensionSheetThickness * 2,
+					beltMountClipZ - beltMountClipTensionSheetThickness * 2], center = true);
+			
 		}
 		// tensioner screw
+		// this piece through the male
+		translate([-beltMountClipX - cylHeightExt / 2, -beltMountClipY / 4, 0])
+			rotate([0, 90, 0])
+				cylinder(h=beltMountClipX + cylHeightExt,
+					d=beltMountClipTensionScrewD, center=true);
+		// and through the bulk
+		translate([-beltMountClipX * 2 - cylHeightExt / 2, -beltMountClipY / 4, 0])
+			rotate([0, 90, 0])
+				cylinder(h=beltMountClipX + cylHeightExt,
+					d=beltMountClipTensionScrewD, center=true);
 		// tensioner captive nut
+		#translate([-beltMountClipX * 2 - cylHeightExt / 2, -beltMountClipY / 4, 0])
+			cube([beltMountCaptiveNutHeight,
+				beltMountCaptiveNutWidth,
+				beltMountClipZ], center=true);
 		// mounting screws to carriage
 	}
 }
