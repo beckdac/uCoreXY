@@ -715,8 +715,8 @@ module beltMount() {
 			translate([-beltMountClipX-beltMountClipTensionSheetThickness * 2 / 2, -beltMountClipY / 4,
 					beltMountClipZ / 2 - beltMountClipZ / 2])
 				cube([beltMountClipX - beltMountClipTensionSheetThickness * 2 + cylHeightExt,
-					beltMountClipY / 2 - beltMountClipTensionSheetThickness * 2,
-					beltMountClipZ - beltMountClipTensionSheetThickness * 2], center = true);
+					beltMountClipY / 2 - beltMountClipTensionSheetThickness * 2 - iFitAdjust,
+					beltMountClipZ - beltMountClipTensionSheetThickness * 2 - iFitAdjust], center = true);
 			
 		}
 		// tensioner screw
