@@ -237,7 +237,7 @@ module render_part() {
 	} else if (part == "renderPosYCarriage") {
 		renderPosYCarriage();
 	} else if (part == "renderNegYCarriage") {
-		renderNegYCarriage(0);
+		renderNegYCarriage(180);
 	} else if (part == "renderXCarriage") {
 		renderXCarriage();
 	} else if (part == "carriageIdlerPulleyHousing") {
@@ -260,7 +260,7 @@ module assembly() {
         topPosXPosYCornerBracket();
 		yAxisLinearRails();
 		xAxisLinearRails();
-		renderNegYCarriage(0);
+		renderNegYCarriage(180);
 		renderPosYCarriage();
 		renderXCarriage();
 		negXStepperMount();
@@ -682,11 +682,11 @@ module renderNegYCarriage(rotateHousingZAxisAngle) {
 				frameSideHeight / 2 + beamHW / 2 +
 				holderBaseWidth / 2
 			])
-		translate([frameSideLength / 2 +
-					effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5
-					-carriageIdlerPulleyHousingWidth / 2,
+		translate([-frameSideLength / 2 -
+					effectiveLinearBearingOD / 2 - linearBearingHolderShellThickness / 1.5 + 
+					carriageIdlerPulleyHousingWidth / 2,
 				0, 0])
-			//rotate([0, 0, rotateHousingZAxisAngle])
+			rotate([0, 0, rotateHousingZAxisAngle])
 				renderYCarriageIdlerPulleyHousing();
 		echo(rotateHousingZAxisAngle);
   }
