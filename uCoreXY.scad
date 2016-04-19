@@ -453,7 +453,7 @@ module bottomPosXPosYCornerBracket() {
 
 module bottomNegXNegYCornerBracket() {
     fSLTrnas = frameSideLength / 2 + beamHW / 2; // Translation distant to put brack on the outside of frame
-    fSHTrnas = frameSideHeight / 2 + beamHW / 2; // Translation distant to put brack on the outside of frame
+    fSHTrnas = frameSideHeight / 2 + beamHW; // Translation distant to put brack on the outside of frame
     color([.6, .6, 0]) {
     translate([-fSLTrnas, -fSLTrnas, -fSHTrnas]) 
         translate([0, -plateThickness, 0])
