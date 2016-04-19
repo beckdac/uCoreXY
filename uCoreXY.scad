@@ -351,28 +351,6 @@ module parallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRailSep, 
 						// this is an interesting piece... not ready to give up the number 
 						cylinder(h=depth, d=linearRailOD);
 			}
-			// slots for tightening
-			translate([-axisRailMountWidth/2, 0, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4])
-				cube([1.5, axisRailSep, plateThickness + beamHW + cylHeightExt], center = true);
-            // separation slot between holes
-            translate([-axisRailMountWidth * .75, 0, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4])
-				cube([10, 2, plateThickness + beamHW + cylHeightExt], center = true);
-			// screw holes for tightenging
-        	for (i=[-1, 1])
-				translate([-axisRailMountWidth * .6, i * axisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4])
-					rotate([0, 90, 0])
-						cylinder(h=axisRailTightScrewDepth, d=axisRailTightScrewD, center=true);
-			// inset for screw
-        	for (i=[-1, 1])
-				translate([-axisRailMountWidth * .8, i * axisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4])
-					rotate([0, 90, 0])
-						cylinder(h=axisRailTightScrewDepth / 3, d=axisRailTightScrewD * 3, center=true);
-			// captive nut
-        	for (i=[-1, 1])
-				translate([-axisRailMountWidth * .3, i * axisRailSep/4, beamHW / 2 + plateThickness / 2 + cylHeightExt / 4])
-					rotate([0, 90, 0])
-						cube([plateThickness + beamHW + cylHeightExt, axisRailTightCaptiveNutWidth, axisRailTightCaptiveNutHeight], center=true);
-
 		}
 }
 
@@ -880,7 +858,7 @@ joinerWidth = 2 * ((-beltThickness / 2
 }
 
 module xCarriage() {
-	#difference() {
+	difference() {
 		union() {
 			translate([-xAxisRailSep / 2, 
 					-holderBaseLength / 2 + plateThickness, plateThickness / 2])
