@@ -626,7 +626,7 @@ module renderXCarriage() {
 		])
 	rotate([0, 180, 90])
 		union(){
-			xCarriage();
+			#xCarriage();
 			translate([0, 0, -laserHeatsinkMountScrewZ])
 				laserHeatsink();
 			color([.75, .75, .75])
@@ -756,7 +756,8 @@ module xCarriageBeltMount() {
                 frameSideHeight / 2 + beamHW / 2 +
                 holderBaseWidth / 2
             ])
-	translate([laserHeatsinkY, 0
+	translate([laserHeatsinkY,
+		0,
 		-reinforcedPlateThickness / 2])
 	difference() {
 	union() {
@@ -771,9 +772,9 @@ module xCarriageBeltMount() {
 					beltMountClip(true);
 				}
 		translate([0, 
-				+beltThickness / 2 
+				beltThickness / 2
 					- carriageIdlerPulleyHousingLength / 2
-					- beltIdlerPulleyD / 2,
+				    - beltIdlerPulleyD / 2,
 				beltIdlerPulleyH / 2 + reinforcedPlateThickness / 2
 				+ beltIdlerPulleyH
 				+ 2 * beltIdlerPulleyHousingPulleySpacerHeight ])
@@ -784,8 +785,7 @@ module xCarriageBeltMount() {
 		joinerWidth = 2 * ((-beltThickness / 2
 					+carriageIdlerPulleyHousingLength / 2
 					+beltIdlerPulleyD / 2) - beltMountClipY / 2);
-		translate([0,
-				0,
+		translate([0, 0,
 				(xPulleyMountPlateHeight - reinforcedPlateThickness) / 2 +
 					reinforcedPlateThickness / 2
 				])
