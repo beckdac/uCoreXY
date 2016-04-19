@@ -925,6 +925,7 @@ module renderNegYCarriage(rotateHousingZAxisAngle) {
 				0, 0])
 			rotate([0, 0, rotateHousingZAxisAngle])
 				renderYCarriageIdlerPulleyHousing();
+	// belt
   }
 }
 
@@ -1244,14 +1245,24 @@ module renderYCarriageIdlerPulleyHousing() {
 				+ beltIdlerPulleyH
 				+ 2 * beltIdlerPulleyHousingPulleySpacerHeight ])
 			beltIdlerPulley();
-		// belts
+		// BELT
 		translate([-carriageIdlerPulleyHousingWidth / 2 - beltIdlerPulleyD / 2,
-			//	carriageIdlerPulleyHousingLength / 2,
 				-150/2.5,
 				beltIdlerPulleyH / 2 + reinforcedPlateThickness / 2
 				+ beltIdlerPulleyH
 				+ 2 * beltIdlerPulleyHousingPulleySpacerHeight ])
 			cube([beltThickness, 150, beltH], center=true);
+		translate([-carriageIdlerPulleyHousingWidth / 2 - beltIdlerPulleyD / 2,
+				0,
+				beltIdlerPulleyH / 2 + reinforcedPlateThickness / 2
+				+ beltIdlerPulleyH
+				+ 2 * beltIdlerPulleyHousingPulleySpacerHeight ])
+			cube([420, beltThickness, beltH], center=true);
+		translate([-carriageIdlerPulleyHousingWidth / 2 - beltIdlerPulleyD / 2,
+				0,
+				beltIdlerPulleyH / 2 + reinforcedPlateThickness / 2
+				+ beltIdlerPulleyHousingPulleySpacerHeight ])
+			cube([420, beltThickness, beltH], center=true);
 
 		// spacers
 		translate([carriageIdlerPulleyHousingWidth / 2,
@@ -1337,7 +1348,8 @@ module carriageIdlerPulleyHousing() {
 				for (j = [-1,1])
 					translate([i * carriageIdlerPulleyHousingWidth / 2,
 							j * carriageIdlerPulleyHousingLength / 2, 0])
-						cylinder(h=reinforcedPlateThickness + cylHeightExt,
+						//cylinder(h=reinforcedPlateThickness + cylHeightExt,
+						#cylinder(h=100 + reinforcedPlateThickness + cylHeightExt,
 							d=beltIdlerPulleyHousingScrewD, center=true);
 		}
 }
