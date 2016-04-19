@@ -938,7 +938,6 @@ module renderNegYCarriage(rotateHousingZAxisAngle) {
 				0, 0])
 			rotate([0, 0, rotateHousingZAxisAngle])
 				renderYCarriageIdlerPulleyHousing();
-		echo(rotateHousingZAxisAngle);
   }
 }
 
