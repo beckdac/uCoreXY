@@ -626,7 +626,7 @@ module renderXCarriage() {
 		])
 	rotate([0, 180, 90])
 		union(){
-			#xCarriage();
+			xCarriage();
 			translate([0, 0, -laserHeatsinkMountScrewZ])
 				laserHeatsink();
 			color([.75, .75, .75])
@@ -666,7 +666,7 @@ module beltMountClip(growUp) {
 				thisHeight = xPulleyMountPlateHeight - reinforcedPlateThickness - beltMountClipZ;
 				if (growUp) {
 /*
-					#translate([0,
+					translate([0,
 							0,
 							beltMountClipZ / 2 + thisHeight / 2])
 						cube([beltMountClipX,
@@ -688,7 +688,7 @@ module beltMountClip(growUp) {
 			// incoming belt cutout
 			translate([beltMountClipX / 8,
 						-beltThickness / 2,
-						(beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltIdlerPulleyH / 2
+						(beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltIdlerPulleyH / 2 + beltIdlerPulleyHousingPulleySpacerHeight
 						])
 				cube([beltMountClipX * .75,
 					beltThickness,
@@ -696,7 +696,7 @@ module beltMountClip(growUp) {
 			// outgoing belt cutout
 			translate([beltMountClipX / 2 - beltMountClipX * .25 / 2,
 						-beltThickness * 1.5,
-						(beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltIdlerPulleyH / 2
+						(beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltIdlerPulleyH / 2 + beltIdlerPulleyHousingPulleySpacerHeight
 						])
 				cube([beltMountClipX * .25,
 					beltThickness,
@@ -704,7 +704,7 @@ module beltMountClip(growUp) {
 			// semi circle
 			translate([-beltMountClipX / 4,
 					-beltMountClipY / 4,
-					(beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltIdlerPulleyH / 2
+					(beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltIdlerPulleyH / 2 + beltIdlerPulleyHousingPulleySpacerHeight
 					])
 			difference() {
 				difference() {
@@ -721,7 +721,7 @@ module beltMountClip(growUp) {
 			// semi circle enlarged cutout for cleanliness
 			translate([-beltMountClipX / 4,
 					-beltMountClipY / 4,
-					(beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltIdlerPulleyH / 2
+					(beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltIdlerPulleyH / 2 + beltIdlerPulleyHousingPulleySpacerHeight
 					])
 			intersection() {
 				difference() {
@@ -739,6 +739,7 @@ module beltMountClip(growUp) {
 			translate([0, 0, 
 					(beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight) / 2 - beltIdlerPulleyH / 2
 					- (beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt) / 2
+					+ beltIdlerPulleyHousingPulleySpacerHeight
 				])
 			linear_extrude(height=beltIdlerPulleyH + beltIdlerPulleyHousingPulleySpacerHeight + cylHeightExt)
 				polygon(points=[[-iFitAdjust, -beltMountClipY / 4 - beltThickness - iFitAdjust],
@@ -794,18 +795,21 @@ module xCarriageBeltMount() {
 				joinerWidth,
 				xPulleyMountPlateHeight - reinforcedPlateThickness], center=true);
 	}
-/*
 		// mounting screws to carriage
 		screwHeight = beltMountClipZ * 2 + cylHeightExt;
-		translate([-beltMountClipX,
-				0,
+		for (i = [-1,1])
+		translate([0,
+				i * beltMountClipY / 3,
 				(xPulleyMountPlateHeight - reinforcedPlateThickness) / 2 +
 					reinforcedPlateThickness / 2
 				])
 			cylinder(h=screwHeight,
 				d=beltMountScrewD, center=true);
-*/
 	}
+}
+
+module recessedNut(sides, d, h) {
+	cylinder(h=h, d=d, center=true, $fn=sides);
 }
 
 module xCarriage() {
@@ -840,17 +844,19 @@ module xCarriage() {
 			laserHeatsinkY + iFitAdjust, 
 			laserHeatsinkZ + iFitAdjust], center=true);
 		// holes for mounting
-/*
 		for (i=[-1, 1])
 			for (j=[-1, 1])
-				translate([i * holderBaseLength / 6, j * holderBaseWidth / 1.5])
-					cylinder(h=plateThickness, d=laserHeatsinkMountScrewD, center=true);
-		rotate([0, 0, 90])
-			for (i=[-1, 1])
-				for (j=[-1, 1])
-					translate([i * holderBaseLength / 3, j * holderBaseWidth * .75])
-						cylinder(h=plateThickness, d=laserHeatsinkMountScrewD, center=true);
-*/
+		translate([i * beltMountClipX / 3,
+				j * beltMountClipY / 3 + j * beltMountClipX,
+				//(xPulleyMountPlateHeight - reinforcedPlateThickness) / 2 +
+					reinforcedPlateThickness / 2
+// - (plateThickness + cylHeightExt) / 2
+				])
+					union() {
+						cylinder(h=reinforcedPlateThickness + cylHeightExt, d=beltMountScrewD, center=true);
+						translate([0, 0, beltMountCaptiveNutHeight / 1.5])
+							recessedNut(6, h=beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
+					}
 	}
 }
 
