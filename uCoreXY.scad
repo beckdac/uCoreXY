@@ -83,7 +83,7 @@ beltIdlerPulleyHousingPulleySpacerD = 4.4;
 /* for 20 tooth compatible dimensions */
 beltIdlerPulleyLidH = 1;
 //beltIdlerPulleyH = 8.4;
-beltIdlerPulleyH = 9 - beltIdlerPulleyLidH * 2;
+beltIdlerPulleyH = 9;// - beltIdlerPulleyLidH * 2;
 beltIdlerPulleyD = 12.2;
 beltIdlerPulleyLidD = 18;
 beltIdlerPulleyBearingID = 3;
@@ -648,6 +648,7 @@ module renderXCarriage() {
 			}
 		}
 	xCarriageBeltMount();
+	mirror([0, -1, 0]) mirror([-1, 0, 0]) xCarriageBeltMount();
   }
 }
 
