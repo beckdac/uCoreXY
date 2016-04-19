@@ -4,11 +4,12 @@
 
 // select part
 part = "assembly";
-part = "yCarriage";
+//part = "yCarriage";
 //part = "xCarriage";
 //part = "renderXCarriage";
 //part = "renderPosYCarriage";
 //part = "topNegXNegYCornerBracket";
+//part = "bottomNegXNegYCornerBracket";
 //part = "xStepperMount";
 //part = "negXStepperMount";
 //part = "negXPulleyMount";
@@ -222,6 +223,14 @@ module render_part() {
 		topNegXPosYCornerBracket();
 	} else if (part == "topPosXPosYCornerBracket") {
 		topPosXPosYCornerBracket();
+	} else if (part == "bottomNegXNegYCornerBracket") {
+		bottomNegXNegYCornerBracket();
+	} else if (part == "bottomPosXNegYCornerBracket") {
+		bottomPosXNegYCornerBracket();
+	} else if (part == "bottomNegXPosYCornerBracket") {
+		bottomNegXPosYCornerBracket();
+	} else if (part == "bottomPosXPosYCornerBracket") {
+		bottomPosXPosYCornerBracket();
     } else if (part == "yAxisLinearRails") {
         yAxisLinearRails();
     } else if (part == "xAxisLinearRails") {
@@ -282,6 +291,10 @@ module assembly() {
         topPosXNegYCornerBracket();
         topNegXPosYCornerBracket();
         topPosXPosYCornerBracket();
+        bottomNegXNegYCornerBracket();
+        bottomPosXNegYCornerBracket();
+        bottomNegXPosYCornerBracket();
+        bottomPosXPosYCornerBracket();
 		yAxisLinearRails();
 		xAxisLinearRails();
 		renderNegYCarriage(-90);
@@ -372,7 +385,7 @@ module yAxisRailMount() {
     }
 }
 
-module beamBracket90() {
+module beamBracket90(partial) {
    union() {
        // main triangle and beam overlaps
         linear_extrude(height=plateThickness)
@@ -383,7 +396,8 @@ module beamBracket90() {
        // veritcal on other
         linear_extrude(height=plateThickness + beamHW)           
             polygon(points=[ [-plateThickness, -plateThickness ], [-plateThickness,cornerLength], [0, cornerLength], [0, 0]], convexity = 10);
-  
+ 
+	if (!partial) { 
     // another main triangle
     rotate([90, 0, 0]) translate([0, plateThickness, 0]) 
         difference() {
@@ -396,6 +410,7 @@ module beamBracket90() {
     translate([0, plateThickness, 0]) rotate([0, -90, 0]) translate([plateThickness, -plateThickness, 0]) linear_extrude(height=plateThickness)
             polygon(points=[ [0,-plateThickness], [cornerLength, -plateThickness], [cornerLength, beamHW], [beamHW, cornerLength], [0, cornerLength] ], convexity = 10);     
                 }
+	}
 }
 
 module topPosXNegYCornerBracket() {
@@ -418,11 +433,36 @@ module topNegXNegYCornerBracket() {
         translate([0, -plateThickness, 0])
             rotate([-90, 0, 0]) 
                 union() {
-                    beamBracket90();
+                    beamBracket90(false);
                     yAxisRailMount();
                 }
     }
 }
+
+module bottomPosXNegYCornerBracket() {
+    mirror([1,0,0]) bottomNegXNegYCornerBracket();
+}
+
+module bottomNegXPosYCornerBracket() {
+    mirror([0,1,0]) bottomNegXNegYCornerBracket();
+}
+
+module bottomPosXPosYCornerBracket() {
+    mirror([1,0,0]) bottomNegXPosYCornerBracket();
+}
+
+module bottomNegXNegYCornerBracket() {
+    fSLTrnas = frameSideLength / 2 + beamHW / 2; // Translation distant to put brack on the outside of frame
+    fSHTrnas = frameSideHeight / 2 + beamHW / 2; // Translation distant to put brack on the outside of frame
+    color([.6, .6, 0]) {
+    translate([-fSLTrnas, -fSLTrnas, -fSHTrnas]) 
+        translate([0, -plateThickness, 0])
+                union() {
+					beamBracket90(true);
+                }
+    }
+}
+
 
 module yAxisLinearRails() {
 	color([.75,.75,.75])
