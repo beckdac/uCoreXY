@@ -1121,8 +1121,13 @@ module xMount() {
 module xStepperMount() {
 	difference() {
 		xMount();
-		cylinder(h=reinforcedPlateThickness + cylHeightExt, d=stepperCollarWidth * 1.1, center=true);
-		for (i = [-1,1])
+		for (i = [-1,1]) {
+			hull() {
+				translate([0, stepperMountHoleTensionSlotLen * .25, 0])
+					cylinder(h=reinforcedPlateThickness + cylHeightExt, d=stepperCollarWidth * 1.1, center=true);
+				translate([0, -stepperMountHoleTensionSlotLen * .75, 0])
+					cylinder(h=reinforcedPlateThickness + cylHeightExt, d=stepperCollarWidth * 1.1, center=true);
+			}
 			for (j = [-1,1])
 				translate([i * stepperMountHoleSpacing / 2, j * stepperMountHoleSpacing / 2, 0])
 					hull() {
@@ -1133,6 +1138,7 @@ module xStepperMount() {
 							cylinder(h=reinforcedPlateThickness + cylHeightExt,
 								d=stepperMountScrewD, center=true);
 					}
+		}
 	}
 }
 
