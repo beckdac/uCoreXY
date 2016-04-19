@@ -333,7 +333,7 @@ module beamFrame() {
 
 // if includeSupportCones is false, supportConeLength must be 0 
 // is there an assert in openscad?
-module parallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRailSep, axisRailTightScrewDepth, axisRailTightScrewD, axisRailTightCaptiveNutWidth, axisRailTightCaptiveNutHeight, includeSupportCones, supportConeLength) {
+module parallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRailSep, includeSupportCones, supportConeLength) {
 		difference() {
 		  	union() {
                 // both hulls set out the rail to bracket mounts
@@ -370,7 +370,7 @@ module parallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRailSep, 
 module yAxisRailMount() {
     union() {
 		translate([-yAxisLinearBearingToBracketClearence, 0, 0]) 
-			parallelRailsMount(yAxisRailMountHeight, yAxisRailMountWidth, yAxisRailSep, yAxisRailTightScrewDepth, yAxisRailTightScrewD, yAxisRailTightCaptiveNutWidth, yAxisRailTightCaptiveNutHeight, false, 0);
+			parallelRailsMount(yAxisRailMountHeight, yAxisRailMountWidth, yAxisRailSep, false, 0);
 		// now the pieces that join the bracket to the mount
 		// first, the primary connection between the mount and the bracket
 		linear_extrude(height=plateThickness + beamHW)
@@ -630,7 +630,7 @@ module yCarriage() {
 				// align y to 0
 				translate([0, xAxisRailMountHeight / 2 + plateThickness + linearRailOD -linearBearingLength / 2, yCarriageShelfLength / 3])
 				rotate([0, 0, 180])
-					parallelRailsMount(xAxisRailMountHeight, xAxisRailMountWidth, xAxisRailSep, xAxisRailTightScrewDepth, xAxisRailTightScrewD, xAxisRailTightCaptiveNutWidth, xAxisRailTightCaptiveNutHeight, true, xAxisSupportConeLength);
+					parallelRailsMount(xAxisRailMountHeight, xAxisRailMountWidth, xAxisRailSep, true, xAxisSupportConeLength);
 		}
 		// holes for mounting xaxis
 echo("WARNING: mounting locations were determined empirically, not parametrically");
