@@ -4,7 +4,7 @@
 
 // select part
 part = "assembly";
-//part = "yCarriage";
+part = "yCarriage";
 //part = "xCarriage";
 //part = "renderXCarriage";
 //part = "renderPosYCarriage";
@@ -593,6 +593,20 @@ module yCarriage() {
 					parallelRailsMount(xAxisRailMountHeight, xAxisRailMountWidth, xAxisRailSep, xAxisRailTightScrewDepth, xAxisRailTightScrewD, xAxisRailTightCaptiveNutWidth, xAxisRailTightCaptiveNutHeight, true, xAxisSupportConeLength);
 		}
 		// holes for mounting xaxis
+echo("WARNING: mounting locations were determined empirically, not parametrically");
+        for (i=[-1,1])
+            for (j=[-1,1])
+                translate([0,
+                        j * carriageIdlerPulleyHousingLength / 2 + 
+							holderBaseWidth / 2  + plateThickness / 8,
+                        i * carriageIdlerPulleyHousingWidth / 2 + 18.6 + carriageIdlerPulleyHousingWidth
+						])
+					union() {
+                    	rotate([0, 90, 0])
+                        	cylinder(h=200, d=beltIdlerPulleyHousingScrewD, center=true);
+                    	rotate([0, 90, 0])
+							recessedNut(6, h=12 + beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
+					}
 	}
 }
 
@@ -907,9 +921,12 @@ module xCarriage() {
 
 module renderNegYCarriage(rotateHousingZAxisAngle) {
   union() {
+	// move to rails
 	translate([-yAxisRailMountWidth + plateThickness / 4 - yAxisLinearBearingToBracketClearence,
 			0, yAxisRailSep / 2])
+		// move to frame
 		translate([-frameSideLength / 2 + beamHW / 2, 0, frameSideHeight / 2 + beamHW / 2])
+			// center in y and move x center to middle of bearing
 			translate([-(effectiveLinearBearingOD / 2 + linearBearingHolderShellThickness / 1.5),
 					-holderBaseLength / 2 + plateThickness, 0])
 				rotate([0, 90, 0])
@@ -1349,7 +1366,7 @@ module carriageIdlerPulleyHousing() {
 					translate([i * carriageIdlerPulleyHousingWidth / 2,
 							j * carriageIdlerPulleyHousingLength / 2, 0])
 						//cylinder(h=reinforcedPlateThickness + cylHeightExt,
-						#cylinder(h=100 + reinforcedPlateThickness + cylHeightExt,
+						cylinder(h=100 + reinforcedPlateThickness + cylHeightExt,
 							d=beltIdlerPulleyHousingScrewD, center=true);
 		}
 }
