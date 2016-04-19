@@ -19,6 +19,7 @@ part = "assembly";
 //part = "xPulleyHousing";
 //part = "negXPulleyMount";
 //part = "xCarriageBeltMount";
+//part = "xCarriageTop";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
 beamHW = 10;
@@ -267,6 +268,8 @@ module render_part() {
 		negXCarriageBeltMount();
 	} else if (part == "posXCarriageBeltMount") {
 		posXCarriageBeltMount();
+	} else if (part == "xCarriageTop") {
+		xCarriageTop();
 	} else {
 		// invalid value
 	}
@@ -649,6 +652,7 @@ module renderXCarriage() {
 		}
 	xCarriageBeltMount();
 	mirror([0, -1, 0]) mirror([-1, 0, 0]) xCarriageBeltMount();
+	xCarriageTop();
   }
 }
 
@@ -810,6 +814,60 @@ module xCarriageBeltMount() {
 
 module recessedNut(sides, d, h) {
 	cylinder(h=h, d=d, center=true, $fn=sides);
+}
+
+module xCarriageTop() {
+joinerWidth = 2 * ((-beltThickness / 2
+					+carriageIdlerPulleyHousingLength / 2
+					+beltIdlerPulleyD / 2) - beltMountClipY / 2);
+
+	translate([0, 0,
+            yAxisRailSep / 2 - reinforcedPlateThickness / 2 +
+                frameSideHeight / 2 + beamHW / 2 +
+                holderBaseWidth / 2 + 1
+			+ xPulleyMountPlateHeight - reinforcedPlateThickness - .5
+		])
+	rotate([0, 0, -90])
+	difference() {
+		union() {
+			translate([0, 0, reinforcedPlateThickness / 2])
+				/*
+				cube([beltMountClipX * 2 + joinerWidth,
+					holderBaseLength * 2 - 2 * plateThickness,
+					plateThickness], center=true);
+				*/
+				hull () {
+					// using linearRailOD to round courners, purely aesthetic 
+					for (i=[-1,1])
+						for (j=[-1,1])
+							translate([i * (beltMountClipX * 2 + joinerWidth) / 2 + i * -linearRailOD,
+										j * (holderBaseLength * 2 - 2 * plateThickness) / 2 + j * -linearRailOD,
+										0
+									])
+								cylinder(h=plateThickness, d=linearRailOD * 2, center=true);
+				}
+		}
+		// slot for heatsink
+		cube([laserHeatsinkX + iFitAdjust, 
+			laserHeatsinkY + iFitAdjust, 
+			laserHeatsinkZ + iFitAdjust], center=true);
+		// holes for mounting
+		for (i=[-1, 1])
+			for (j=[-1, 1])
+				translate([i * beltMountClipX / 3,
+						j * beltMountClipY / 3 + j * beltMountClipX,
+						reinforcedPlateThickness / 2
+					])
+					cylinder(h=reinforcedPlateThickness + cylHeightExt, d=beltMountScrewD, center=true);
+		for (i=[-1, 1])
+			for (j=[-1, 1])
+				for (k=[0, 1])
+					translate([i * beltMountClipX / 1.25,
+							j * beltMountClipY / 3 + j * k * beltMountClipY / 3,
+							reinforcedPlateThickness / 2
+						])
+					cylinder(h=reinforcedPlateThickness + cylHeightExt, d=beltMountScrewD, center=true);
+	}
 }
 
 module xCarriage() {
