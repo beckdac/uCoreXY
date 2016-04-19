@@ -760,7 +760,7 @@ module xCarriageBeltMount() {
 	translate([0, 0,
             yAxisRailSep / 2 - reinforcedPlateThickness / 2 +
                 frameSideHeight / 2 + beamHW / 2 +
-                holderBaseWidth / 2 + 1
+                holderBaseWidth / 2 + .5
             ])
 	translate([laserHeatsinkY,
 		0,
@@ -809,6 +809,15 @@ module xCarriageBeltMount() {
 				])
 			cylinder(h=screwHeight,
 				d=beltMountScrewD, center=true);
+		// slot for zip tie
+		for (i = [-1,1])
+		translate([-beltMountClipX / 8,
+				i * beltMountClipY,
+				plateThickness - (linearBearingZipTieHeight + cylHeightExt) / 2
+				])
+			cube([linearBearingZipTieWidth * 2,
+				beltMountClipY / 2,
+				linearBearingZipTieHeight + cylHeightExt], center=true);
 	}
 }
 
@@ -825,7 +834,7 @@ joinerWidth = 2 * ((-beltThickness / 2
             yAxisRailSep / 2 - reinforcedPlateThickness / 2 +
                 frameSideHeight / 2 + beamHW / 2 +
                 holderBaseWidth / 2 + 1
-			+ xPulleyMountPlateHeight - reinforcedPlateThickness - .5
+			+ xPulleyMountPlateHeight - reinforcedPlateThickness - 1
 		])
 	rotate([0, 0, -90])
 	difference() {
@@ -871,7 +880,7 @@ joinerWidth = 2 * ((-beltThickness / 2
 }
 
 module xCarriage() {
-	difference() {
+	#difference() {
 		union() {
 			translate([-xAxisRailSep / 2, 
 					-holderBaseLength / 2 + plateThickness, plateThickness / 2])
