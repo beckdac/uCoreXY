@@ -754,7 +754,7 @@ module xCarriageBeltMount() {
 	translate([0, 0,
             yAxisRailSep / 2 - reinforcedPlateThickness / 2 +
                 frameSideHeight / 2 + beamHW / 2 +
-                holderBaseWidth / 2
+                holderBaseWidth / 2 + 1
             ])
 	translate([laserHeatsinkY,
 		0,
@@ -1193,6 +1193,15 @@ module renderYCarriageIdlerPulleyHousing() {
 				+ beltIdlerPulleyH
 				+ 2 * beltIdlerPulleyHousingPulleySpacerHeight ])
 			beltIdlerPulley();
+		// belts
+		translate([-carriageIdlerPulleyHousingWidth / 2 - beltIdlerPulleyD / 2,
+			//	carriageIdlerPulleyHousingLength / 2,
+				-150/2.5,
+				beltIdlerPulleyH / 2 + reinforcedPlateThickness / 2
+				+ beltIdlerPulleyH
+				+ 2 * beltIdlerPulleyHousingPulleySpacerHeight ])
+			cube([beltThickness, 150, beltH], center=true);
+
 		// spacers
 		translate([carriageIdlerPulleyHousingWidth / 2,
 				-carriageIdlerPulleyHousingLength / 2,
