@@ -382,25 +382,6 @@ axisRailMountHeightBuffer = 10;
 module bracketParallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRailSep) {
 		difference() {
 		  	union() {
-/*
-				translate([
-					//-(beamHW + plateThickness),
-					(beamHW + plateThickness) / 2 -
-					(axisRailMountWidth + axisRailMountWidthBuffer) / 2 - 1,
-					//yAxisLinearBearingToBracketClearence - 	(yAxisRailMountWidth + axisRailMountWidthBuffer),
-	//				-yAxisLinearBearingToBracketClearence - plateThickness,
-					//-	(axisRailMountWidth + axisRailMountWidthBuffer) / 2,
-					0,
-					(plateThickness + beamHW) / 2
-					])
-				cube([
-					axisRailMountWidth + axisRailMountWidthBuffer,
-					axisRailMountHeight + axisRailMountHeightBuffer,
-					plateThickness + beamHW
-					], center=true);
-*/
-                // both hulls set out the rail to bracket mounts
-        		//for (i=[-1, 1])
         			hull() {
 						linear_extrude(height=plateThickness + beamHW)
             				polygon(points=[
@@ -414,8 +395,6 @@ module bracketParallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRa
 									//[-axisRailMountWidth/2, -axisRailMountHeight / 2], 
 									//[-plateThickness, -axisRailMountHeight / 2]
 								], convexity = 10);
-				//		translate([-axisRailMountWidth/2, i * axisRailSep/2, 0])
-				//			cylinder(h=plateThickness + beamHW, d=linearRailOD * 2);
 						D=linearRailOD * 2;
 						H=plateThickness + beamHW;
 						translate([axisRailMountWidth + D, -(axisRailMountHeight + D) / 2 + 10, H / 2])
@@ -438,23 +417,7 @@ module bracketParallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRa
 
 module yAxisRailMount() {
     union() {
-		//translate([-yAxisLinearBearingToBracketClearence, 0, 0]) 
-		////translate([-plateThickness, 0, 0]) 
-			bracketParallelRailsMount(yAxisRailMountHeight, yAxisRailMountWidth, yAxisRailSep, false, 0);
-
-/*
-		// now the pieces that join the bracket to the mount
-		// first, the primary connection between the mount and the bracket
-		linear_extrude(height=plateThickness + beamHW)
-			polygon(points=[ [-plateThickness, yAxisRailMountHeight], [-yAxisLinearBearingToBracketClearence, yAxisRailMountHeight / 2], [-yAxisLinearBearingToBracketClearence, -yAxisRailMountHeight / 2], [-plateThickness, - yAxisRailMountHeight / 2 ] ], convexity=10);
-
-
-
-        // wing joining mount to brack for additional stability
-        translate([-plateThickness, 0, 0])
-		  linear_extrude(height=plateThickness + beamHW)
-            polygon(points=[ [0, -yAxisRailMountHeight / 2], [2.5 * yAxisRailMountWidth/2, -yAxisRailMountHeight / 2], [ 4.5 * yAxisRailMountWidth/2, 0 ], [0, 0 ]], convexity=10);
-*/
+		bracketParallelRailsMount(yAxisRailMountHeight, yAxisRailMountWidth, yAxisRailSep, false, 0);
     }
 }
 
