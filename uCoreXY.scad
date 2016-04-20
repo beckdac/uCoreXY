@@ -966,9 +966,9 @@ joinerWidth = 2 * ((-beltThickness / 2
 				}
 		}
 		// slot for heatsink
-		cube([laserHeatsinkX + iFitAdjust, 
-			laserHeatsinkY + iFitAdjust, 
-			laserHeatsinkZ + iFitAdjust], center=true);
+		cube([laserHeatsinkX + iFitAdjust * 2, 
+			laserHeatsinkY + iFitAdjust * 2, 
+			laserHeatsinkZ + iFitAdjust * 2], center=true);
 		// holes for mounting
 		for (i=[-1, 1])
 			for (j=[-1, 1])
