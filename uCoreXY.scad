@@ -54,6 +54,8 @@ frameSideHeight = frameBeamHeight + 2 * 0.5 * beamHW; // this accounts for two c
 
 // linear rail outer diameter (mm)
 linearRailOD = 8;
+// linear rail mount inner diameter (mm)
+linearRailMountID = linearRailOD + iFitAdjust;
 // Y axis linear rail to linear rail separation (center to center, mm)
 yAxisRailSep = 30;
 // Y axis linear rail mount tighenting screw diameter (mm)
@@ -361,7 +363,7 @@ module parallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRailSep, 
         	for (i=[-1, 1])
 				translate([- axisRailMountWidth / 2, i * axisRailSep / 2, 
 						- cylHeightExt / 2])
-					cylinder(h=plateThickness + beamHW + cylHeightExt, d=linearRailOD);
+					cylinder(h=plateThickness + beamHW + cylHeightExt, d=linearRailMountID);
 			if (includeSupportCones) {
 				depth = plateThickness + beamHW + supportConeLength / 2 + cylHeightExt;
         		for (i=[-1, 1])
@@ -370,7 +372,7 @@ module parallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRailSep, 
 							supportConeLength / 8 - cylHeightExt / 2
 								- depth])
 						// this is an interesting piece... not ready to give up the number 
-						cylinder(h=depth, d=linearRailOD);
+						cylinder(h=depth, d=linearRailMountID);
 			}
 		}
 }
@@ -411,16 +413,22 @@ module bracketParallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRa
 				translate([-yAxisLinearBearingToBracketClearence- axisRailMountWidth / 2, 
 						i * axisRailSep / 2, 
 						- cylHeightExt / 2])
-					cylinder(h=plateThickness + beamHW + cylHeightExt, d=linearRailOD);
+					cylinder(h=plateThickness + beamHW + cylHeightExt, d=linearRailMountID);
 			// nut slots
 						D=linearRailOD * 2;
 						H=plateThickness + beamHW;
 						translate([axisRailMountWidth + D, -(axisRailMountHeight + D) / 2 + 10, H / 2])
-			#recessedNut(6, h=100*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
+			translate([0,
+				0,
+				0
+				])
+			#recessedNut(6, h=plateThickness + cylHeightExt, d=beltMountCaptiveNutWidth);
 						translate([-axisRailMountWidth - D, -(axisRailMountHeight + D) / 2 + 10, H / 2])
-			#recessedNut(6, h=100*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
+			#recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
 						translate([-axisRailMountWidth / 2 - D, axisRailMountHeight - D / 2, H / 2])
-			#recessedNut(6, h=100*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
+			#recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
+						translate([axisRailMountWidth + D, axisRailMountHeight - D / 2, H / 2])
+			#recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
 		}
 }
 
