@@ -395,7 +395,7 @@ module bracketParallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRa
 									//[-axisRailMountWidth/2, -axisRailMountHeight / 2], 
 									//[-plateThickness, -axisRailMountHeight / 2]
 								], convexity = 10);
-						D=linearRailOD * 2;
+						D=linearRailOD * 2.5;
 						H=plateThickness + beamHW;
 						translate([axisRailMountWidth + D, -(axisRailMountHeight + D) / 2 + 10, H / 2])
 							cylinder(h=H, d=D, center=true);
@@ -412,6 +412,15 @@ module bracketParallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRa
 						i * axisRailSep / 2, 
 						- cylHeightExt / 2])
 					cylinder(h=plateThickness + beamHW + cylHeightExt, d=linearRailOD);
+			// nut slots
+						D=linearRailOD * 2;
+						H=plateThickness + beamHW;
+						translate([axisRailMountWidth + D, -(axisRailMountHeight + D) / 2 + 10, H / 2])
+			#recessedNut(6, h=100*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
+						translate([-axisRailMountWidth - D, -(axisRailMountHeight + D) / 2 + 10, H / 2])
+			#recessedNut(6, h=100*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
+						translate([-axisRailMountWidth / 2 - D, axisRailMountHeight - D / 2, H / 2])
+			#recessedNut(6, h=100*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
 		}
 }
 
