@@ -207,6 +207,24 @@ xPulleyMountPlateHeight =
 	+ 2 * beltIdlerPulleyH
 	+ 3 * beltIdlerPulleyHousingPulleySpacerHeight;
 
+// Nema17 data
+stepperWidth = 42.3;
+stepperHeight = 34;
+stepperMountHoleSpacing = 31;
+stepperMountScrewD = 3 + iFitAdjust;
+stepperMountScrewDepth = 4.5;
+stepperShaftD = 5;
+stepperShaftLength = 24;
+stepperCollarHeight = 2;
+stepperCollarWidth = 22;
+
+xMountStepperBuffer = 2;
+xMountWidth = stepperWidth + xMountStepperBuffer + reinforcedPlateThickness * 2;
+stepperMountHoleTensionSlotLen = 6;
+xMountFaceExtension = 10;
+xMountScrewD = 3;
+
+// this is a generic mount that is based off the nema17 dimensions
 
 ////////////////////// End header ////////////////////
 
@@ -426,17 +444,17 @@ module bracketParallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRa
 			H=plateThickness + beamHW;
 /* old method
 			translate([axisRailMountWidth + D, -(axisRailMountHeight + D) / 2 + 10, H / 2])
-				#recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
+				recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
 			translate([-axisRailMountWidth - D, -(axisRailMountHeight + D) / 2 + 10, H / 2])
-				#recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
+				recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
 			translate([-axisRailMountWidth / 2 - D, axisRailMountHeight - D / 2, H / 2])
-				#recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
+				recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
 			translate([axisRailMountWidth + D, axisRailMountHeight - D / 2, H / 2])
-				#recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
+				recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
 */
 translate([-10, -8, 0]) 
 union() {
-			translate([-xMountWidth / 1.5, -xMountWidth / 5, 0])
+			translate([-xMountWidth / 1.75, -xMountWidth / 5, 0])
 				#recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
 			translate([-xMountWidth / 5, .8 * xMountWidth / 5, 0])
 				#recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
@@ -943,11 +961,6 @@ joinerWidth = 2 * ((-beltThickness / 2
 	difference() {
 		union() {
 			translate([0, 0, reinforcedPlateThickness / 2])
-				/*
-				cube([beltMountClipX * 2 + joinerWidth,
-					holderBaseLength * 2 - 2 * plateThickness,
-					plateThickness], center=true);
-				*/
 				hull () {
 					// using linearRailOD to round courners, purely aesthetic 
 					for (i=[-1,1])
@@ -1018,9 +1031,7 @@ module xCarriage() {
 			for (j=[-1, 1])
 		translate([i * beltMountClipX / 3,
 				j * beltMountClipY / 3 + j * beltMountClipX,
-				//(xPulleyMountPlateHeight - reinforcedPlateThickness) / 2 +
 					reinforcedPlateThickness / 2
-// - (plateThickness + cylHeightExt) / 2
 				])
 					union() {
 						cylinder(h=reinforcedPlateThickness + cylHeightExt, d=beltMountScrewD, center=true);
@@ -1147,23 +1158,6 @@ module beltIdlerPulley() {
 	}
 }
 
-// Nema17 data
-stepperWidth = 42.3;
-stepperHeight = 34;
-stepperMountHoleSpacing = 31;
-stepperMountScrewD = 3 + iFitAdjust;
-stepperMountScrewDepth = 4.5;
-stepperShaftD = 5;
-stepperShaftLength = 24;
-stepperCollarHeight = 2;
-stepperCollarWidth = 22;
-
-xMountStepperBuffer = 2;
-xMountWidth = stepperWidth + xMountStepperBuffer + reinforcedPlateThickness * 2;
-stepperMountHoleTensionSlotLen = 6;
-xMountFaceExtension = 10;
-
-// this is a generic mount that is based off the nema17 dimensions
 // it will also hold the pulley mounts
 module xMount() {
 	union () {
@@ -1192,22 +1186,33 @@ module xMount() {
 }
 
 module xMountWithFlanges() {
-	union() {
-		xMount(xMountFaceExtension);
-		#translate([0, xMountWidth / 2 - reinforcedPlateThickness / 2, stepperHeight * 1.25 / 2])
-			hull() {
-				cube([xMountWidth, reinforcedPlateThickness, stepperHeight * 1.25], center=true);
-				// linearRailOD is again, a cosmetic for rounded corners, not essential
-				translate([-37, 0, -14])
-					rotate([90, 0, 0])
-						cylinder(h=reinforcedPlateThickness, d=linearRailOD*2, center=true);
-				translate([-37, 0, -6])
-					rotate([90, 0, 0])
-						cylinder(h=reinforcedPlateThickness, d=linearRailOD*2, center=true);
-				translate([37, 0, -14])
-					rotate([90, 0, 0])
-						cylinder(h=reinforcedPlateThickness, d=linearRailOD*2, center=true);
-			}
+	difference() {
+		union() {
+			xMount(xMountFaceExtension);
+			translate([0, xMountWidth / 2 - reinforcedPlateThickness / 2, stepperHeight * 1.25 / 2])
+				hull() {
+					cube([xMountWidth, reinforcedPlateThickness, stepperHeight * 1.25], center=true);
+					// linearRailOD is again, a cosmetic for rounded corners, not essential
+					for (i=[-36,36])
+						for (j=[-14,-6])
+							translate([i, 0, j])
+								rotate([90, 0, 0])
+									cylinder(h=reinforcedPlateThickness, d=linearRailOD*2, center=true);
+				}
+		}
+		// mounting screws
+translate([7, 0, 20.5]) 
+translate([-10, 0, 0]) 
+mirror([0, -1, 0])
+rotate([90, 0, 0])
+#union() {
+			translate([-xMountWidth / 1.75, -xMountWidth / 5, 0])
+				cylinder(h=100, d=xMountScrewD + iFitAdjust);
+			translate([-xMountWidth / 5, .8 * xMountWidth / 5, 0])
+				cylinder(h=100, d=xMountScrewD + iFitAdjust);
+			translate([3.5 * xMountWidth / 5, -xMountWidth / 5, 0])
+				cylinder(h=100, d=xMountScrewD + iFitAdjust);
+}
 	}
 }
 
