@@ -223,6 +223,7 @@ xMountWidth = stepperWidth + xMountStepperBuffer + reinforcedPlateThickness * 2;
 stepperMountHoleTensionSlotLen = 6;
 xMountFaceExtension = 10;
 xMountScrewD = 3;
+xMountCaptiveNutHeight = yAxisRailTightCaptiveNutHeight;
 
 // this is a generic mount that is based off the nema17 dimensions
 
@@ -455,11 +456,26 @@ module bracketParallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRa
 translate([-10, -8, 0]) 
 union() {
 			translate([-xMountWidth / 1.75, -xMountWidth / 5, 0])
-				#recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
+				union() {
+					translate([0, 0, 3 * xMountCaptiveNutHeight])
+						recessedNut(6, h=xMountCaptiveNutHeight + cylHeightExt,
+							d=beltMountCaptiveNutWidth);
+					cylinder(h=100, d=xMountScrewD, center=true);
+				}
 			translate([-xMountWidth / 5, .8 * xMountWidth / 5, 0])
-				#recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
+				union() {
+					translate([0, 0, 3 * xMountCaptiveNutHeight])
+						recessedNut(6, h=xMountCaptiveNutHeight + cylHeightExt,
+							d=beltMountCaptiveNutWidth);
+					cylinder(h=100, d=xMountScrewD, center=true);
+				}
 			translate([3.5 * xMountWidth / 5, -xMountWidth / 5, 0])
-				#recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
+				union() {
+					translate([0, 0, 3 * xMountCaptiveNutHeight])
+						recessedNut(6, h=xMountCaptiveNutHeight + cylHeightExt,
+							d=beltMountCaptiveNutWidth);
+					cylinder(h=100, d=xMountScrewD, center=true);
+				}
 }
 		}
 }
@@ -1205,7 +1221,7 @@ translate([7, 0, 20.5])
 translate([-10, 0, 0]) 
 mirror([0, -1, 0])
 rotate([90, 0, 0])
-#union() {
+union() {
 			translate([-xMountWidth / 1.75, -xMountWidth / 5, 0])
 				cylinder(h=100, d=xMountScrewD + iFitAdjust);
 			translate([-xMountWidth / 5, .8 * xMountWidth / 5, 0])
