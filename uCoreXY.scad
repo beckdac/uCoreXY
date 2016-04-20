@@ -21,6 +21,8 @@ part = "assembly";
 //part = "negXPulleyMount";
 //part = "xCarriageBeltMount";
 //part = "xCarriageTop";
+//part = "yAxisRailMount";
+//part = "cornerBracketAssembly";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
 beamHW = 10;
@@ -83,10 +85,10 @@ beltIdlerPulleyHousingPulleySpacerHeight = 2;
 beltIdlerPulleyHousingPulleySpacerD = 4.4;
 */
 /* for 20 tooth compatible dimensions */
+// measured 4/19/2016 from in hand stock
 beltIdlerPulleyLidH = 1;
-//beltIdlerPulleyH = 8.4;
-beltIdlerPulleyH = 9;// - beltIdlerPulleyLidH * 2;
-beltIdlerPulleyD = 12.2;
+beltIdlerPulleyH = 8.5;
+beltIdlerPulleyD = 12.1;
 beltIdlerPulleyLidD = 18;
 beltIdlerPulleyBearingID = 3;
 beltIdlerPulleyBearingScrewD = beltIdlerPulleyBearingID + iFitAdjust;
@@ -162,7 +164,9 @@ beltMountScrewD = 3;
 /* [Computed Constants] */
 // constants computed from the above
 reinforcedPlateThickness = plateThickness * reinforcedPlateScale;
+yAxisRailMountWidthBuffer = 0;
 yAxisRailMountWidth = linearBearingOD + (linearBearingOD - linearRailOD);
+yAxisRailMountHeightBuffer = 0;
 yAxisRailMountHeight = yAxisRailSep + 
      (.5 * linearBearingOD) + // to account for the required spacing of the bearings 
      yAxisRailMountBuffer;
@@ -279,6 +283,10 @@ module render_part() {
 		posXCarriageBeltMount();
 	} else if (part == "xCarriageTop") {
 		xCarriageTop();
+	} else if (part == "yAxisRailMount") {
+		yAxisRailMount();
+	} else if (part == "cornerBracketAssembly") {
+		cornerBracketAssembly();
 	} else {
 		// invalid value
 	}
@@ -367,10 +375,74 @@ module parallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRailSep, 
 		}
 }
 
+axisRailMountWidthBuffer = 20;
+axisRailMountHeightBuffer = 10;
+
+// new mount from the brackets
+module bracketParallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRailSep) {
+		difference() {
+		  	union() {
+/*
+				translate([
+					//-(beamHW + plateThickness),
+					(beamHW + plateThickness) / 2 -
+					(axisRailMountWidth + axisRailMountWidthBuffer) / 2 - 1,
+					//yAxisLinearBearingToBracketClearence - 	(yAxisRailMountWidth + axisRailMountWidthBuffer),
+	//				-yAxisLinearBearingToBracketClearence - plateThickness,
+					//-	(axisRailMountWidth + axisRailMountWidthBuffer) / 2,
+					0,
+					(plateThickness + beamHW) / 2
+					])
+				cube([
+					axisRailMountWidth + axisRailMountWidthBuffer,
+					axisRailMountHeight + axisRailMountHeightBuffer,
+					plateThickness + beamHW
+					], center=true);
+*/
+                // both hulls set out the rail to bracket mounts
+        		//for (i=[-1, 1])
+        			hull() {
+						linear_extrude(height=plateThickness + beamHW)
+            				polygon(points=[
+									[-plateThickness, axisRailMountHeight], 
+									[-plateThickness, -plateThickness],
+									[cornerLength, -plateThickness],
+									//[axisRailMountWidth, -axisRailMountHeight],
+									[-axisRailMountWidth, -axisRailMountHeight / 2],
+									[-axisRailMountWidth, 0]
+									//[-axisRailMountWidth/2, axisRailMountHeight / 2], 
+									//[-axisRailMountWidth/2, -axisRailMountHeight / 2], 
+									//[-plateThickness, -axisRailMountHeight / 2]
+								], convexity = 10);
+				//		translate([-axisRailMountWidth/2, i * axisRailSep/2, 0])
+				//			cylinder(h=plateThickness + beamHW, d=linearRailOD * 2);
+						D=linearRailOD * 2;
+						H=plateThickness + beamHW;
+						translate([axisRailMountWidth + D, -(axisRailMountHeight + D) / 2 + 10, H / 2])
+							cylinder(h=H, d=D, center=true);
+						translate([-axisRailMountWidth - D, -(axisRailMountHeight + D) / 2 + 10, H / 2])
+							cylinder(h=H, d=D, center=true);
+						translate([-axisRailMountWidth / 2 - D, axisRailMountHeight - D / 2, H / 2])
+							cylinder(h=H, d=D, center=true);
+					}
+			}
+			// rail holes
+        	for (i=[-1, 1])
+//yAxisLinearBearingToBracketClearence
+				translate([-yAxisLinearBearingToBracketClearence- axisRailMountWidth / 2, 
+						i * axisRailSep / 2, 
+						- cylHeightExt / 2])
+					cylinder(h=plateThickness + beamHW + cylHeightExt, d=linearRailOD);
+		}
+}
+
 module yAxisRailMount() {
     union() {
-		translate([-yAxisLinearBearingToBracketClearence, 0, 0]) 
-			parallelRailsMount(yAxisRailMountHeight, yAxisRailMountWidth, yAxisRailSep, false, 0);
+		//translate([-yAxisLinearBearingToBracketClearence, 0, 0]) 
+		////translate([-plateThickness, 0, 0]) 
+			bracketParallelRailsMount(yAxisRailMountHeight, yAxisRailMountWidth, yAxisRailSep, false, 0);
+
+/*
 		// now the pieces that join the bracket to the mount
 		// first, the primary connection between the mount and the bracket
 		linear_extrude(height=plateThickness + beamHW)
@@ -382,6 +454,7 @@ module yAxisRailMount() {
         translate([-plateThickness, 0, 0])
 		  linear_extrude(height=plateThickness + beamHW)
             polygon(points=[ [0, -yAxisRailMountHeight / 2], [2.5 * yAxisRailMountWidth/2, -yAxisRailMountHeight / 2], [ 4.5 * yAxisRailMountWidth/2, 0 ], [0, 0 ]], convexity=10);
+*/
     }
 }
 
@@ -425,6 +498,13 @@ module topPosXPosYCornerBracket() {
     mirror([1,0,0]) topNegXPosYCornerBracket();
 }
 
+module cornerBracketAssembly() {
+	union() {
+		beamBracket90(false);
+		yAxisRailMount();
+	}
+}
+
 module topNegXNegYCornerBracket() {
     fSLTrnas = frameSideLength / 2 + beamHW / 2; // Translation distant to put brack on the outside of frame
     fSHTrnas = frameSideHeight / 2 + beamHW / 2; // Translation distant to put brack on the outside of frame
@@ -432,10 +512,7 @@ module topNegXNegYCornerBracket() {
     translate([-fSLTrnas, -fSLTrnas, fSHTrnas]) 
         translate([0, -plateThickness, 0])
             rotate([-90, 0, 0]) 
-                union() {
-                    beamBracket90(false);
-                    yAxisRailMount();
-                }
+					cornerBracketAssembly();
     }
 }
 
@@ -939,9 +1016,9 @@ module xCarriage() {
 					}
 		}
 		// slot for heatsink
-		cube([laserHeatsinkX + iFitAdjust, 
-			laserHeatsinkY + iFitAdjust, 
-			laserHeatsinkZ + iFitAdjust], center=true);
+		cube([laserHeatsinkX + iFitAdjust * 2, 
+			laserHeatsinkY + iFitAdjust * 2, 
+			laserHeatsinkZ + iFitAdjust * 2], center=true);
 		// holes for mounting
 		for (i=[-1, 1])
 			for (j=[-1, 1])
