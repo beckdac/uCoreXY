@@ -100,7 +100,7 @@ beltThickness = 1.5;
 // belt pulley
 beltPulleyLidD = 16;
 beltPulleyH = 16;
-beltPulleyGearedD = 12.2;
+beltPulleyGearedD = 12.1;
 beltPulleyShaftD = 5;
 beltPulleyLidH = 1;
 
