@@ -23,6 +23,7 @@ part = "assembly";
 //part = "xCarriageTop";
 //part = "yAxisRailMount";
 //part = "cornerBracketAssembly";
+//part = "xMountWithFlanges";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
 beamHW = 10;
@@ -389,21 +390,27 @@ module bracketParallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRa
             				polygon(points=[
 									[-plateThickness, axisRailMountHeight], 
 									[-plateThickness, -plateThickness],
-									[cornerLength, -plateThickness],
-									//[axisRailMountWidth, -axisRailMountHeight],
+									[cornerLength / 2, -plateThickness],
 									[-axisRailMountWidth, -axisRailMountHeight / 2],
 									[-axisRailMountWidth, 0]
-									//[-axisRailMountWidth/2, axisRailMountHeight / 2], 
-									//[-axisRailMountWidth/2, -axisRailMountHeight / 2], 
-									//[-plateThickness, -axisRailMountHeight / 2]
 								], convexity = 10);
 						D=linearRailOD * 2.5;
 						H=plateThickness + beamHW;
+/*
 						translate([axisRailMountWidth + D, -(axisRailMountHeight + D) / 2 + 10, H / 2])
 							cylinder(h=H, d=D, center=true);
 						translate([-axisRailMountWidth - D, -(axisRailMountHeight + D) / 2 + 10, H / 2])
 							cylinder(h=H, d=D, center=true);
 						translate([-axisRailMountWidth / 2 - D, axisRailMountHeight - D / 2, H / 2])
+							cylinder(h=H, d=D, center=true);
+*/
+						translate([(axisRailMountWidth + D) / 2 + 10, -(axisRailMountHeight + D) / 2 + 10, H / 2])
+							cylinder(h=H, d=D, center=true);
+						translate([-axisRailMountWidth - D, -(axisRailMountHeight + D) / 2 + 10, H / 2])
+							cylinder(h=H, d=D, center=true);
+						translate([-axisRailMountWidth - D, -(axisRailMountHeight + D) / 2 + 20, H / 2])
+							cylinder(h=H, d=D, center=true);
+						translate([-axisRailMountWidth / 2 - D, axisRailMountHeight / 2 - D / 2, H / 2])
 							cylinder(h=H, d=D, center=true);
 					}
 			}
@@ -415,20 +422,27 @@ module bracketParallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRa
 						- cylHeightExt / 2])
 					cylinder(h=plateThickness + beamHW + cylHeightExt, d=linearRailMountID);
 			// nut slots
-						D=linearRailOD * 2;
-						H=plateThickness + beamHW;
-						translate([axisRailMountWidth + D, -(axisRailMountHeight + D) / 2 + 10, H / 2])
-			translate([0,
-				0,
-				0
-				])
-			#recessedNut(6, h=plateThickness + cylHeightExt, d=beltMountCaptiveNutWidth);
-						translate([-axisRailMountWidth - D, -(axisRailMountHeight + D) / 2 + 10, H / 2])
-			#recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
-						translate([-axisRailMountWidth / 2 - D, axisRailMountHeight - D / 2, H / 2])
-			#recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
-						translate([axisRailMountWidth + D, axisRailMountHeight - D / 2, H / 2])
-			#recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
+			D=linearRailOD * 2;
+			H=plateThickness + beamHW;
+/* old method
+			translate([axisRailMountWidth + D, -(axisRailMountHeight + D) / 2 + 10, H / 2])
+				#recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
+			translate([-axisRailMountWidth - D, -(axisRailMountHeight + D) / 2 + 10, H / 2])
+				#recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
+			translate([-axisRailMountWidth / 2 - D, axisRailMountHeight - D / 2, H / 2])
+				#recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
+			translate([axisRailMountWidth + D, axisRailMountHeight - D / 2, H / 2])
+				#recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
+*/
+translate([-10, -8, 0]) 
+union() {
+			translate([-xMountWidth / 1.5, -xMountWidth / 5, 0])
+				#recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
+			translate([-xMountWidth / 5, .8 * xMountWidth / 5, 0])
+				#recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
+			translate([3.5 * xMountWidth / 5, -xMountWidth / 5, 0])
+				#recessedNut(6, h=10*beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
+}
 		}
 }
 
@@ -1175,9 +1189,29 @@ module xMount() {
 	}
 }
 
+module xMountWithFlanges() {
+	union() {
+		xMount();
+		#translate([0, xMountWidth / 2 - reinforcedPlateThickness / 2, stepperHeight * 1.25 / 2])
+			hull() {
+				cube([xMountWidth, reinforcedPlateThickness, stepperHeight * 1.25], center=true);
+				// linearRailOD is again, a cosmetic for rounded corners, not essential
+				translate([-37, 0, -14])
+					rotate([90, 0, 0])
+						cylinder(h=reinforcedPlateThickness, d=linearRailOD*2, center=true);
+				translate([-37, 0, -6])
+					rotate([90, 0, 0])
+						cylinder(h=reinforcedPlateThickness, d=linearRailOD*2, center=true);
+				translate([37, 0, -14])
+					rotate([90, 0, 0])
+						cylinder(h=reinforcedPlateThickness, d=linearRailOD*2, center=true);
+			}
+	}
+}
+
 module xStepperMount() {
 	difference() {
-		xMount();
+		xMountWithFlanges();
 		for (i = [-1,1]) {
 			hull() {
 				translate([0, stepperMountHoleTensionSlotLen * .25, 0])
@@ -1273,7 +1307,8 @@ module xPulleyHousing() {
 module xPulleyMount() {
 	difference() {
 		rotate([180, 0, 0])
-			xMount();
+			mirror([-1, 0, 0])
+				xMountWithFlanges();
 		// bearing screw
 		cylinder(h=reinforcedPlateThickness + cylHeightExt, 
 			d=beltIdlerPulleyBearingScrewD * 1.1, center=true);
