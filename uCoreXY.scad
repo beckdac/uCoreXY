@@ -1161,13 +1161,14 @@ stepperCollarWidth = 22;
 xMountStepperBuffer = 2;
 xMountWidth = stepperWidth + xMountStepperBuffer + reinforcedPlateThickness * 2;
 stepperMountHoleTensionSlotLen = 6;
+xMountFaceExtension = 10;
 
 // this is a generic mount that is based off the nema17 dimensions
 // it will also hold the pulley mounts
 module xMount() {
 	union () {
 		// face plate
-		cube([xMountWidth, xMountWidth, reinforcedPlateThickness], center=true);
+		cube([xMountWidth, xMountWidth + xMountFaceExtension, reinforcedPlateThickness], center=true);
 		// corner plate backing
 		translate([0, xMountWidth / 2 - reinforcedPlateThickness / 2, stepperHeight * 1.25 / 2])
 			cube([xMountWidth, reinforcedPlateThickness, stepperHeight * 1.25], center=true);
@@ -1181,7 +1182,8 @@ module xMount() {
 						cube([reinforcedPlateThickness, reinforcedPlateThickness,
 							stepperHeight * 1.25], center=true);
 					translate([i * xMountWidth / 2 - i * reinforcedPlateThickness / 2, 
-							-xMountWidth / 2 + reinforcedPlateThickness / 2, 
+							-xMountWidth / 2 + reinforcedPlateThickness / 2 +
+								- xMountFaceExtension / 2, 
 							0])
 						cube([reinforcedPlateThickness, reinforcedPlateThickness,
 							reinforcedPlateThickness], center=true);
@@ -1191,7 +1193,7 @@ module xMount() {
 
 module xMountWithFlanges() {
 	union() {
-		xMount();
+		xMount(xMountFaceExtension);
 		#translate([0, xMountWidth / 2 - reinforcedPlateThickness / 2, stepperHeight * 1.25 / 2])
 			hull() {
 				cube([xMountWidth, reinforcedPlateThickness, stepperHeight * 1.25], center=true);
@@ -1210,22 +1212,23 @@ module xMountWithFlanges() {
 }
 
 module xStepperMount() {
+	xMountFaceExtension = 10;
 	difference() {
-		xMountWithFlanges();
+		xMountWithFlanges(xMountFaceExtension);
 		for (i = [-1,1]) {
 			hull() {
-				translate([0, stepperMountHoleTensionSlotLen * .25, 0])
+				translate([0, stepperMountHoleTensionSlotLen * .25 - xMountFaceExtension / 2, 0])
 					cylinder(h=reinforcedPlateThickness + cylHeightExt, d=stepperCollarWidth * 1.1, center=true);
-				translate([0, -stepperMountHoleTensionSlotLen * .75, 0])
+				translate([0, -stepperMountHoleTensionSlotLen * .75 - xMountFaceExtension / 2, 0])
 					cylinder(h=reinforcedPlateThickness + cylHeightExt, d=stepperCollarWidth * 1.1, center=true);
 			}
 			for (j = [-1,1])
 				translate([i * stepperMountHoleSpacing / 2, j * stepperMountHoleSpacing / 2, 0])
 					hull() {
-						translate([0, stepperMountHoleTensionSlotLen * .25, 0])
+						translate([0, stepperMountHoleTensionSlotLen * .25 - xMountFaceExtension / 2, 0])
 							cylinder(h=reinforcedPlateThickness + cylHeightExt,
 								d=stepperMountScrewD, center=true);
-						translate([0, -stepperMountHoleTensionSlotLen * .75, 0])
+						translate([0, -stepperMountHoleTensionSlotLen * .75 - xMountFaceExtension / 2, 0])
 							cylinder(h=reinforcedPlateThickness + cylHeightExt,
 								d=stepperMountScrewD, center=true);
 					}
@@ -1247,7 +1250,7 @@ module negXStepperMount() {
 		rotate([180, 0, 180])
 			union() {
 				xStepperMount();
-				translate([0, 0, reinforcedPlateThickness / 2 - stepperCollarHeight])
+				translate([0, -xMountFaceExtension / 2, reinforcedPlateThickness / 2 - stepperCollarHeight])
 					rotate([180, 0, 0])
 						motor(Nema17, orientation=[0, -180, 0]);
 			}
