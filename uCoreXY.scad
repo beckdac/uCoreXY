@@ -506,6 +506,15 @@ union() {
 					cylinder(h=100, d=xMountScrewD, center=true);
 				}
 }
+			// limit switch mount
+			translate([0, -30, (plateThickness + beamHW) / 2])
+				cube([30, beamHW, cylHeightExt + plateThickness + beamHW], center=true);
+			for(i=[-1,1])
+				translate([0, -23, (plateThickness + beamHW) / 2])
+					translate([i * limitSwitchMountScrewSep / 2, 0, beamHW / 2.2])
+						rotate([90, 0, 0])
+							#cylinder(h=limitSwitchMountScrewDepth + cylHeightExt, 
+								d=limitSwitchMountScrewD, center=true);
 		}
 }
 
