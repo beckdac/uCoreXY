@@ -25,6 +25,8 @@ part = "assembly";
 //part = "cornerBracketAssembly";
 //part = "xMountWithFlanges";
 //part = "renderPowerSupplyMount";
+//part = "powerSupplyMount";
+//part = "rampsMount";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
 beamHW = 10;
@@ -228,6 +230,11 @@ xMountFaceExtension = 10;
 xMountScrewD = 3;
 xMountCaptiveNutHeight = yAxisRailTightCaptiveNutHeight;
 
+
+// ramps
+rampsScrewMountWidthSep = 48.3;
+rampsScrewMountLengthSep = 82;
+
 // this is a generic mount that is based off the nema17 dimensions
 
 ////////////////////// End header ////////////////////
@@ -316,6 +323,8 @@ module render_part() {
 		powerSupply();
 	} else if (part == "powerSupplyMount") {
 		powerSupplyMount();
+	} else if (part == "rampsMount") {
+		rampsMount();
 	} else if (part == "renderPowerSupplyMount") {
 		renderPowerSupplyMount();
 	} else {
@@ -344,6 +353,7 @@ module assembly() {
 		negXPulleyMount();
 		posXPulleyMount();
 		renderPowerSupplyMount();
+		renderRampsMount();
     }
 }
 
@@ -1614,7 +1624,7 @@ powerSupplyMountScrewWidthOffset= 4.5+57.5;
 powerSupplyMountScrewD = 3 + iFitAdjust;
 powerSupplyMountScrewDepth = 3;
 powerSupplyMountPlateWidth = frameSideHeight + beamHW + plateThickness * 2;
-powerMountPlateBuffer = 20;
+powerMountPlateBuffer = 0;
 powerTerminalMountPlateWidth = frameSideHeight;
 powerTerminalMountPlateLength = 0;
 powerTerminalMountPlateHeight = plateThickness;
@@ -1667,7 +1677,7 @@ module powerSupplyMount() {
 							translate([i * (frameBeamHeight + beamHW) / 2,
 									j * (frameBeamLength - cornerLength) / 2 -j * beamHW -j * plateThickness / 2,
 									0])
-								#cylinder(h=100*powerSupplyMountScrewDepth + cylHeightExt, 
+								cylinder(h=100*powerSupplyMountScrewDepth + cylHeightExt, 
 									d=powerSupplyMountScrewD, center=true);
 							
 				}
@@ -1708,4 +1718,57 @@ module powerSupply() {
 								cylinder(h=powerSupplyMountScrewDepth + cylHeightExt, 
 									d=powerSupplyMountScrewD, center=true);
 				}
+}
+
+module renderRampsMount() {
+translate([0, -frameSideLength / 2 - beamHW - plateThickness, 0])
+
+	rotate([270, 90, 0])
+		union() {
+			rampsMount();
+		}
+}
+
+module rampsMount() {
+		translate([
+				0,
+				0,
+				powerSupplyMountPlateHeight / 2
+				])
+			rotate([0, 0, 0])
+				difference() {
+					translate([0, powerTerminalMountPlateLength / 2, 0])
+					cube([powerSupplyMountPlateWidth, 
+						powerSupplyMountPlateLength, powerSupplyMountPlateHeight], center=true);
+					// mount holes
+					for (i=[-1,1])
+						for (j=[-1,1])
+							// make screws
+							translate([i * rampsScrewMountWidthSep / 2,
+									j * rampsScrewMountLengthSep / 2,
+									0])
+								cylinder(h=10*powerSupplyMountScrewDepth + cylHeightExt, 
+									d=powerSupplyMountScrewD, center=true);
+					// utility holes for zip ties, hold downs, etc.
+					for (i=[-1,0,1])
+						for (j=[-1,0,1])
+							translate([i * rampsScrewMountWidthSep * .75,
+									j * rampsScrewMountLengthSep * .85,
+									0])
+								cylinder(h=10*powerSupplyMountScrewDepth + cylHeightExt, 
+									d=powerSupplyMountScrewD * 2, center=true);
+
+					// frame mount holes
+					for (i=[-1,1])
+						for (j=[-1,1])
+							// make screws
+							translate([i * (frameBeamHeight + beamHW) / 2,
+									j * (frameBeamLength - cornerLength) / 2 -j * beamHW -j * plateThickness / 2,
+									0])
+								cylinder(h=100*powerSupplyMountScrewDepth + cylHeightExt, 
+									d=powerSupplyMountScrewD, center=true);
+							
+				}
+	
+	
 }
