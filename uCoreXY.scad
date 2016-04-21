@@ -27,6 +27,9 @@ part = "assembly";
 //part = "renderPowerSupplyMount";
 //part = "powerSupplyMount";
 //part = "rampsMount";
+//part = "fanMount";
+//part = "fan";
+//part = "renderFanMount";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
 beamHW = 10;
@@ -334,6 +337,12 @@ module render_part() {
 		rampsMount();
 	} else if (part == "renderPowerSupplyMount") {
 		renderPowerSupplyMount();
+	} else if (part == "fanMount") {
+		fanMount();
+	} else if (part == "fan") {
+		fan();
+	} else if (part == "renderFanMount") {
+		renderFanMount();
 	} else {
 		// invalid value
 	}
@@ -361,6 +370,7 @@ module assembly() {
 		posXPulleyMount();
 		renderPowerSupplyMount();
 		renderRampsMount();
+		renderFanMount();
     }
 }
 
@@ -513,7 +523,7 @@ union() {
 				translate([0, -23, (plateThickness + beamHW) / 2])
 					translate([i * limitSwitchMountScrewSep / 2, 0, beamHW / 2.2])
 						rotate([90, 0, 0])
-							#cylinder(h=limitSwitchMountScrewDepth + cylHeightExt, 
+							cylinder(h=limitSwitchMountScrewDepth + cylHeightExt, 
 								d=limitSwitchMountScrewD, center=true);
 		}
 }
@@ -1843,4 +1853,56 @@ module rampsMount() {
 				}
 	
 	
+}
+
+fanW = 80;
+fanH = 38;
+fanMountScrewD = 3.5;
+fanMountWidth = 120;
+fanMountScrewSep = 71.5;
+fanMountPlateWidth = powerSupplyMountPlateWidth;
+fanMountOffset = -(fanW - fanMountPlateWidth) / 2;
+
+module fan() {
+	color([.1, .1, .1])
+	rotate([90, 0, 0])
+	difference() {
+		cube([fanW, fanW, fanH], center=true);
+		for (i=[-1,1])
+			for (j=[-1,1])
+				translate([i * fanMountScrewSep / 2, j * fanMountScrewSep / 2, 0])
+					#cylinder(h=fanH + cylHeightExt, d=fanMountScrewD, center=true);
+	}
+}
+
+module fanMount() {
+difference() {
+	cube([fanMountWidth, plateThickness, fanMountPlateWidth], center=true);
+	for (i=[-1,1])
+		for (j=[-1,1])
+			translate([0, 0, -fanMountOffset])
+			translate([i * fanMountScrewSep/2, -plateThickness, j*fanMountScrewSep/2])
+				rotate([90, 0, 0])
+					cylinder(h=fanH + cylHeightExt, d=fanMountScrewD, center=true);
+
+	rotate([0, 90, 90])
+					for (i=[-1,1])
+						for (j=[-1,1])
+							// make screws
+							translate([i * (frameBeamHeight + beamHW) / 2,
+									j * fanMountScrewSep / 2,
+									0])
+								cylinder(h=100*powerSupplyMountScrewDepth + cylHeightExt, 
+									d=powerSupplyMountScrewD, center=true);
+}
+
+}
+
+module renderFanMount() {
+	translate([(beamHW + frameSideLength) / 2 + plateThickness / 2, 0, 0])
+	rotate([0, 0, 90]) {
+		translate([0, -fanH / 2 - plateThickness / 2, -fanMountOffset])
+			fan();
+		fanMount();
+	}
 }
