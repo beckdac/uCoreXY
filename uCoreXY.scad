@@ -72,7 +72,7 @@ yAxisRailTightCaptiveNutHeight = 4;
 // clearence between y axis linear bearings and bracket (mm)
 yAxisLinearBearingToBracketClearence = 10;
 // Y axis linear rail length (mm)
-yAxisLinearRailLength = 330;
+yAxisLinearRailLength = 430;
 // X axis linear rail length (mm)
 xAxisLinearRailLength = 330;
 yAxisRailMountBuffer = 10;
@@ -1328,6 +1328,22 @@ union() {
 						-xMountWidth / 5 + i * stepperMountHoleTensionSlotLen / 2,
 						0])
 					cylinder(h=100, d=xMountScrewD + iFitAdjust);
+			}
+}
+		// rail holes
+translate([7, 0, 20.5]) 
+translate([-10, 0, 0]) 
+mirror([0, -1, 0])
+rotate([90, 0, 0])
+union() {
+					for(j=[-1,1])
+			hull() {
+				for(i=[-1,1])
+						translate([0, j * yAxisRailSep / 2, 0])
+						translate([-xMountWidth / 5,
+							.8 * xMountWidth / 5 + i * stepperMountHoleTensionSlotLen / 2,
+							0])
+						cylinder(h=100, d=linearRailOD + 4 * iFitAdjust);
 			}
 }
 	}
