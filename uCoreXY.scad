@@ -50,6 +50,8 @@ frameSideLength = frameBeamLength + 2 * 0.5 * beamHW; // this accounts for two c
 // frame beam height (mm)
 frameBeamHeight = 100;
 frameSideHeight = frameBeamHeight + 2 * 0.5 * beamHW; // this accounts for two corner cubes (2 at half width)
+// frame screw diameter (mm)
+beamScrewD = 3;
 
 /* [Rails] */
 
@@ -487,30 +489,37 @@ module yAxisRailMount() {
 }
 
 module beamBracket90(partial) {
-   union() {
-       // main triangle and beam overlaps
-        linear_extrude(height=plateThickness)
-            polygon(points=[ [0,0], [cornerLength, 0], [cornerLength, beamHW], [beamHW, cornerLength], [0, cornerLength] ], convexity = 10);
-       // veritcal on one side of 90
-        linear_extrude(height=plateThickness + beamHW)
-            polygon(points=[ [-plateThickness, -plateThickness ], [cornerLength, -plateThickness], [cornerLength, 0], [0, 0]], convexity = 10);
-       // veritcal on other
-        linear_extrude(height=plateThickness + beamHW)           
-            polygon(points=[ [-plateThickness, -plateThickness ], [-plateThickness,cornerLength], [0, cornerLength], [0, 0]], convexity = 10);
+	difference() {
+		// bracket
+   		union() {
+       	// main triangle and beam overlaps
+        	linear_extrude(height=plateThickness)
+            	polygon(points=[ [0,0], [cornerLength, 0], [cornerLength, beamHW], [beamHW, cornerLength], [0, cornerLength] ], convexity = 10);
+       		// veritcal on one side of 90
+        	linear_extrude(height=plateThickness + beamHW)
+            	polygon(points=[ [-plateThickness, -plateThickness ], [cornerLength, -plateThickness], [cornerLength, 0], [0, 0]], convexity = 10);
+       		// veritcal on other
+        	linear_extrude(height=plateThickness + beamHW)           
+            	polygon(points=[ [-plateThickness, -plateThickness ], [-plateThickness,cornerLength], [0, cornerLength], [0, 0]], convexity = 10);
  
-	if (!partial) { 
-    // another main triangle
-    rotate([90, 0, 0]) translate([0, plateThickness, 0]) 
-        difference() {
-            linear_extrude(height=plateThickness)
-                polygon(points=[ [0,0], [cornerLength, 0], [cornerLength, beamHW], [beamHW, cornerLength], [0, cornerLength] ], convexity = 10);     
-			translate([cornerLength, cornerLength, plateThickness / 2])
-				cylinder(h=plateThickness + cylHeightExt, r = cornerLength / 1.2 , center=true);
-		}
-    // another main triangle
-    translate([0, plateThickness, 0]) rotate([0, -90, 0]) translate([plateThickness, -plateThickness, 0]) linear_extrude(height=plateThickness)
-            polygon(points=[ [0,-plateThickness], [cornerLength, -plateThickness], [cornerLength, beamHW], [beamHW, cornerLength], [0, cornerLength] ], convexity = 10);     
-                }
+			if (!partial) { 
+    			// another main triangle
+    			rotate([90, 0, 0]) translate([0, plateThickness, 0]) 
+        		difference() {
+            		linear_extrude(height=plateThickness)
+                		polygon(points=[ [0,0], [cornerLength, 0], [cornerLength, beamHW], [beamHW, cornerLength], [0, cornerLength] ], convexity = 10);     
+					translate([cornerLength, cornerLength, plateThickness / 2])
+						cylinder(h=plateThickness + cylHeightExt, r = cornerLength / 1.2 , center=true);
+				}
+    		// another main triangle
+    		translate([0, plateThickness, 0]) rotate([0, -90, 0]) translate([plateThickness, -plateThickness, 0]) linear_extrude(height=plateThickness)
+            	polygon(points=[ [0,-plateThickness], [cornerLength, -plateThickness], [cornerLength, beamHW], [beamHW, cornerLength], [0, cornerLength] ], convexity = 10);    
+			}
+		} 
+		// mounting holes
+		translate([cornerLength * .75, 0, plateThickness + beamHW / 2 + (beamScrewD + iFitAdjust) / 2])
+		rotate([90, 0, 0])
+		#cylinder(h=10*plateThickness + cylHeightExt, d=beamScrewD + iFitAdjust, center=true);
 	}
 }
 
@@ -560,7 +569,7 @@ module bottomNegXNegYCornerBracket() {
     fSLTrnas = frameSideLength / 2 + beamHW / 2; // Translation distant to put brack on the outside of frame
     fSHTrnas = frameSideHeight / 2 + beamHW; // Translation distant to put brack on the outside of frame
     color([.6, .6, 0]) {
-    translate([-fSLTrnas, -fSLTrnas, -fSHTrnas]) 
+    translate([-fSLTrnas, -fSLTrnas + plateThickness, -fSHTrnas + 1]) 
         translate([0, -plateThickness, 0])
                 union() {
 					beamBracket90(true);
