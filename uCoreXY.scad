@@ -235,6 +235,13 @@ xMountCaptiveNutHeight = yAxisRailTightCaptiveNutHeight;
 rampsScrewMountWidthSep = 48.3;
 rampsScrewMountLengthSep = 82;
 
+// limit switches
+limitSwitchHeight = 6.3;
+limitSwitchMountScrewSep = 9;
+limitSwitchMountScrewD = 2.5;
+limitSwitchMountScrewDepth = 4;
+
+
 // this is a generic mount that is based off the nema17 dimensions
 
 ////////////////////// End header ////////////////////
@@ -1630,7 +1637,6 @@ powerTerminalMountPlateLength = 0;
 powerTerminalMountPlateHeight = plateThickness;
 powerSupplyMountPlateLength = powerSupplyLength + powerMountPlateBuffer + powerTerminalMountPlateLength;
 powerSupplyMountPlateHeight = plateThickness;
-
 
 module renderPowerSupplyMount() {
 
