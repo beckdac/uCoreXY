@@ -1125,6 +1125,12 @@ module xCarriage() {
 						translate([0, 0, beltMountCaptiveNutHeight / 1.5])
 							recessedNut(6, h=beltMountCaptiveNutHeight, d=beltMountCaptiveNutWidth);
 					}
+		// holes for limit swtiches, self tapping, I hope
+		for (i=[-1, 1])
+			for (j=[-1, 1])
+				translate([i * limitSwitchMountScrewSep / 2, j * beltMountClipY * 1.7, 0])
+					cylinder(h=10*reinforcedPlateThickness/2 + cylHeightExt,
+						d=limitSwitchMountScrewD, center=true);
 	}
 }
 
