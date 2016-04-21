@@ -521,27 +521,44 @@ module beamBracket90(partial) {
 			}
 		} 
 		// mounting holes
-		translate([cornerLength * .75,
+	for (beamOffset=[.25,.75]) {
+		translate([cornerLength * beamOffset,
 				0,
 				plateThickness  / 2 + beamHW / 2 + (beamScrewD + iFitAdjust) / 2])
 			rotate([90, 0, 0])
-				#cylinder(h=10*plateThickness + cylHeightExt, d=beamScrewD + iFitAdjust, center=true);
-		translate([cornerLength * .75,
+				cylinder(h=10*plateThickness + cylHeightExt, d=beamScrewD + iFitAdjust, center=true);
+		translate([cornerLength * beamOffset,
 				beamHW / 2,
 				plateThickness  / 2 + beamHW / 2 + (beamScrewD + iFitAdjust) / 2])
 			rotate([180, 0, 0])
-				#cylinder(h=10*plateThickness + cylHeightExt, d=beamScrewD + iFitAdjust, center=true);
+				cylinder(h=10*plateThickness + cylHeightExt, d=beamScrewD + iFitAdjust, center=true);
 
 		translate([0, 
-				cornerLength * .75, 
+				cornerLength * beamOffset, 
 				plateThickness  / 2 + beamHW / 2 + (beamScrewD + iFitAdjust) / 2])
 			rotate([0, 90, 0])
-				#cylinder(h=10*plateThickness + cylHeightExt, d=beamScrewD + iFitAdjust, center=true);
+				cylinder(h=10*plateThickness + cylHeightExt, d=beamScrewD + iFitAdjust, center=true);
 		translate([beamHW / 2, 
-				cornerLength * .75, 
+				cornerLength * beamOffset, 
 				0 ])
 			rotate([0, 180, 0])
-				#cylinder(h=10*plateThickness + cylHeightExt, d=beamScrewD + iFitAdjust, center=true);
+				cylinder(h=10*plateThickness + cylHeightExt, d=beamScrewD + iFitAdjust, center=true);
+
+		translate([ 
+				plateThickness  / 2 + beamHW / 2 + (beamScrewD + iFitAdjust) / 2,
+				beamHW / 2,
+				cornerLength * beamOffset
+				])
+			rotate([0, 90, 0])
+				cylinder(h=10*plateThickness + cylHeightExt, d=beamScrewD + iFitAdjust, center=true);
+		translate([
+				beamHW / 2,
+				0,
+				cornerLength * beamOffset
+				])
+			rotate([90, 90, 0])
+				cylinder(h=10*plateThickness + cylHeightExt, d=beamScrewD + iFitAdjust, center=true);
+		}
 	}
 }
 
