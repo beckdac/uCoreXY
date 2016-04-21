@@ -72,7 +72,7 @@ yAxisRailTightCaptiveNutHeight = 4;
 // clearence between y axis linear bearings and bracket (mm)
 yAxisLinearBearingToBracketClearence = 10;
 // Y axis linear rail length (mm)
-yAxisLinearRailLength = 430;
+yAxisLinearRailLength = 330;
 // X axis linear rail length (mm)
 xAxisLinearRailLength = 330;
 yAxisRailMountBuffer = 10;
@@ -1688,9 +1688,16 @@ module powerSupplyMount() {
 				])
 			rotate([0, 0, 0])
 				difference() {
-					translate([0, powerTerminalMountPlateLength / 2, 0])
-					cube([powerSupplyMountPlateWidth, 
-						powerSupplyMountPlateLength, powerSupplyMountPlateHeight], center=true);
+					union() {
+						translate([0, powerTerminalMountPlateLength / 2, 0])
+						cube([powerSupplyMountPlateWidth, 
+							powerSupplyMountPlateLength, powerSupplyMountPlateHeight], center=true);
+						// raised tab
+						for (i=[-1,1])
+							translate([i * (frameBeamHeight + beamHW) / 2,
+									0, -plateThickness])
+								cube([beamHW, powerSupplyMountScrewWidthSep, plateThickness], center=true);
+					}
 					// mount holes
 					for (i=[-1,1])
 						for (j=[-1,1])
@@ -1713,6 +1720,16 @@ module powerSupplyMount() {
 							// make screws
 							translate([i * (frameBeamHeight + beamHW) / 2,
 									j * (frameBeamLength - cornerLength) / 2 -j * beamHW -j * plateThickness / 2,
+									0])
+								cylinder(h=100*powerSupplyMountScrewDepth + cylHeightExt, 
+									d=powerSupplyMountScrewD, center=true);
+
+					// screws in raised tab
+					for (i=[-1,1])
+						for (j=[-1,1])
+							// make screws
+							translate([i * (frameBeamHeight + beamHW) / 2,
+									j * powerSupplyMountScrewWidthSep / 4,
 									0])
 								cylinder(h=100*powerSupplyMountScrewDepth + cylHeightExt, 
 									d=powerSupplyMountScrewD, center=true);
@@ -1754,6 +1771,7 @@ module powerSupply() {
 									- powerSupplyHeight / 2])
 								cylinder(h=powerSupplyMountScrewDepth + cylHeightExt, 
 									d=powerSupplyMountScrewD, center=true);
+
 				}
 }
 
@@ -1774,9 +1792,16 @@ module rampsMount() {
 				])
 			rotate([0, 0, 0])
 				difference() {
-					translate([0, powerTerminalMountPlateLength / 2, 0])
-					cube([powerSupplyMountPlateWidth, 
-						powerSupplyMountPlateLength, powerSupplyMountPlateHeight], center=true);
+					union() {
+						translate([0, powerTerminalMountPlateLength / 2, 0])
+						cube([powerSupplyMountPlateWidth, 
+							powerSupplyMountPlateLength, powerSupplyMountPlateHeight], center=true);
+						// raised tab
+						for (i=[-1,1])
+							translate([i * (frameBeamHeight + beamHW) / 2,
+									0, plateThickness])
+								cube([beamHW, powerSupplyMountScrewWidthSep, plateThickness], center=true);
+					}
 					// mount holes
 					for (i=[-1,1])
 						for (j=[-1,1])
@@ -1804,6 +1829,16 @@ module rampsMount() {
 									0])
 								cylinder(h=100*powerSupplyMountScrewDepth + cylHeightExt, 
 									d=powerSupplyMountScrewD, center=true);
+					// screws in raised tab
+					for (i=[-1,1])
+						for (j=[-1,1])
+							// make screws
+							translate([i * (frameBeamHeight + beamHW) / 2,
+									j * powerSupplyMountScrewWidthSep / 4,
+									0])
+								cylinder(h=100*powerSupplyMountScrewDepth + cylHeightExt, 
+									d=powerSupplyMountScrewD, center=true);
+							
 							
 				}
 	
