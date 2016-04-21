@@ -370,7 +370,8 @@ module assembly() {
 		posXPulleyMount();
 		renderPowerSupplyMount();
 		renderRampsMount();
-		renderFanMount();
+		renderPosXFanMount();
+		renderNegXFanMount();
     }
 }
 
@@ -1884,8 +1885,13 @@ difference() {
 			translate([i * fanMountScrewSep/2, -plateThickness, j*fanMountScrewSep/2])
 				rotate([90, 0, 0])
 					cylinder(h=fanH + cylHeightExt, d=fanMountScrewD, center=true);
+		// air hole
+	translate([0, -10, -fanMountOffset])
+		rotate([0, 90, 90])
+		cylinder(h=10*powerSupplyMountScrewDepth + cylHeightExt, 
+			d=fanMountScrewSep, center=true);
 
-	rotate([0, 90, 90])
+	rotate([0, 90, 90]) {
 					for (i=[-1,1])
 						for (j=[-1,1])
 							// make screws
@@ -1894,8 +1900,18 @@ difference() {
 									0])
 								cylinder(h=100*powerSupplyMountScrewDepth + cylHeightExt, 
 									d=powerSupplyMountScrewD, center=true);
+	}
 }
 
+}
+
+module renderPosXFanMount() {
+	renderFanMount();
+}
+
+module renderNegXFanMount() {
+	mirror([-1,0,0])
+		renderFanMount();
 }
 
 module renderFanMount() {
