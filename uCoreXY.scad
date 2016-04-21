@@ -444,6 +444,8 @@ module bracketParallelRailsMount(axisRailMountHeight, axisRailMountWidth, axisRa
 						i * axisRailSep / 2, 
 						- cylHeightExt / 2])
 					cylinder(h=plateThickness + beamHW + cylHeightExt, d=linearRailMountID);
+			// remove overflow into beam frame
+			cube([50, 50, 50]);
 			// nut slots
 			D=linearRailOD * 2;
 			H=plateThickness + beamHW;
