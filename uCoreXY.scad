@@ -24,6 +24,7 @@ part = "assembly";
 //part = "yAxisRailMount";
 //part = "cornerBracketAssembly";
 //part = "xMountWithFlanges";
+part = "powerSupply";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
 beamHW = 10;
@@ -311,6 +312,8 @@ module render_part() {
 		yAxisRailMount();
 	} else if (part == "cornerBracketAssembly") {
 		cornerBracketAssembly();
+	} else if (part == "powerSupply") {
+		powerSupply();
 	} else {
 		// invalid value
 	}
@@ -327,13 +330,11 @@ module assembly() {
         bottomPosXNegYCornerBracket();
         bottomNegXPosYCornerBracket();
         bottomPosXPosYCornerBracket();
-/*
 		yAxisLinearRails();
 		xAxisLinearRails();
 		renderNegYCarriage(-90);
 		renderPosYCarriage();
 		renderXCarriage();
-*/
 		negXStepperMount();
 		posXStepperMount();
 		negXPulleyMount();
@@ -1594,4 +1595,52 @@ module carriageIdlerPulleyHousing() {
 						cylinder(h=100 + reinforcedPlateThickness + cylHeightExt,
 							d=beltIdlerPulleyHousingScrewD, center=true);
 		}
+}
+
+powerSupplyWidth = 98;
+powerSupplyLength = 199;
+powerSupplyHeight = 38;
+powerSupplyTerminalWidth = 70;
+powerSupplyTerminalLength = 10;
+powerSupplyTerminalHeight = 9;
+powerSupplyMountScrewWidthSep = 80;
+powerSupplyMountScrewLengthSep = 120;
+powerSupplyMountScrewWidthOffset= 4.5+57.5;
+powerSupplyMountScrewD = 3 + iFitAdjust;
+powerSupplyMountScrewDepth = 3;
+
+module powerSupply() {
+	color([.85, .85, .85])
+		translate([
+				0,
+				0,
+				0
+				])
+			rotate([0, 0, 0])
+				difference() {
+					cube([powerSupplyWidth, powerSupplyLength, powerSupplyHeight], center=true);
+					// screw terminal end
+					translate([0,
+							-powerSupplyLength / 2 + powerSupplyTerminalLength / 2,
+							powerSupplyHeight / 2 - powerSupplyTerminalHeight / 2
+							])
+						cube([powerSupplyTerminalWidth + cylHeightExt, 
+							powerSupplyTerminalLength + cylHeightExt, 
+							powerSupplyTerminalHeight + cylHeightExt], center=true);
+					// mount holes
+					for (i=[-1,1])
+						for (j=[-1,1])
+							// move to + offset
+							translate([0, powerSupplyMountScrewWidthOffset, 0])
+							// move to -y end
+							translate([0, -powerSupplyLength / 2, 0])
+							// bring one side of the mounting screws to y = 0
+							translate([0, powerSupplyMountScrewLengthSep / 2, 0])
+							// make screws
+							translate([i * powerSupplyMountScrewWidthSep / 2,
+									j * powerSupplyMountScrewLengthSep / 2,
+									- powerSupplyHeight / 2])
+								cylinder(h=powerSupplyMountScrewDepth + cylHeightExt, 
+									d=powerSupplyMountScrewD, center=true);
+				}
 }
