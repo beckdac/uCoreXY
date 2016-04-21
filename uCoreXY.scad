@@ -3,8 +3,8 @@
 /* [Main] */
 
 // select part
-//part = "assembly";
-part = "yCarriage";
+part = "assembly";
+//part = "yCarriage";
 //part = "xCarriage";
 //part = "renderXCarriage";
 //part = "renderPosYCarriage";
@@ -333,11 +333,11 @@ module assembly() {
 		renderNegYCarriage(-90);
 		renderPosYCarriage();
 		renderXCarriage();
+*/
 		negXStepperMount();
 		posXStepperMount();
 		negXPulleyMount();
 		posXPulleyMount();
-*/
     }
 }
 
@@ -1251,12 +1251,27 @@ translate([-10, 0, 0])
 mirror([0, -1, 0])
 rotate([90, 0, 0])
 union() {
-			translate([-xMountWidth / 1.75, -xMountWidth / 5, 0])
-				cylinder(h=100, d=xMountScrewD + iFitAdjust);
-			translate([-xMountWidth / 5, .8 * xMountWidth / 5, 0])
-				cylinder(h=100, d=xMountScrewD + iFitAdjust);
-			translate([3.5 * xMountWidth / 5, -xMountWidth / 5, 0])
-				cylinder(h=100, d=xMountScrewD + iFitAdjust);
+			hull() {
+				for(i=[-1,1])
+					translate([-xMountWidth / 1.75,
+						-xMountWidth / 5 + i * stepperMountHoleTensionSlotLen / 2,
+						0])
+					cylinder(h=100, d=xMountScrewD + iFitAdjust);
+			}
+			hull() {
+				for(i=[-1,1])
+					translate([-xMountWidth / 5,
+						.8 * xMountWidth / 5 + i * stepperMountHoleTensionSlotLen / 2,
+						0])
+					cylinder(h=100, d=xMountScrewD + iFitAdjust);
+			}
+			hull() {
+				for(i=[-1,1])
+					translate([3.5 * xMountWidth / 5,
+						-xMountWidth / 5 + i * stepperMountHoleTensionSlotLen / 2,
+						0])
+					cylinder(h=100, d=xMountScrewD + iFitAdjust);
+			}
 }
 	}
 }
