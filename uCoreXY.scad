@@ -3,8 +3,8 @@
 /* [Main] */
 
 // select part
-part = "assembly";
-//part = "yCarriage";
+//part = "assembly";
+part = "yCarriage";
 //part = "xCarriage";
 //part = "renderXCarriage";
 //part = "renderPosYCarriage";
@@ -58,13 +58,13 @@ beamScrewD = 3;
 // linear rail outer diameter (mm)
 linearRailOD = 8;
 // linear rail mount inner diameter (mm)
-linearRailMountID = linearRailOD + iFitAdjust;
+linearRailMountID = linearRailOD + iFitAdjust * 1.2;
 // Y axis linear rail to linear rail separation (center to center, mm)
 yAxisRailSep = 30;
 // Y axis linear rail mount tighenting screw diameter (mm)
 yAxisRailTightScrewD = 3;
 yAxisRailTightScrewDepth = 12;
-yAxisRailTightCaptiveNutWidth = 6.7;
+yAxisRailTightCaptiveNutWidth = 7;
 yAxisRailTightCaptiveNutHeight = 4;
 // clearence between y axis linear bearings and bracket (mm)
 yAxisLinearBearingToBracketClearence = 10;
@@ -327,6 +327,7 @@ module assembly() {
         bottomPosXNegYCornerBracket();
         bottomNegXPosYCornerBracket();
         bottomPosXPosYCornerBracket();
+/*
 		yAxisLinearRails();
 		xAxisLinearRails();
 		renderNegYCarriage(-90);
@@ -336,6 +337,7 @@ module assembly() {
 		posXStepperMount();
 		negXPulleyMount();
 		posXPulleyMount();
+*/
     }
 }
 
@@ -511,15 +513,33 @@ module beamBracket90(partial) {
 					translate([cornerLength, cornerLength, plateThickness / 2])
 						cylinder(h=plateThickness + cylHeightExt, r = cornerLength / 1.2 , center=true);
 				}
-    		// another main triangle
-    		translate([0, plateThickness, 0]) rotate([0, -90, 0]) translate([plateThickness, -plateThickness, 0]) linear_extrude(height=plateThickness)
-            	polygon(points=[ [0,-plateThickness], [cornerLength, -plateThickness], [cornerLength, beamHW], [beamHW, cornerLength], [0, cornerLength] ], convexity = 10);    
+    			// another main triangle
+    			translate([0, plateThickness, 0]) rotate([0, -90, 0]) translate([plateThickness, -plateThickness, 0]) linear_extrude(height=plateThickness)
+           	 		polygon(points=[ [0,-plateThickness], [cornerLength, -plateThickness], [cornerLength, beamHW], [beamHW, cornerLength], [0, cornerLength] ], convexity = 10);    
 			}
 		} 
 		// mounting holes
-		translate([cornerLength * .75, 0, plateThickness + beamHW / 2 + (beamScrewD + iFitAdjust) / 2])
-		rotate([90, 0, 0])
-		#cylinder(h=10*plateThickness + cylHeightExt, d=beamScrewD + iFitAdjust, center=true);
+		translate([cornerLength * .75,
+				0,
+				plateThickness  / 2 + beamHW / 2 + (beamScrewD + iFitAdjust) / 2])
+			rotate([90, 0, 0])
+				#cylinder(h=10*plateThickness + cylHeightExt, d=beamScrewD + iFitAdjust, center=true);
+		translate([cornerLength * .75,
+				beamHW / 2,
+				plateThickness  / 2 + beamHW / 2 + (beamScrewD + iFitAdjust) / 2])
+			rotate([180, 0, 0])
+				#cylinder(h=10*plateThickness + cylHeightExt, d=beamScrewD + iFitAdjust, center=true);
+
+		translate([0, 
+				cornerLength * .75, 
+				plateThickness  / 2 + beamHW / 2 + (beamScrewD + iFitAdjust) / 2])
+			rotate([0, 90, 0])
+				#cylinder(h=10*plateThickness + cylHeightExt, d=beamScrewD + iFitAdjust, center=true);
+		translate([beamHW / 2, 
+				cornerLength * .75, 
+				0 ])
+			rotate([0, 180, 0])
+				#cylinder(h=10*plateThickness + cylHeightExt, d=beamScrewD + iFitAdjust, center=true);
 	}
 }
 
