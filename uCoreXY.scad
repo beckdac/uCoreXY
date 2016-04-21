@@ -24,7 +24,7 @@ part = "assembly";
 //part = "yAxisRailMount";
 //part = "cornerBracketAssembly";
 //part = "xMountWithFlanges";
-part = "powerSupply";
+//part = "renderPowerSupplyMount";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
 beamHW = 10;
@@ -314,6 +314,10 @@ module render_part() {
 		cornerBracketAssembly();
 	} else if (part == "powerSupply") {
 		powerSupply();
+	} else if (part == "powerSupplyMount") {
+		powerSupplyMount();
+	} else if (part == "renderPowerSupplyMount") {
+		renderPowerSupplyMount();
 	} else {
 		// invalid value
 	}
@@ -339,6 +343,7 @@ module assembly() {
 		posXStepperMount();
 		negXPulleyMount();
 		posXPulleyMount();
+		renderPowerSupplyMount();
     }
 }
 
@@ -1608,13 +1613,73 @@ powerSupplyMountScrewLengthSep = 120;
 powerSupplyMountScrewWidthOffset= 4.5+57.5;
 powerSupplyMountScrewD = 3 + iFitAdjust;
 powerSupplyMountScrewDepth = 3;
+powerSupplyMountPlateWidth = frameSideHeight + beamHW + plateThickness * 2;
+powerMountPlateBuffer = 20;
+powerTerminalMountPlateWidth = frameSideHeight;
+powerTerminalMountPlateLength = 0;
+powerTerminalMountPlateHeight = plateThickness;
+powerSupplyMountPlateLength = powerSupplyLength + powerMountPlateBuffer + powerTerminalMountPlateLength;
+powerSupplyMountPlateHeight = plateThickness;
+
+
+module renderPowerSupplyMount() {
+
+translate([0, frameSideLength / 2 + beamHW, 0])
+
+	rotate([270, 90, 0])
+		union() {
+			powerSupplyMount();
+			powerSupply();
+		}
+}
+
+module powerSupplyMount() {
+		translate([
+				0,
+				0,
+				powerSupplyMountPlateHeight / 2
+				])
+			rotate([0, 0, 0])
+				difference() {
+					translate([0, powerTerminalMountPlateLength / 2, 0])
+					cube([powerSupplyMountPlateWidth, 
+						powerSupplyMountPlateLength, powerSupplyMountPlateHeight], center=true);
+					// mount holes
+					for (i=[-1,1])
+						for (j=[-1,1])
+							// move to + offset
+							translate([0, powerSupplyMountScrewWidthOffset, 0])
+							// move to -y end
+							translate([0, -powerSupplyLength / 2, 0])
+							// bring one side of the mounting screws to y = 0
+							translate([0, powerSupplyMountScrewLengthSep / 2, 0])
+							// make screws
+							translate([i * powerSupplyMountScrewWidthSep / 2,
+									j * powerSupplyMountScrewLengthSep / 2,
+									0])
+								cylinder(h=10*powerSupplyMountScrewDepth + cylHeightExt, 
+									d=powerSupplyMountScrewD, center=true);
+
+					// frame mount holes
+					for (i=[-1,1])
+						for (j=[-1,1])
+							// make screws
+							translate([i * (frameBeamHeight + beamHW) / 2,
+									j * (frameBeamLength - cornerLength) / 2 -j * beamHW -j * plateThickness / 2,
+									0])
+								#cylinder(h=100*powerSupplyMountScrewDepth + cylHeightExt, 
+									d=powerSupplyMountScrewD, center=true);
+							
+				}
+	
+}
 
 module powerSupply() {
 	color([.85, .85, .85])
 		translate([
 				0,
 				0,
-				0
+				powerSupplyHeight / 2 + powerSupplyMountPlateHeight
 				])
 			rotate([0, 0, 0])
 				difference() {
