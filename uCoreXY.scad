@@ -1805,31 +1805,42 @@ module rampsMount() {
 				difference() {
 					union() {
 						translate([0, powerTerminalMountPlateLength / 2, 0])
-						cube([powerSupplyMountPlateWidth, 
-							powerSupplyMountPlateLength, powerSupplyMountPlateHeight], center=true);
-						// raised tab
-						for (i=[-1,1])
-							translate([i * (frameBeamHeight + beamHW) / 2,
-									0, plateThickness])
-								cube([beamHW, powerSupplyMountScrewWidthSep, plateThickness], center=true);
+							cube([powerSupplyMountPlateWidth, 
+								powerSupplyMountPlateLength, powerSupplyMountPlateHeight], center=true);
+							// raised tab
+							for (i=[-1,1])
+								translate([i * (frameBeamHeight + beamHW) / 2,
+										0, plateThickness])
+									cube([beamHW, powerSupplyMountScrewWidthSep, plateThickness], center=true);
 					}
 					// mount holes
 					for (i=[-1,1])
 						for (j=[-1,1])
 							// make screws
+							translate([powerSupplyMountPlateWidth / 4 - beamHW,
+									powerSupplyMountPlateLength / 4,
+									0,
+									])
 							translate([i * rampsScrewMountWidthSep / 2,
 									j * rampsScrewMountLengthSep / 2,
 									0])
 								cylinder(h=10*powerSupplyMountScrewDepth + cylHeightExt, 
 									d=powerSupplyMountScrewD, center=true);
 					// utility holes for zip ties, hold downs, etc.
-					for (i=[-1,0,1])
-						for (j=[-1,0,1])
-							translate([i * rampsScrewMountWidthSep * .75,
-									j * rampsScrewMountLengthSep * .85,
+					for (i=[-4:-1])
+						for (j=[-9:9])
+							translate([i * 10,
+									j * 10,
 									0])
 								cylinder(h=10*powerSupplyMountScrewDepth + cylHeightExt, 
-									d=powerSupplyMountScrewD * 2, center=true);
+									d=powerSupplyMountScrewD, center=true);
+					for (i=[0:4])
+						for (j=[-9:0])
+							translate([i * 10,
+									j * 10,
+									0])
+								cylinder(h=10*powerSupplyMountScrewDepth + cylHeightExt, 
+									d=powerSupplyMountScrewD, center=true);
 
 					// frame mount holes
 					for (i=[-1,1])
@@ -1872,7 +1883,7 @@ module fan() {
 		for (i=[-1,1])
 			for (j=[-1,1])
 				translate([i * fanMountScrewSep / 2, j * fanMountScrewSep / 2, 0])
-					#cylinder(h=fanH + cylHeightExt, d=fanMountScrewD, center=true);
+					cylinder(h=fanH + cylHeightExt, d=fanMountScrewD, center=true);
 	}
 }
 
