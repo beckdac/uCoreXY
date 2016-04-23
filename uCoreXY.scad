@@ -6,9 +6,13 @@
 part = "assembly";
 //part = "yCarriage";
 //part = "xCarriage";
+//part = "xCarriageTop";
 //part = "renderXCarriage";
 //part = "renderPosYCarriage";
 //part = "topNegXNegYCornerBracket";
+//part = "topPosXNegYCornerBracket";
+//part = "topNegXPosYCornerBracket";
+//part = "topPosXPosYCornerBracket";
 //part = "bottomNegXNegYCornerBracket";
 //part = "xStepperMount";
 //part = "negXStepperMount";
@@ -30,6 +34,8 @@ part = "assembly";
 //part = "fanMount";
 //part = "fan";
 //part = "renderFanMount";
+//part = "pulleyHousingSpacer";
+//part = "pulleySpacer";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
 beamHW = 10;
@@ -343,6 +349,10 @@ module render_part() {
 		fan();
 	} else if (part == "renderFanMount") {
 		renderFanMount();
+	} else if (part == "pulleyHousingSpacer") {
+		pulleyHousingSpacer();
+	} else if (part == "pulleySpacer") {
+		pulleySpacer();
 	} else {
 		// invalid value
 	}
@@ -1893,7 +1903,7 @@ difference() {
 	for (i=[-1,1])
 		for (j=[-1,1])
 			translate([0, 0, -fanMountOffset])
-			translate([i * fanMountScrewSep/2, -plateThickness, j*fanMountScrewSep/2])
+			translate([i * fanMountScrewSep/2, -plateThickness, j*fanMountScrewSep/2 + beamHW / 2])
 				rotate([90, 0, 0])
 					cylinder(h=fanH + cylHeightExt, d=fanMountScrewD, center=true);
 		// air hole
