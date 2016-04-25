@@ -16,6 +16,7 @@ part = "assembly";
 //part = "bottomNegXNegYCornerBracket";
 //part = "xStepperMount";
 //part = "negXStepperMount";
+//part = "posXStepperMount";
 //part = "negXPulleyMount";
 //part = "posXPulleyMount";
 //part = "beltIdlerPulley";
@@ -1285,6 +1286,7 @@ module beltIdlerPulley() {
 module xMount() {
 	union () {
 		// face plate
+		translate([0, -xMountFaceExtension / 2, 0])
 		cube([xMountWidth, xMountWidth + xMountFaceExtension, reinforcedPlateThickness], center=true);
 		// corner plate backing
 		translate([0, xMountWidth / 2 - reinforcedPlateThickness / 2, stepperHeight * 1.25 / 2])
