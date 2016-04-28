@@ -6,7 +6,7 @@
 part = "assembly";
 //part = "yCarriage";
 //part = "xCarriage";
-//part = "xCarriageTop";
+part = "xCarriageTop";
 //part = "renderXCarriage";
 //part = "renderPosYCarriage";
 //part = "topNegXNegYCornerBracket";
@@ -1090,6 +1090,11 @@ joinerWidth = 2 * ((-beltThickness / 2
 								cylinder(h=plateThickness, d=linearRailOD * 2, center=true);
 				}
 		}
+		// cutouts to access belts
+		for (i=[-1, 1])
+			for (j=[-1, 1])
+				translate([i * 20, j * 27, -5])
+					#cube([20, 20, 20], center=true);
 		// slot for heatsink
 		cube([laserHeatsinkX + iFitAdjust * 2, 
 			laserHeatsinkY + iFitAdjust * 2, 
@@ -1106,7 +1111,7 @@ joinerWidth = 2 * ((-beltThickness / 2
 			for (j=[-1, 1])
 				for (k=[0, 1])
 					translate([i * beltMountClipX / 1.25,
-							j * beltMountClipY / 3 + j * k * beltMountClipY / 3,
+							j * beltMountClipY / 3 + j * k * beltMountClipY / 4,
 							reinforcedPlateThickness / 2
 						])
 					cylinder(h=reinforcedPlateThickness + cylHeightExt, d=beltMountScrewD, center=true);
