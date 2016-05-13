@@ -4,9 +4,9 @@
 
 // select part
 part = "assembly";
-//part = "yCarriage";
+part = "yCarriage";
 //part = "xCarriage";
-part = "xCarriageTop";
+//part = "xCarriageTop";
 //part = "renderXCarriage";
 //part = "renderPosYCarriage";
 //part = "topNegXNegYCornerBracket";
@@ -37,6 +37,7 @@ part = "xCarriageTop";
 //part = "renderFanMount";
 //part = "pulleyHousingSpacer";
 //part = "pulleySpacer";
+//part = "aptLightingLD";
 // [assembly:all parts assembled, beamFrame:beam frame, topNegXNegYCornerBracket:top corner bracket (-x -y), topPosXNegYCornerBracket:top corner bracket (x -y), topNegXPosYCornerBracket:top corner bracket (-x y), topPosXPosYCornerBracket (x y), yAxisLinearRails:y axis linear rails, xAxisLinearRails:x axis linear rails, yCarriage:y axis carriage]
 // height and width of extrusion (mm)
 beamHW = 10;
@@ -147,11 +148,11 @@ carriageIdlerPulleyHousingCylD = beltIdlerPulleyHousingScrewD + plateThickness /
 
 /* [X Carriages] */
 // laser heatsink x (mm)
-laserHeatsinkX = 22;
+laserHeatsinkX = 40;
 // laser heatsink y (mm)
-laserHeatsinkY = 27;
+laserHeatsinkY = 40;
 // laser heatsink x (mm)
-laserHeatsinkZ = 58;
+laserHeatsinkZ = 90;
 // laser diameter (mm)
 laserDiameter = 12;
 laserHeatsinkMountScrewD = 3;
@@ -199,7 +200,7 @@ effectiveLinearBearingZipTieWidth = linearBearingZipTieWidth + iFitAdjust;
 effectiveLinearBearingZipTieHeight = linearBearingZipTieHeight + iFitAdjust;
 holderBaseWidth = effectiveLinearBearingOD + 4 * plateThickness;
 holderBaseLength = effectiveLinearBearingLength + 4 * plateThickness;
-yCarriageBraceLength = holderBaseLength * 2 - 2 * plateThickness;
+yCarriageBraceLength = holderBaseLength * 2 - 2 * plateThickness + (laserHeatsinkY - laserHeatsinkX) * .75;
 
 
 
@@ -250,6 +251,18 @@ limitSwitchHeight = 6.3;
 limitSwitchMountScrewSep = 9;
 limitSwitchMountScrewD = 2.5;
 limitSwitchMountScrewDepth = 4;
+
+// aptLighting Laser Diode
+aptLightingLDHeight = 90;
+aptLightingLDWidth = 40;
+aptLightingLDLength = 40;
+aptLightingLDScrewD = 3;
+aptLightingLDScrewSepHeight = 40;
+aptLightingLDScrewSepWidth = 10;
+aptLightingLDScrews = 3;
+aptLightingLDScrewSepSingleton = 9;
+aptLightingLDLensD = 18;
+aptLightingLDLensHeight = 9;
 
 
 // this is a generic mount that is based off the nema17 dimensions
@@ -354,6 +367,8 @@ module render_part() {
 		pulleyHousingSpacer();
 	} else if (part == "pulleySpacer") {
 		pulleySpacer();
+	} else if (part == "aptLightingLD") {
+		renderAptLightingLD();
 	} else {
 		// invalid value
 	}
@@ -817,8 +832,15 @@ module yCarriage() {
 					translate([i, j, 0])
 						linearBearingHolder();
     		// 90 angle for x axis
-			translate([-holderBaseWidth / 2, -holderBaseLength / 2, 0])
-				cube([reinforcedPlateThickness, yCarriageBraceLength, yCarriageShelfLength]);
+			//translate([-holderBaseWidth / 2, -holderBaseLength / 2, 0])
+				//cube([reinforcedPlateThickness, yCarriageBraceLength, yCarriageShelfLength]);
+echo("WARNING: carriage plate location was determined empirically, not parametrically");
+			translate([-holderBaseWidth / 2,
+					-holderBaseLength / 2 - 6,
+					-plateThickness / 2])
+				cube([reinforcedPlateThickness,
+					xAxisRailSep + 2 * linearRailOD,
+					yCarriageShelfLength]);
 			// braces for the carriage
 			yCarriageBrace();
 			translate([0, yCarriageBraceLength / 2 - reinforcedPlateThickness / 2, 0])
@@ -828,14 +850,21 @@ module yCarriage() {
 			// xAxis rails
 			// bring y to axis sep / 2
 			translate([reinforcedPlateThickness, 
-				-holderBaseWidth,
+				//-holderBaseWidth,
+				-xAxisRailSep / 2 - linearRailOD + plateThickness / 2,
 				yCarriageShelfLength / 3
 				])
 			// bring y to center of carriage (0)
-			translate([0, yCarriageBraceLength / 2 - plateThickness / 1.5, 0])
-			translate([-holderBaseWidth / 2, -holderBaseLength * .5, 0])
+			translate([0, 
+					yCarriageBraceLength / 2 - plateThickness / 1.5,
+					0])
+			translate([-holderBaseWidth / 2, 
+					-holderBaseLength * .5,
+					0])
 				// align y to 0
-				translate([0, xAxisRailMountHeight / 2 + plateThickness + linearRailOD -linearBearingLength / 2, yCarriageShelfLength / 3])
+				translate([0, 
+					xAxisRailMountHeight / 2 + plateThickness + linearRailOD -linearBearingLength / 2,
+					yCarriageShelfLength / 3])
 				rotate([0, 0, 180])
 					parallelRailsMount(xAxisRailMountHeight, xAxisRailMountWidth, xAxisRailSep, true, xAxisSupportConeLength);
 		}
@@ -1094,7 +1123,7 @@ joinerWidth = 2 * ((-beltThickness / 2
 		for (i=[-1, 1])
 			for (j=[-1, 1])
 				translate([i * 20, j * 27, -5])
-					#cube([20, 20, 20], center=true);
+					cube([20, 20, 20], center=true);
 		// slot for heatsink
 		cube([laserHeatsinkX + iFitAdjust * 2, 
 			laserHeatsinkY + iFitAdjust * 2, 
@@ -1949,4 +1978,11 @@ module renderFanMount() {
 			fan();
 		fanMount();
 	}
+}
+
+module renderAptLightingLD() {
+	translate([0, 0, aptLightingLDHeight / 2])
+		cube([aptLightingLDWidth, aptLightingLDLength, aptLightingLDHeight], center=true);
+	translate([0, 0, -aptLightingLDLensHeight / 2])
+		cylinder(h=aptLightingLDLensHeight, d=aptLightingLDLensD, center=true);
 }
