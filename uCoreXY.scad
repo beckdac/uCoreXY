@@ -4,8 +4,8 @@
 
 // select part
 part = "assembly";
-part = "yCarriage";
-//part = "xCarriage";
+//part = "yCarriage";
+part = "xCarriage";
 //part = "xCarriageTop";
 //part = "renderXCarriage";
 //part = "renderPosYCarriage";
@@ -1030,7 +1030,7 @@ module xCarriageBeltMount() {
                 frameSideHeight / 2 + beamHW / 2 +
                 holderBaseWidth / 2 + .5
             ])
-	translate([laserHeatsinkY,
+	translate([laserHeatsinkY / 1.25,
 		0,
 		-reinforcedPlateThickness / 2])
 	difference() {
@@ -1112,7 +1112,7 @@ joinerWidth = 2 * ((-beltThickness / 2
 					// using linearRailOD to round courners, purely aesthetic 
 					for (i=[-1,1])
 						for (j=[-1,1])
-							translate([i * (beltMountClipX * 2 + joinerWidth) / 2 + i * -linearRailOD,
+							translate([i * (beltMountClipX * 2 + joinerWidth) / 2 + i * -linearRailOD + i * 10,
 										j * (holderBaseLength * 2 - 2 * plateThickness) / 2 + j * -linearRailOD,
 										0
 									])
@@ -1120,10 +1120,12 @@ joinerWidth = 2 * ((-beltThickness / 2
 				}
 		}
 		// cutouts to access belts
+/*
 		for (i=[-1, 1])
 			for (j=[-1, 1])
 				translate([i * 20, j * 27, -5])
 					cube([20, 20, 20], center=true);
+*/
 		// slot for heatsink
 		cube([laserHeatsinkX + iFitAdjust * 2, 
 			laserHeatsinkY + iFitAdjust * 2, 
@@ -1132,7 +1134,8 @@ joinerWidth = 2 * ((-beltThickness / 2
 		for (i=[-1, 1])
 			for (j=[-1, 1])
 				translate([i * beltMountClipX / 3,
-						j * beltMountClipY / 3 + j * beltMountClipX,
+					//	j * beltMountClipY / 3 + j * beltMountClipX,
+						j * (laserHeatsinkX / 1.5) + j * beltMountClipY / 3 + 1,
 						reinforcedPlateThickness / 2
 					])
 					cylinder(h=reinforcedPlateThickness + cylHeightExt, d=beltMountScrewD, center=true);
@@ -1158,7 +1161,7 @@ module xCarriage() {
 							linearBearingHolder();
 			translate([0, 0, reinforcedPlateThickness / 2])
 				cube([xAxisRailSep - holderBaseWidth + plateThickness,
-					holderBaseLength * 2 - 2 * plateThickness,
+					15 + holderBaseLength * 2 - 2 * plateThickness,
 					reinforcedPlateThickness], center=true);
            	for (i=[-1, 1])
 				translate([0,
@@ -1182,7 +1185,9 @@ module xCarriage() {
 		for (i=[-1, 1])
 			for (j=[-1, 1])
 		translate([i * beltMountClipX / 3,
-				j * beltMountClipY / 3 + j * beltMountClipX,
+					//j * beltMountClipY / 3 + j * beltMountClipX,
+					j * (laserHeatsinkX / 1.5) + j * beltMountClipY / 3 + j * 1,
+					//j * beltMountClipY / 3,
 					reinforcedPlateThickness / 2
 				])
 					union() {
@@ -1193,7 +1198,7 @@ module xCarriage() {
 		// holes for limit swtiches, self tapping, I hope
 		for (i=[-1, 1])
 			for (j=[-1, 1])
-				translate([i * limitSwitchMountScrewSep / 2, j * beltMountClipY * 1.7, 0])
+				translate([i * limitSwitchMountScrewSep / 2, j * beltMountClipY * 2.1, 0])
 					cylinder(h=10*reinforcedPlateThickness/2 + cylHeightExt,
 						d=limitSwitchMountScrewD, center=true);
 	}
