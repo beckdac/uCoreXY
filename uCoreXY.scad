@@ -1168,7 +1168,7 @@ module xCarriage() {
 						i * (laserHeatsinkY / 2 + iFitAdjust / 2 + plateThickness / 4),
 						laserHeatsinkMountScrewZ * .75])
 					difference() {
-						cube([laserHeatsinkX * 1.5, plateThickness / 2, laserHeatsinkMountScrewZ * 1.25], center=true);
+						cube([laserHeatsinkX * 1.25, plateThickness / 2, laserHeatsinkMountScrewZ * 1.25], center=true);
 						for (i=[-1, 1])
 							translate([i * (laserHeatsinkX - laserHeatsinkMountScrewX * 2) / 2, 
 									0, plateThickness / 2])
