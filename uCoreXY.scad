@@ -5,7 +5,7 @@
 // select part
 part = "assembly";
 //part = "yCarriage";
-part = "xCarriage";
+//part = "xCarriage";
 //part = "xCarriageTop";
 //part = "renderXCarriage";
 //part = "renderPosYCarriage";
@@ -367,8 +367,6 @@ module render_part() {
 		pulleyHousingSpacer();
 	} else if (part == "pulleySpacer") {
 		pulleySpacer();
-	} else if (part == "aptLightingLD") {
-		renderAptLightingLD();
 	} else {
 		// invalid value
 	}
@@ -1118,6 +1116,10 @@ joinerWidth = 2 * ((-beltThickness / 2
 									])
 								cylinder(h=plateThickness, d=linearRailOD * 2, center=true);
 				}
+			translate([0, 0, reinforcedPlateThickness * 2])
+				cube([laserHeatsinkX + reinforcedPlateThickness,
+					laserHeatsinkY + reinforcedPlateThickness,
+					reinforcedPlateThickness * 4], center=true);
 		}
 		// cutouts to access belts
 /*
@@ -1131,6 +1133,17 @@ joinerWidth = 2 * ((-beltThickness / 2
 			laserHeatsinkY + iFitAdjust * 2, 
 			laserHeatsinkZ + iFitAdjust * 2], center=true);
 		// holes for mounting
+		rotate([0, 0, 90])
+		for (i=[-1, 0, 1])
+			translate([0, i * aptLightingLDScrewSepWidth, reinforcedPlateThickness * 2])
+				rotate([0, -90, 0])
+					cylinder(h=laserHeatsinkY + 2 * reinforcedPlateThickness + cylHeightExt, 
+						d=aptLightingLDScrewD, center=true);
+		for (i=[-1, 0, 1])
+			translate([0, i * aptLightingLDScrewSepWidth, reinforcedPlateThickness * 2])
+				rotate([0, -90, 0])
+					cylinder(h=laserHeatsinkY + 2 * reinforcedPlateThickness + cylHeightExt, 
+						d=aptLightingLDScrewD, center=true);
 		for (i=[-1, 1])
 			for (j=[-1, 1])
 				translate([i * beltMountClipX / 3,
@@ -1142,8 +1155,8 @@ joinerWidth = 2 * ((-beltThickness / 2
 		for (i=[-1, 1])
 			for (j=[-1, 1])
 				for (k=[0, 1])
-					translate([i * beltMountClipX / 1.25,
-							j * beltMountClipY / 3 + j * k * beltMountClipY / 4,
+					translate([i * beltMountClipX / .75,
+							j * beltMountClipY / 3 + j * k * beltMountClipY / 4 + j * k * 10,
 							reinforcedPlateThickness / 2
 						])
 					cylinder(h=reinforcedPlateThickness + cylHeightExt, d=beltMountScrewD, center=true);
@@ -1983,11 +1996,4 @@ module renderFanMount() {
 			fan();
 		fanMount();
 	}
-}
-
-module renderAptLightingLD() {
-	translate([0, 0, aptLightingLDHeight / 2])
-		cube([aptLightingLDWidth, aptLightingLDLength, aptLightingLDHeight], center=true);
-	translate([0, 0, -aptLightingLDLensHeight / 2])
-		cylinder(h=aptLightingLDLensHeight, d=aptLightingLDLensD, center=true);
 }
