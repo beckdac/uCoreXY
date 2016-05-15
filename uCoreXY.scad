@@ -1116,10 +1116,10 @@ joinerWidth = 2 * ((-beltThickness / 2
 									])
 								cylinder(h=plateThickness, d=linearRailOD * 2, center=true);
 				}
-			translate([0, 0, reinforcedPlateThickness * 2])
+			translate([0, 0, reinforcedPlateThickness * 1.5 + 2])
 				cube([laserHeatsinkX + reinforcedPlateThickness,
 					laserHeatsinkY + reinforcedPlateThickness,
-					reinforcedPlateThickness * 4], center=true);
+					reinforcedPlateThickness * 3], center=true);
 		}
 		// cutouts to access belts
 /*
